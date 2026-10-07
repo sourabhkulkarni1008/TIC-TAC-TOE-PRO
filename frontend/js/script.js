@@ -570,9 +570,9 @@ function setupEventListeners() {
                 if (error) {
                     let msg = error.message || 'Invalid email or password.';
                     if (msg.toLowerCase().includes('invalid login credentials')) {
-                        msg = 'Incorrect email or password. Please try again.';
+                        msg = 'Incorrect email or password. (Note: If you just registered, check if Supabase requires email confirmation in your inbox, or disable "Confirm email" in Supabase Dashboard).';
                     } else if (msg.toLowerCase().includes('email not confirmed')) {
-                        msg = 'Please check your inbox to confirm your email before logging in.';
+                        msg = 'Please check your email inbox to confirm your account before logging in.';
                     }
                     showAuthAlert(msg, 'error');
                 } else {
@@ -627,12 +627,16 @@ function setupEventListeners() {
                         msg = 'An account with this email is already registered. Please switch to Login.';
                     }
                     showAuthAlert(msg, 'error');
-                } else {
+                } else if (data?.user && data.user.identities && data.user.identities.length === 0) {
+                    showAuthAlert('An account with this email already exists in Supabase. Please switch to Login.', 'error');
+                } else if (data?.session) {
                     showAuthAlert('Account created successfully! Logging you in...', 'success');
                     updateAuthDisplay(data.user);
                     await loadUserProfile();
                     renderUI();
                     setTimeout(() => closeModal(elements.authModal), 500);
+                } else {
+                    showAuthAlert('Account created! If your Supabase project has "Confirm email" enabled, please check your inbox (and spam) to confirm your account.', 'success');
                 }
             } catch (err) {
                 showAuthAlert('Network error during registration. Please try again.', 'error');
