@@ -2854,6 +2854,245 @@ body {
     }
 }
 
+/* ==========================================================================
+   EXTRACTED COMPONENT & UTILITY CLASSES
+   ========================================================================== */
+.auth-user-pill {
+    display: none;
+}
+
+.diff-name-badge {
+    margin-left: 4px;
+}
+
+.reward-steps-wrapper {
+    margin-bottom: 2rem;
+}
+
+.instruction-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+}
+
+.reward-progress-bar-fill {
+    width: 0%;
+}
+
+.trademark-banner-notice {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.redemption-history-box {
+    margin-top: 2rem;
+}
+
+.content-article-card {
+    margin-bottom: 2rem;
+}
+
+.guide-title-cyan {
+    color: var(--cyan);
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.guide-title-magenta {
+    color: var(--magenta);
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.guide-title-emerald {
+    color: var(--emerald);
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.guide-title-gold {
+    color: var(--gold);
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.guide-text-spaced {
+    margin-bottom: 1rem;
+}
+
+.guide-text-spaced-lg {
+    margin-bottom: 1.25rem;
+}
+
+.guide-list {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.strategy-subgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.strategy-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 1.25rem;
+}
+
+.strategy-box h4 {
+    margin-bottom: 0.5rem;
+}
+
+.strategy-box h4.color-cyan { color: var(--cyan); }
+.strategy-box h4.color-gold { color: var(--gold); }
+.strategy-box h4.color-emerald { color: var(--emerald); }
+.strategy-box h4.color-blue { color: var(--blue); }
+
+.strategy-box p {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.badge-emerald { background: var(--emerald); }
+.badge-gold { background: var(--gold); }
+.badge-rose { background: var(--rose); }
+
+.guide-ordered-list {
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+.guide-ordered-list strong {
+    color: #ffffff;
+}
+
+.scoring-stats-grid {
+    margin-bottom: 1.5rem;
+}
+
+.stat-card-compact {
+    padding: 1rem;
+}
+
+.stat-value-compact {
+    font-size: 1.3rem;
+}
+
+.scoring-footer-text {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.about-highlights-title {
+    margin-bottom: 1.5rem;
+    font-size: 1.25rem;
+    color: var(--cyan);
+}
+
+.btn-full-width {
+    width: 100%;
+}
+
+.btn-form-submit {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.contact-form-alert {
+    display: none;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.faq-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.faq-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+}
+
+.badge-auth, .badge-privacy {
+    background: rgba(0, 242, 254, 0.15);
+    color: var(--cyan);
+}
+
+.badge-terms {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--gold);
+}
+
+.auth-alert-box {
+    display: none;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    text-align: center;
+}
+
+.form-hidden {
+    display: none;
+}
+
+.auth-footnote {
+    margin-top: 1.25rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.text-gold {
+    color: var(--gold) !important;
+}
+
+.text-rose {
+    color: var(--rose) !important;
+}
+
+.text-cyan {
+    color: var(--cyan) !important;
+}
+
+.modal-subtitle-spaced {
+    margin-bottom: 1.5rem;
+}
+
+.modal-stats-notice {
+    text-align: left;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.text-mt-xs {
+    margin-top: 4px;
+}
+
+.modal-actions-spaced {
+    margin-top: 2rem;
+}
+
 
 
 

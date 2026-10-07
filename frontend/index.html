@@ -63,7 +63,7 @@
                     </button>
 
                     <!-- Authenticated View: User Email & Logout (Hidden by default) -->
-                    <div class="auth-user-pill" id="navAuthUserPill" style="display: none;">
+                    <div class="auth-user-pill" id="navAuthUserPill">
                         <span class="auth-user-email" id="navUserEmail">player@example.com</span>
                         <button type="button" class="btn-logout" id="navBtnLogout" title="Log Out">
                             <span>Logout</span>
@@ -158,7 +158,7 @@
                             </div>
                             <div>
                                 <span class="current-diff-badge" id="currentDiffBadge">
-                                    Mode: <strong id="currentDiffName" style="margin-left: 4px;">EASY (+1.0 Pt)</strong>
+                                    Mode: <strong id="currentDiffName" class="diff-name-badge">EASY (+1.0 Pt)</strong>
                                 </span>
                             </div>
                         </div>
@@ -192,7 +192,7 @@
 
                         <!-- 3x3 Tic-Tac-Toe Board -->
                         <div class="board-container">
-                            <div class="board" id="gameBoard" role="grid" aria-label="Tic-Tac-Toe Grid">
+                            <div class="board" id="gameBoard" aria-label="Tic-Tac-Toe Board">
                                 <button type="button" class="cell" data-index="0" id="cell-0" aria-label="Cell 1"></button>
                                 <button type="button" class="cell" data-index="1" id="cell-1" aria-label="Cell 2"></button>
                                 <button type="button" class="cell" data-index="2" id="cell-2" aria-label="Cell 3"></button>
@@ -335,8 +335,8 @@
                     </div>
 
                     <!-- How Redemption Works Timeline -->
-                    <div class="reward-steps-wrapper" style="margin-bottom: 2rem;">
-                        <div class="instruction-cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                    <div class="reward-steps-wrapper">
+                        <div class="instruction-cards-grid">
                             <div class="instruction-card">
                                 <div class="instruction-step-badge">1</div>
                                 <h3>1. Earn Points</h3>
@@ -377,7 +377,7 @@
                             <div class="reward-denomination">₹10</div>
                             <div class="reward-points-req">Required Points: <strong>1,000</strong></div>
                             <div class="reward-progress-bar-container">
-                                <div class="reward-progress-bar-fill" id="progBar10" style="width: 0%;"></div>
+                                <div class="reward-progress-bar-fill" id="progBar10"></div>
                             </div>
                             <span class="reward-status-tag status-locked" id="statusTag10">Points Needed</span>
                             <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem10" disabled>
@@ -399,7 +399,7 @@
                             <div class="reward-denomination">₹20</div>
                             <div class="reward-points-req">Required Points: <strong>2,000</strong></div>
                             <div class="reward-progress-bar-container">
-                                <div class="reward-progress-bar-fill" id="progBar20" style="width: 0%;"></div>
+                                <div class="reward-progress-bar-fill" id="progBar20"></div>
                             </div>
                             <span class="reward-status-tag status-locked" id="statusTag20">Points Needed</span>
                             <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem20" disabled>
@@ -421,7 +421,7 @@
                             <div class="reward-denomination">₹50</div>
                             <div class="reward-points-req">Required Points: <strong>5,000</strong></div>
                             <div class="reward-progress-bar-container">
-                                <div class="reward-progress-bar-fill" id="progBar50" style="width: 0%;"></div>
+                                <div class="reward-progress-bar-fill" id="progBar50"></div>
                             </div>
                             <span class="reward-status-tag status-locked" id="statusTag50">Points Needed</span>
                             <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem50" disabled>
@@ -443,7 +443,7 @@
                             <div class="reward-denomination">₹100</div>
                             <div class="reward-points-req">Required Points: <strong>10,000</strong></div>
                             <div class="reward-progress-bar-container">
-                                <div class="reward-progress-bar-fill" id="progBar100" style="width: 0%;"></div>
+                                <div class="reward-progress-bar-fill" id="progBar100"></div>
                             </div>
                             <span class="reward-status-tag status-locked" id="statusTag100">Points Needed</span>
                             <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem100" disabled>
@@ -454,12 +454,12 @@
                     </div>
 
                     <!-- Trademark Disclaimer Notice -->
-                    <div class="trademark-banner-notice" style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
+                    <div class="trademark-banner-notice">
                         ⚖️ <strong>Legal & Trademark Notice:</strong> Google Play and Google Play Gift Cards are trademarks of Google LLC. This website is independently operated and is not affiliated with, endorsed by, or sponsored by Google LLC or Alphabet Inc. All rewards are procured and fulfilled independently through legitimate authorized gift card distributors.
                     </div>
 
                     <!-- Redemption Activity List -->
-                    <div class="redemption-history-box" style="margin-top: 2rem;">
+                    <div class="redemption-history-box">
                         <div class="history-header">
                             <h4>📋 Your Redemption Requests</h4>
                         </div>
@@ -490,15 +490,15 @@
                     </div>
 
                     <!-- 1. Fundamental Rules -->
-                    <article class="content-article-card" style="margin-bottom: 2rem;">
-                        <h3 style="color: var(--cyan); font-size: 1.4rem; margin-bottom: 1rem;">📖 1. The Fundamental Rules of Tic-Tac-Toe</h3>
-                        <p style="margin-bottom: 1rem;">
+                    <article class="content-article-card">
+                        <h3 class="guide-title-cyan">📖 1. The Fundamental Rules of Tic-Tac-Toe</h3>
+                        <p class="guide-text-spaced">
                             Tic-Tac-Toe is a classic zero-sum, complete-information strategy game played on a 3×3 grid consisting of 9 distinct cells. Two players take turns placing their respective marks: Player 1 plays as <strong>✕ (Cross)</strong> and Player 2 (or the AI Bot) plays as <strong>○ (Nought)</strong>.
                         </p>
-                        <p style="margin-bottom: 1rem;">
+                        <p class="guide-text-spaced">
                             <strong>The Objective:</strong> Be the first player to position three of your marks into an unbroken line. A winning line can be formed in any of three geometric orientations:
                         </p>
-                        <ul style="padding-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.7;">
+                        <ul class="guide-list">
                             <li><strong>Horizontal (3 Rows):</strong> Top row [0, 1, 2], Middle row [3, 4, 5], or Bottom row [6, 7, 8].</li>
                             <li><strong>Vertical (3 Columns):</strong> Left col [0, 3, 6], Center col [1, 4, 7], or Right col [2, 5, 8].</li>
                             <li><strong>Diagonal (2 Angles):</strong> Top-left to bottom-right [0, 4, 8] or top-right to bottom-left [2, 4, 6].</li>
@@ -509,34 +509,34 @@
                     </article>
 
                     <!-- 2. Master Strategies -->
-                    <article class="content-article-card" style="margin-bottom: 2rem;">
-                        <h3 style="color: var(--magenta); font-size: 1.4rem; margin-bottom: 1rem;">🧠 2. Tic-Tac-Toe Master Strategies</h3>
-                        <div class="strategy-subgrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                    <article class="content-article-card">
+                        <h3 class="guide-title-magenta">🧠 2. Tic-Tac-Toe Master Strategies</h3>
+                        <div class="strategy-subgrid">
                             
-                            <div class="strategy-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
-                                <h4 style="color: var(--cyan); margin-bottom: 0.5rem;">👑 The Corner Opening Advantage</h4>
-                                <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                            <div class="strategy-box">
+                                <h4 class="color-cyan">👑 The Corner Opening Advantage</h4>
+                                <p>
                                     When you move first, placing your mark in one of the four corners (top-left, top-right, bottom-left, bottom-right) gives you the greatest number of winning trajectories (3 potential lines per corner). If the opponent responds with an edge rather than the center, you can force a guaranteed win.
                                 </p>
                             </div>
 
-                            <div class="strategy-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
-                                <h4 style="color: var(--gold); margin-bottom: 0.5rem;">🎯 Center Control & Defense</h4>
-                                <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                            <div class="strategy-box">
+                                <h4 class="color-gold">🎯 Center Control & Defense</h4>
+                                <p>
                                     The center tile (cell 4) intersects with 4 winning lines (1 horizontal, 1 vertical, and 2 diagonals). If your opponent takes a corner first, taking the center is essential to prevent them from executing an unstoppable diagonal trap.
                                 </p>
                             </div>
 
-                            <div class="strategy-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
-                                <h4 style="color: var(--emerald); margin-bottom: 0.5rem;">⚔️ The Forking Technique</h4>
-                                <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                            <div class="strategy-box">
+                                <h4 class="color-emerald">⚔️ The Forking Technique</h4>
+                                <p>
                                     A "Fork" occurs when you create a board state where you have two separate, non-overlapping winning threats simultaneously. Because your opponent can only block one space per turn, the second winning move becomes inevitable on your next move.
                                 </p>
                             </div>
 
-                            <div class="strategy-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
-                                <h4 style="color: var(--blue); margin-bottom: 0.5rem;">🛡️ Defensive Counter-Play</h4>
-                                <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                            <div class="strategy-box">
+                                <h4 class="color-blue">🛡️ Defensive Counter-Play</h4>
+                                <p>
                                     Always scan the board for the opponent's 2-in-a-row setups. If the opponent holds two marks in a line, you must block the third square immediately. To counter enemy forks, play moves that force the opponent to defend rather than build their second threat.
                                 </p>
                             </div>
@@ -545,16 +545,16 @@
                     </article>
 
                     <!-- 3. AI Difficulty Breakdown -->
-                    <article class="content-article-card" style="margin-bottom: 2rem;">
-                        <h3 style="color: var(--emerald); font-size: 1.4rem; margin-bottom: 1rem;">🤖 3. AI Difficulty Breakdown: Easy vs Medium vs Hard</h3>
-                        <p style="margin-bottom: 1.25rem;">
+                    <article class="content-article-card">
+                        <h3 class="guide-title-emerald">🤖 3. AI Difficulty Breakdown: Easy vs Medium vs Hard</h3>
+                        <p class="guide-text-spaced-lg">
                             Our platform features 3 distinct custom-built AI engines, each designed with different mathematical complexities:
                         </p>
 
                         <div class="instruction-cards-grid">
                             
                             <div class="instruction-card">
-                                <div class="instruction-step-badge" style="background: var(--emerald);">🟢</div>
+                                <div class="instruction-step-badge badge-emerald">🟢</div>
                                 <h3>Easy Bot (Heuristic Random)</h3>
                                 <p>
                                     Designed for beginners and quick warm-ups. The Easy Bot selects moves using pseudo-random heuristics without deep lookahead. It occasionally misses blocks and gives plenty of scoring opportunities.
@@ -565,7 +565,7 @@
                             </div>
 
                             <div class="instruction-card">
-                                <div class="instruction-step-badge" style="background: var(--gold);">🟡</div>
+                                <div class="instruction-step-badge badge-gold">🟡</div>
                                 <h3>Medium Bot (Tactical Reflex)</h3>
                                 <p>
                                     A tactical opponent. On every turn, the Medium Bot scans the board to see if it has an immediate winning move. If not, it checks whether you are about to win and blocks you. If neither applies, it plays smartly across open tiles.
@@ -576,7 +576,7 @@
                             </div>
 
                             <div class="instruction-card">
-                                <div class="instruction-step-badge" style="background: var(--rose);">🔴</div>
+                                <div class="instruction-step-badge badge-rose">🔴</div>
                                 <h3>Hard Bot (Minimax Algorithm)</h3>
                                 <p>
                                     Powered by the renowned <em>Minimax recursive decision algorithm with Alpha-Beta pruning</em>. It calculates every possible branch of the game tree to depth 9. It will never make an error and will exploit any mistake you make!
@@ -590,54 +590,54 @@
                     </article>
 
                     <!-- 4. Beginner Tips Checklist -->
-                    <article class="content-article-card" style="margin-bottom: 2rem;">
-                        <h3 style="color: var(--gold); font-size: 1.4rem; margin-bottom: 1rem;">💡 4. Top 5 Strategy Tips for Beginners</h3>
-                        <ol style="padding-left: 1.5rem; color: var(--text-secondary); line-height: 1.8;">
-                            <li><strong style="color: #fff;">Always take the Center if available:</strong> If you are Player 2 and the corner is taken, grab the center immediately to restrict your opponent to a maximum of 2 winning paths.</li>
-                            <li><strong style="color: #fff;">Watch the Opposite Corner Trap:</strong> If Player 1 holds two opposite corners (e.g. top-left and bottom-right), do not play a third corner! Instead, play an edge square to force them to block your line.</li>
-                            <li><strong style="color: #fff;">Think Two Moves Ahead:</strong> Before placing your mark, ask: "If I place my mark here, what is the best move my opponent can make?"</li>
-                            <li><strong style="color: #fff;">Never Ignore a Threat:</strong> Even if you are building your own line, an unblocked enemy 2-in-a-row will cause an instant loss on their next turn.</li>
-                            <li><strong style="color: #fff;">Warm up on Easy before challenging Hard:</strong> Practice spotting forks on Easy and Medium difficulty to build muscle memory before testing your skills against Minimax.</li>
+                    <article class="content-article-card">
+                        <h3 class="guide-title-gold">💡 4. Top 5 Strategy Tips for Beginners</h3>
+                        <ol class="guide-ordered-list">
+                            <li><strong>Always take the Center if available:</strong> If you are Player 2 and the corner is taken, grab the center immediately to restrict your opponent to a maximum of 2 winning paths.</li>
+                            <li><strong>Watch the Opposite Corner Trap:</strong> If Player 1 holds two opposite corners (e.g. top-left and bottom-right), do not play a third corner! Instead, play an edge square to force them to block your line.</li>
+                            <li><strong>Think Two Moves Ahead:</strong> Before placing your mark, ask: "If I place my mark here, what is the best move my opponent can make?"</li>
+                            <li><strong>Never Ignore a Threat:</strong> Even if you are building your own line, an unblocked enemy 2-in-a-row will cause an instant loss on their next turn.</li>
+                            <li><strong>Warm up on Easy before challenging Hard:</strong> Practice spotting forks on Easy and Medium difficulty to build muscle memory before testing your skills against Minimax.</li>
                         </ol>
                     </article>
 
                     <!-- 5. Fair Economics & Scoring System -->
                     <article class="content-article-card">
-                        <h3 style="color: var(--cyan); font-size: 1.4rem; margin-bottom: 1rem;">🪙 5. How Our Scoring & Reward System Works</h3>
-                        <p style="margin-bottom: 1rem;">
+                        <h3 class="guide-title-cyan">🪙 5. How Our Scoring & Reward System Works</h3>
+                        <p class="guide-text-spaced">
                             Tic-Tac-Toe Pro operates on a completely transparent point economy. Every game outcome is tracked accurately in your wallet:
                         </p>
-                        <div class="stats-grid" style="margin-bottom: 1.5rem;">
-                            <div class="stat-card" style="padding: 1rem;">
+                        <div class="stats-grid scoring-stats-grid">
+                            <div class="stat-card stat-card-compact">
                                 <div class="stat-icon icon-easy">🟢</div>
                                 <div class="stat-content">
-                                    <span class="stat-value" style="font-size: 1.3rem;">+1.0 Pt</span>
+                                    <span class="stat-value stat-value-compact">+1.0 Pt</span>
                                     <span class="stat-label">Easy Victory</span>
                                 </div>
                             </div>
-                            <div class="stat-card" style="padding: 1rem;">
+                            <div class="stat-card stat-card-compact">
                                 <div class="stat-icon icon-medium">🟡</div>
                                 <div class="stat-content">
-                                    <span class="stat-value" style="font-size: 1.3rem;">+1.5 Pts</span>
+                                    <span class="stat-value stat-value-compact">+1.5 Pts</span>
                                     <span class="stat-label">Medium Victory</span>
                                 </div>
                             </div>
-                            <div class="stat-card" style="padding: 1rem;">
+                            <div class="stat-card stat-card-compact">
                                 <div class="stat-icon icon-hard">🔴</div>
                                 <div class="stat-content">
-                                    <span class="stat-value" style="font-size: 1.3rem;">+2.0 Pts</span>
+                                    <span class="stat-value stat-value-compact">+2.0 Pts</span>
                                     <span class="stat-label">Hard Victory</span>
                                 </div>
                             </div>
-                            <div class="stat-card" style="padding: 1rem;">
+                            <div class="stat-card stat-card-compact">
                                 <div class="stat-icon icon-draws">🤝</div>
                                 <div class="stat-content">
-                                    <span class="stat-value" style="font-size: 1.3rem;">0 Pts</span>
+                                    <span class="stat-value stat-value-compact">0 Pts</span>
                                     <span class="stat-label">Draws / Losses</span>
                                 </div>
                             </div>
                         </div>
-                        <p style="color: var(--text-secondary); line-height: 1.6;">
+                        <p class="scoring-footer-text">
                             Our conversion rate is fixed at <strong>100 Points = ₹1.00 INR</strong>. When you redeem, points are deducted from your balance, and a redemption order is logged to our backend system. The digital gift voucher is reviewed for anti-cheat verification and delivered directly to your registered email address within 24 to 48 hours.
                         </p>
                     </article>
@@ -689,7 +689,7 @@
                         </div>
 
                         <div class="about-highlights-card">
-                            <h4 style="margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--cyan);">🎮 Platform Highlights</h4>
+                            <h4 class="about-highlights-title">🎮 Platform Highlights</h4>
                             
                             <div class="about-stat-row">
                                 <span class="about-stat-label">AI Engine</span>
@@ -754,17 +754,17 @@
                                     <textarea id="contactMessage" class="form-textarea" placeholder="Describe your question or feedback..." required></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" id="btnSubmitContact">
+                                <button type="submit" class="btn btn-primary btn-form-submit" id="btnSubmitContact">
                                     <span>✉️ Send Message</span>
                                 </button>
-                                <div id="contactFormAlert" style="display:none; margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.9rem; text-align: center;"></div>
+                                <div id="contactFormAlert" class="contact-form-alert"></div>
                             </form>
                         </div>
 
                         <!-- FAQ Accordion -->
                         <div class="faq-card">
-                            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Frequently Asked Questions</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.75rem;">Quick answers to common questions about gameplay, accounts, and rewards.</p>
+                            <h3 class="faq-title">Frequently Asked Questions</h3>
+                            <p class="faq-subtitle">Quick answers to common questions about gameplay, accounts, and rewards.</p>
 
                             <div class="faq-item">
                                 <button type="button" class="faq-question">
@@ -902,7 +902,7 @@
         <div class="modal-card auth-modal-card">
             <button type="button" class="modal-close-btn" id="btnCloseAuthModal">✕</button>
             
-            <div class="modal-icon-badge" style="background: rgba(0, 242, 254, 0.15); color: var(--cyan);">🔐</div>
+            <div class="modal-icon-badge badge-auth">🔐</div>
             <h3 class="modal-title" id="authModalTitle">Account Access</h3>
             <p class="modal-subtitle" id="authModalSubtitle">Sign in or create an account to save your points securely in the cloud.</p>
 
@@ -913,7 +913,7 @@
             </div>
 
             <!-- Inline Alert Message -->
-            <div id="authAlertBox" style="display: none; margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.88rem; text-align: center;"></div>
+            <div id="authAlertBox" class="auth-alert-box"></div>
 
             <!-- Form 1: Sign In Form -->
             <form id="formSignIn" class="auth-form-body">
@@ -925,13 +925,13 @@
                     <label for="signInPassword">Password</label>
                     <input type="password" id="signInPassword" class="form-input" placeholder="••••••••" required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn btn-primary" id="btnSubmitSignIn" style="width: 100%; margin-top: 0.5rem;">
+                <button type="submit" class="btn btn-primary btn-form-submit" id="btnSubmitSignIn">
                     <span>Sign In</span>
                 </button>
             </form>
 
             <!-- Form 2: Register Form (Hidden by default) -->
-            <form id="formRegister" class="auth-form-body" style="display: none;">
+            <form id="formRegister" class="auth-form-body form-hidden">
                 <div class="form-group">
                     <label for="registerEmail">Email Address</label>
                     <input type="email" id="registerEmail" class="form-input" placeholder="name@example.com" required autocomplete="username">
@@ -944,12 +944,12 @@
                     <label for="registerConfirmPassword">Confirm Password</label>
                     <input type="password" id="registerConfirmPassword" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password">
                 </div>
-                <button type="submit" class="btn btn-primary" id="btnSubmitRegister" style="width: 100%; margin-top: 0.5rem;">
+                <button type="submit" class="btn btn-primary btn-form-submit" id="btnSubmitRegister">
                     <span>Create Free Account</span>
                 </button>
             </form>
 
-            <div class="auth-footnote" style="margin-top: 1.25rem; font-size: 0.78rem; color: var(--text-muted); text-align: center;">
+            <div class="auth-footnote">
                 🔒 Strictly Email + Password. No spam, no social trackers, and zero OTP delays.
             </div>
         </div>
@@ -973,7 +973,7 @@
                 </div>
                 <div class="modal-stat-row">
                     <span>Updated Total:</span>
-                    <strong id="resultModalTotal" style="color: var(--gold);">48.5 Pts</strong>
+                    <strong id="resultModalTotal" class="text-gold">48.5 Pts</strong>
                 </div>
             </div>
 
@@ -1003,11 +1003,11 @@
                 </div>
                 <div class="modal-stat-row">
                     <span>Points to Deduct:</span>
-                    <strong id="confirmPointsCost" style="color: var(--rose);">-1,000 Pts</strong>
+                    <strong id="confirmPointsCost" class="text-rose">-1,000 Pts</strong>
                 </div>
                 <div class="modal-stat-row">
                     <span>Remaining Balance:</span>
-                    <strong id="confirmPointsRemaining" style="color: var(--gold);">0.0 Pts</strong>
+                    <strong id="confirmPointsRemaining" class="text-gold">0.0 Pts</strong>
                 </div>
             </div>
 
@@ -1028,12 +1028,12 @@
             <button type="button" class="modal-close-btn" id="btnCloseSuccessModal">✕</button>
             <div class="modal-icon-badge badge-win">✅</div>
             <h3 class="modal-title">Redemption Request Submitted</h3>
-            <p class="modal-subtitle" style="margin-bottom: 1.5rem;">
-                Your request for <strong id="successRewardLabel" style="color: var(--cyan);">₹10 Google Play Reward</strong> has been logged to your account.
+            <p class="modal-subtitle modal-subtitle-spaced">
+                Your request for <strong id="successRewardLabel" class="text-cyan">₹10 Google Play Reward</strong> has been logged to your account.
             </p>
-            <div class="modal-stats-box" style="text-align: left; font-size: 0.85rem; color: var(--text-secondary);">
+            <div class="modal-stats-box modal-stats-notice">
                 <p>📌 <strong>Request Status:</strong> Pending Anti-Fraud Verification</p>
-                <p style="margin-top: 4px;">Points have been deducted. Your gift code will be delivered to your registered email address within 24 to 48 hours.</p>
+                <p class="text-mt-xs">Points have been deducted. Your gift code will be delivered to your registered email address within 24 to 48 hours.</p>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-primary" id="btnSuccessClose">
@@ -1047,7 +1047,7 @@
     <div class="modal-overlay" id="privacyModal">
         <div class="modal-card legal-modal-card">
             <button type="button" class="modal-close-btn" id="btnClosePrivacyModal">✕</button>
-            <div class="modal-icon-badge" style="background: rgba(0, 242, 254, 0.15); color: var(--cyan);">🔒</div>
+            <div class="modal-icon-badge badge-privacy">🔒</div>
             <h3 class="modal-title">Privacy Policy</h3>
             <p class="modal-subtitle">Effective Date: October 2026 | Last Updated: October 2026</p>
 
@@ -1110,8 +1110,8 @@
                 </div>
             </div>
 
-            <div class="modal-actions" style="margin-top: 2rem;">
-                <button type="button" class="btn btn-primary" id="btnAcceptPrivacy" style="width: 100%;">
+            <div class="modal-actions modal-actions-spaced">
+                <button type="button" class="btn btn-primary btn-full-width" id="btnAcceptPrivacy">
                     <span>Understood & Close</span>
                 </button>
             </div>
@@ -1122,7 +1122,7 @@
     <div class="modal-overlay" id="termsModal">
         <div class="modal-card legal-modal-card">
             <button type="button" class="modal-close-btn" id="btnCloseTermsModal">✕</button>
-            <div class="modal-icon-badge" style="background: rgba(245, 158, 11, 0.15); color: var(--gold);">📜</div>
+            <div class="modal-icon-badge badge-terms">📜</div>
             <h3 class="modal-title">Terms of Service</h3>
             <p class="modal-subtitle">Effective Date: October 2026 | Last Updated: October 2026</p>
 
@@ -1166,8 +1166,8 @@
                 </div>
             </div>
 
-            <div class="modal-actions" style="margin-top: 2rem;">
-                <button type="button" class="btn btn-primary" id="btnAcceptTerms" style="width: 100%;">
+            <div class="modal-actions modal-actions-spaced">
+                <button type="button" class="btn btn-primary btn-full-width" id="btnAcceptTerms">
                     <span>I Agree & Close</span>
                 </button>
             </div>
