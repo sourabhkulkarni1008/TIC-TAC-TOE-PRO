@@ -6,15 +6,15 @@
     <meta name="theme-color" content="#090d16">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Tic-Tac-Toe Pro | Play, Win Points & Google Play Rewards</title>
-    <meta name="description" content="Play interactive Tic-Tac-Toe against AI across Easy, Medium, and Hard difficulties. Earn points with every win and explore Google Play redeem rewards.">
+    <title>Tic-Tac-Toe Pro | Play Strategy Game, Win Points & Google Play Rewards</title>
+    <meta name="description" content="Master Tic-Tac-Toe against intelligent AI bots across Easy, Medium, and Hard difficulties. Learn master strategies, earn points on every victory, and redeem genuine Google Play gift cards.">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Supabase JS Client (v2) for Silent Cloud Sync -->
+    <!-- Supabase JS Client (v2) for Email+Password Auth & Cloud Sync -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <!-- Google AdSense Official Script -->
@@ -43,7 +43,7 @@
                 <ul class="nav-links">
                     <li><a href="#home" class="nav-link active" id="linkHome">Home</a></li>
                     <li><a href="#game" class="nav-link" id="linkPlay">Play Game</a></li>
-                    <li><a href="#instructions" class="nav-link" id="linkInstructions">How to Play</a></li>
+                    <li><a href="#instructions" class="nav-link" id="linkInstructions">Guide & Strategy</a></li>
                     <li><a href="#stats" class="nav-link" id="linkStats">Stats</a></li>
                     <li><a href="#rewards" class="nav-link" id="linkRewards">Rewards</a></li>
                     <li><a href="#about" class="nav-link" id="linkAbout">About</a></li>
@@ -53,15 +53,31 @@
 
             <div class="nav-actions">
                 <!-- Live Points Header Pill -->
-                <div class="points-pill" id="headerPointsPill" title="Your total accumulated points">
+                <div class="points-pill" id="headerPointsPill" title="Your total accumulated points (Click to view Rewards)">
                     <span class="points-pill-icon">🪙</span>
                     <span id="headerPointsVal">0.0</span> <small>Pts</small>
+                </div>
+
+                <!-- Auth Navigation Pill / Buttons -->
+                <div class="auth-nav-container" id="navAuthContainer">
+                    <!-- Guest View: Sign In / Register Button -->
+                    <button type="button" class="btn-auth-nav" id="navBtnOpenAuth">
+                        <span>🔐 Login / Register</span>
+                    </button>
+
+                    <!-- Authenticated View: User Email & Logout (Hidden by default) -->
+                    <div class="auth-user-pill" id="navAuthUserPill" style="display: none;">
+                        <span class="auth-user-email" id="navUserEmail">player@example.com</span>
+                        <button type="button" class="btn-logout" id="navBtnLogout" title="Log Out">
+                            <span>Logout</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Contain    <!-- Main Content Container -->
+    <!-- Main Content Container -->
     <main>
 
         <!-- ==========================================================================
@@ -76,7 +92,7 @@
                     <div class="hero-content">
                         <h1>Play Tic-Tac-Toe, Win Matches & <span class="hero-gradient-text">Earn Rewards</span></h1>
                         <p class="hero-subtitle">
-                            Test your tactics against smart AI opponents. Select your challenge level, accumulate points with every victory, and redeem exclusive Google Play reward credits.
+                            Challenge smart AI opponents across 3 difficulty tiers. Hone your strategic thinking, accumulate points with every victory, and redeem genuine Google Play gift cards.
                         </p>
 
                         <div class="hero-cta-group">
@@ -90,7 +106,7 @@
 
                         <!-- Quick Difficulty Switcher in Hero -->
                         <div class="difficulty-selector-box">
-                            <span class="selector-label">Choose Difficulty to Begin:</span>
+                            <span class="selector-label">Choose AI Difficulty to Begin:</span>
                             <div class="difficulty-options">
                                 <button type="button" class="diff-btn diff-easy active" data-diff="easy" id="diffEasyBtn">
                                     <span class="diff-name">🟢 Easy</span>
@@ -127,7 +143,7 @@
                         </div>
 
                         <div class="quick-conversion-note">
-                            💡 <strong>Conversion Rate:</strong> 100 Points = ₹1.00 INR
+                            💡 <strong>Transparent Conversion Rate:</strong> 100 Points = ₹1.00 INR
                         </div>
                     </div>
 
@@ -139,7 +155,15 @@
                 <div class="container">
                     <!-- Top Google AdSense Banner Slot -->
                     <div class="ad-banner-section" style="padding-top: 0;">
-                        <div class="ad-banner-wrapper" id="adBannerTopContainer"></div>
+                        <div class="ad-banner-wrapper" id="adBannerTopContainer">
+                            <div class="ad-unit-label">SPONSORED ADVERTISEMENT</div>
+                            <ins class="adsbygoogle"
+                                 style="display:block"
+                                 data-ad-client="ca-pub-2711605087755702"
+                                 data-ad-slot="4293059609"
+                                 data-ad-format="auto"
+                                 data-full-width-responsive="true"></ins>
+                        </div>
                     </div>
 
                     <div class="game-arena-card">
@@ -188,12 +212,12 @@
                                 <button type="button" class="cell" data-index="0" id="cell-0" aria-label="Cell 1"></button>
                                 <button type="button" class="cell" data-index="1" id="cell-1" aria-label="Cell 2"></button>
                                 <button type="button" class="cell" data-index="2" id="cell-2" aria-label="Cell 3"></button>
-                                <button type="button" class="cell" data-index="3" id="cell-4" aria-label="Cell 4"></button>
-                                <button type="button" class="cell" data-index="4" id="cell-5" aria-label="Cell 5"></button>
-                                <button type="button" class="cell" data-index="5" id="cell-6" aria-label="Cell 6"></button>
-                                <button type="button" class="cell" data-index="6" id="cell-7" aria-label="Cell 7"></button>
-                                <button type="button" class="cell" data-index="7" id="cell-8" aria-label="Cell 8"></button>
-                                <button type="button" class="cell" data-index="8" id="cell-9" aria-label="Cell 9"></button>
+                                <button type="button" class="cell" data-index="3" id="cell-3" aria-label="Cell 4"></button>
+                                <button type="button" class="cell" data-index="4" id="cell-4" aria-label="Cell 5"></button>
+                                <button type="button" class="cell" data-index="5" id="cell-5" aria-label="Cell 6"></button>
+                                <button type="button" class="cell" data-index="6" id="cell-6" aria-label="Cell 7"></button>
+                                <button type="button" class="cell" data-index="7" id="cell-7" aria-label="Cell 8"></button>
+                                <button type="button" class="cell" data-index="8" id="cell-8" aria-label="Cell 9"></button>
                             </div>
                         </div>
 
@@ -208,7 +232,15 @@
 
                     <!-- Bottom Google AdSense Banner Slot -->
                     <div class="ad-banner-section" style="padding-bottom: 0;">
-                        <div class="ad-banner-wrapper" id="adBannerBottomContainer"></div>
+                        <div class="ad-banner-wrapper" id="adBannerBottomContainer">
+                            <div class="ad-unit-label">SPONSORED ADVERTISEMENT</div>
+                            <ins class="adsbygoogle"
+                                 style="display:block"
+                                 data-ad-client="ca-pub-2711605087755702"
+                                 data-ad-slot="4293059609"
+                                 data-ad-format="auto"
+                                 data-full-width-responsive="true"></ins>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -320,7 +352,7 @@
                     <div class="conversion-banner">
                         <div class="conversion-text">
                             <h3>🪙 Point Conversion Rate: 100 Points = ₹1 INR</h3>
-                            <p>Accumulate points by winning games. Once you reach the required threshold, you can request a redemption.</p>
+                            <p>Accumulate points by defeating AI bots. Once you reach the minimum balance, submit your redemption to receive your digital code via email.</p>
                         </div>
                         <div class="conversion-pills">
                             <div class="conv-pill">100 Pts = ₹1</div>
@@ -328,6 +360,32 @@
                             <div class="conv-pill">2,000 Pts = ₹20</div>
                             <div class="conv-pill">5,000 Pts = ₹50</div>
                             <div class="conv-pill">10,000 Pts = ₹100</div>
+                        </div>
+                    </div>
+
+                    <!-- How Redemption Works Timeline -->
+                    <div class="reward-steps-wrapper" style="margin-bottom: 2rem;">
+                        <div class="instruction-cards-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+                            <div class="instruction-card">
+                                <div class="instruction-step-badge">1</div>
+                                <h3>1. Earn Points</h3>
+                                <p>Win matches on Easy (+1.0), Medium (+1.5), or Hard (+2.0) to grow your wallet.</p>
+                            </div>
+                            <div class="instruction-card">
+                                <div class="instruction-step-badge">2</div>
+                                <h3>2. Select Reward Tier</h3>
+                                <p>Choose your desired gift card amount (₹10 to ₹100) once your point balance qualifies.</p>
+                            </div>
+                            <div class="instruction-card">
+                                <div class="instruction-step-badge">3</div>
+                                <h3>3. Verification Check</h3>
+                                <p>Our automated system confirms fair play and validates your registered account email.</p>
+                            </div>
+                            <div class="instruction-card">
+                                <div class="instruction-step-badge">4</div>
+                                <h3>4. Email Dispatch</h3>
+                                <p>Your digital Google Play code is sent directly to your email within <strong>24 to 48 hours</strong>.</p>
+                            </div>
                         </div>
                     </div>
 
@@ -424,8 +482,13 @@
 
                     </div>
 
+                    <!-- Trademark Disclaimer Notice -->
+                    <div class="trademark-banner-notice" style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
+                        ⚖️ <strong>Legal & Trademark Notice:</strong> Google Play and Google Play Gift Cards are trademarks of Google LLC. This website is independently operated and is not affiliated with, endorsed by, or sponsored by Google LLC or Alphabet Inc. All rewards are procured and fulfilled independently through legitimate authorized gift card distributors.
+                    </div>
+
                     <!-- Redemption Activity List -->
-                    <div class="redemption-history-box">
+                    <div class="redemption-history-box" style="margin-top: 2rem;">
                         <div class="history-header">
                             <h4>📋 Your Redemption Requests</h4>
                         </div>
@@ -439,69 +502,175 @@
         </div>
 
         <!-- ==========================================================================
-             VIEW 4: RULES VIEW
+             VIEW 4: RULES, STRATEGY & EDUCATIONAL CONTENT VIEW
              ========================================================================== -->
         <div class="app-view" data-view="rules" id="viewRules">
-            <!-- 5. GAME INSTRUCTIONS & HOW TO PLAY -->
+            
+            <!-- 5. COMPREHENSIVE STRATEGY & GAMEPLAY GUIDE -->
             <section class="instructions-section" id="instructions">
                 <div class="container">
+                    
                     <div class="section-heading text-center">
-                        <span class="section-tag">GUIDE & RULES</span>
-                        <h2>How to Play & Earn Rewards</h2>
+                        <span class="section-tag">STRATEGY & GAMEPLAY GUIDE</span>
+                        <h2>Mastering Tic-Tac-Toe: Rules, Tactics & AI Secrets</h2>
                         <p class="section-subtitle">
-                            Learn the rules of Tic-Tac-Toe Pro, understand our fair scoring system, and start collecting reward points today.
+                            Deepen your tactical mastery, explore the mathematical theory of Tic-Tac-Toe, and learn how to defeat our AI bots.
                         </p>
                     </div>
 
-                    <div class="instruction-cards-grid">
-                        <!-- Step 1 -->
-                        <div class="instruction-card">
-                            <div class="instruction-step-badge">1</div>
-                            <h3>Choose AI Difficulty</h3>
-                            <p>
-                                Select from Easy, Medium, or Hard before making your move. Higher difficulty challenges yield bigger rewards per victory!
-                            </p>
-                            <div class="instruction-highlight-box">
-                                🟢 Easy: <strong>+1.0 Pt</strong> | 🟡 Med: <strong>+1.5 Pts</strong> | 🔴 Hard: <strong>+2.0 Pts</strong>
-                            </div>
-                        </div>
+                    <!-- 1. Fundamental Rules -->
+                    <article class="content-article-card" style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--cyan); font-size: 1.4rem; margin-bottom: 1rem;">📖 1. The Fundamental Rules of Tic-Tac-Toe</h3>
+                        <p style="margin-bottom: 1rem;">
+                            Tic-Tac-Toe is a classic zero-sum, complete-information strategy game played on a 3×3 grid consisting of 9 distinct cells. Two players take turns placing their respective marks: Player 1 plays as <strong>✕ (Cross)</strong> and Player 2 (or the AI Bot) plays as <strong>○ (Nought)</strong>.
+                        </p>
+                        <p style="margin-bottom: 1rem;">
+                            <strong>The Objective:</strong> Be the first player to position three of your marks into an unbroken line. A winning line can be formed in any of three geometric orientations:
+                        </p>
+                        <ul style="padding-left: 1.5rem; margin-bottom: 1rem; color: var(--text-secondary); line-height: 1.7;">
+                            <li><strong>Horizontal (3 Rows):</strong> Top row [0, 1, 2], Middle row [3, 4, 5], or Bottom row [6, 7, 8].</li>
+                            <li><strong>Vertical (3 Columns):</strong> Left col [0, 3, 6], Center col [1, 4, 7], or Right col [2, 5, 8].</li>
+                            <li><strong>Diagonal (2 Angles):</strong> Top-left to bottom-right [0, 4, 8] or top-right to bottom-left [2, 4, 6].</li>
+                        </ul>
+                        <p>
+                            If all 9 cells are occupied and neither player has connected a 3-mark sequence, the match concludes as a <strong>Draw (or "Cat's Game")</strong>.
+                        </p>
+                    </article>
 
-                        <!-- Step 2 -->
-                        <div class="instruction-card">
-                            <div class="instruction-step-badge">2</div>
-                            <h3>Make Your ✕ Moves</h3>
-                            <p>
-                                You play as mark <strong>✕</strong> on the classic 3×3 grid. Take turns against the AI to align three of your marks in a row horizontally, vertically, or diagonally.
-                            </p>
-                            <div class="instruction-highlight-box">
-                                💡 <strong>Tip:</strong> Control the center tile to maximize your winning angles!
+                    <!-- 2. Master Strategies -->
+                    <article class="content-article-card" style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--magenta); font-size: 1.4rem; margin-bottom: 1rem;">🧠 2. Tic-Tac-Toe Master Strategies</h3>
+                        <div class="strategy-subgrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                            
+                            <div class="strategy-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
+                                <h4 style="color: var(--cyan); margin-bottom: 0.5rem;">👑 The Corner Opening Advantage</h4>
+                                <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                                    When you move first, placing your mark in one of the four corners (top-left, top-right, bottom-left, bottom-right) gives you the greatest number of winning trajectories (3 potential lines per corner). If the opponent responds with an edge rather than the center, you can force a guaranteed win.
+                                </p>
                             </div>
-                        </div>
 
-                        <!-- Step 3 -->
-                        <div class="instruction-card">
-                            <div class="instruction-step-badge">3</div>
-                            <h3>Win Matches & Earn Points</h3>
-                            <p>
-                                Each time you defeat the AI, points are credited instantly to your real-time wallet balance and synced securely with your Supabase cloud profile.
-                            </p>
-                            <div class="instruction-highlight-box">
-                                ⚡ Instant automatic cloud sync to your unique player ID.
+                            <div class="strategy-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
+                                <h4 style="color: var(--gold); margin-bottom: 0.5rem;">🎯 Center Control & Defense</h4>
+                                <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                                    The center tile (cell 4) intersects with 4 winning lines (1 horizontal, 1 vertical, and 2 diagonals). If your opponent takes a corner first, taking the center is essential to prevent them from executing an unstoppable diagonal trap.
+                                </p>
                             </div>
-                        </div>
 
-                        <!-- Step 4 -->
-                        <div class="instruction-card">
-                            <div class="instruction-step-badge">4</div>
-                            <h3>Redeem Google Play Cards</h3>
-                            <p>
-                                Accumulate points and exchange them for genuine Google Play gift cards at an exact conversion rate of <strong>100 Points = ₹1.00 INR</strong>.
-                            </p>
-                            <div class="instruction-highlight-box">
-                                🎁 Cards available: <strong>₹10, ₹20, ₹50, ₹100</strong>.
+                            <div class="strategy-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
+                                <h4 style="color: var(--emerald); margin-bottom: 0.5rem;">⚔️ The Forking Technique</h4>
+                                <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                                    A "Fork" occurs when you create a board state where you have two separate, non-overlapping winning threats simultaneously. Because your opponent can only block one space per turn, the second winning move becomes inevitable on your next move.
+                                </p>
+                            </div>
+
+                            <div class="strategy-box" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 1.25rem;">
+                                <h4 style="color: var(--blue); margin-bottom: 0.5rem;">🛡️ Defensive Counter-Play</h4>
+                                <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.6;">
+                                    Always scan the board for the opponent's 2-in-a-row setups. If the opponent holds two marks in a line, you must block the third square immediately. To counter enemy forks, play moves that force the opponent to defend rather than build their second threat.
+                                </p>
+                            </div>
+
+                        </div>
+                    </article>
+
+                    <!-- 3. AI Difficulty Breakdown -->
+                    <article class="content-article-card" style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--emerald); font-size: 1.4rem; margin-bottom: 1rem;">🤖 3. AI Difficulty Breakdown: Easy vs Medium vs Hard</h3>
+                        <p style="margin-bottom: 1.25rem;">
+                            Our platform features 3 distinct custom-built AI engines, each designed with different mathematical complexities:
+                        </p>
+
+                        <div class="instruction-cards-grid">
+                            
+                            <div class="instruction-card">
+                                <div class="instruction-step-badge" style="background: var(--emerald);">🟢</div>
+                                <h3>Easy Bot (Heuristic Random)</h3>
+                                <p>
+                                    Designed for beginners and quick warm-ups. The Easy Bot selects moves using pseudo-random heuristics without deep lookahead. It occasionally misses blocks and gives plenty of scoring opportunities.
+                                </p>
+                                <div class="instruction-highlight-box">
+                                    🏆 Reward: <strong>+1.0 Point per win</strong>
+                                </div>
+                            </div>
+
+                            <div class="instruction-card">
+                                <div class="instruction-step-badge" style="background: var(--gold);">🟡</div>
+                                <h3>Medium Bot (Tactical Reflex)</h3>
+                                <p>
+                                    A tactical opponent. On every turn, the Medium Bot scans the board to see if it has an immediate winning move. If not, it checks whether you are about to win and blocks you. If neither applies, it plays smartly across open tiles.
+                                </p>
+                                <div class="instruction-highlight-box">
+                                    🏆 Reward: <strong>+1.5 Points per win</strong>
+                                </div>
+                            </div>
+
+                            <div class="instruction-card">
+                                <div class="instruction-step-badge" style="background: var(--rose);">🔴</div>
+                                <h3>Hard Bot (Minimax Algorithm)</h3>
+                                <p>
+                                    Powered by the renowned <em>Minimax recursive decision algorithm with Alpha-Beta pruning</em>. It calculates every possible branch of the game tree to depth 9. It will never make an error and will exploit any mistake you make!
+                                </p>
+                                <div class="instruction-highlight-box">
+                                    🏆 Reward: <strong>+2.0 Points per win</strong>
+                                </div>
+                            </div>
+
+                        </div>
+                    </article>
+
+                    <!-- 4. Beginner Tips Checklist -->
+                    <article class="content-article-card" style="margin-bottom: 2rem;">
+                        <h3 style="color: var(--gold); font-size: 1.4rem; margin-bottom: 1rem;">💡 4. Top 5 Strategy Tips for Beginners</h3>
+                        <ol style="padding-left: 1.5rem; color: var(--text-secondary); line-height: 1.8;">
+                            <li><strong style="color: #fff;">Always take the Center if available:</strong> If you are Player 2 and the corner is taken, grab the center immediately to restrict your opponent to a maximum of 2 winning paths.</li>
+                            <li><strong style="color: #fff;">Watch the Opposite Corner Trap:</strong> If Player 1 holds two opposite corners (e.g. top-left and bottom-right), do not play a third corner! Instead, play an edge square to force them to block your line.</li>
+                            <li><strong style="color: #fff;">Think Two Moves Ahead:</strong> Before placing your mark, ask: "If I place my mark here, what is the best move my opponent can make?"</li>
+                            <li><strong style="color: #fff;">Never Ignore a Threat:</strong> Even if you are building your own line, an unblocked enemy 2-in-a-row will cause an instant loss on their next turn.</li>
+                            <li><strong style="color: #fff;">Warm up on Easy before challenging Hard:</strong> Practice spotting forks on Easy and Medium difficulty to build muscle memory before testing your skills against Minimax.</li>
+                        </ol>
+                    </article>
+
+                    <!-- 5. Fair Economics & Scoring System -->
+                    <article class="content-article-card">
+                        <h3 style="color: var(--cyan); font-size: 1.4rem; margin-bottom: 1rem;">🪙 5. How Our Scoring & Reward System Works</h3>
+                        <p style="margin-bottom: 1rem;">
+                            Tic-Tac-Toe Pro operates on a completely transparent point economy. Every game outcome is tracked accurately in your wallet:
+                        </p>
+                        <div class="stats-grid" style="margin-bottom: 1.5rem;">
+                            <div class="stat-card" style="padding: 1rem;">
+                                <div class="stat-icon icon-easy">🟢</div>
+                                <div class="stat-content">
+                                    <span class="stat-value" style="font-size: 1.3rem;">+1.0 Pt</span>
+                                    <span class="stat-label">Easy Victory</span>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding: 1rem;">
+                                <div class="stat-icon icon-medium">🟡</div>
+                                <div class="stat-content">
+                                    <span class="stat-value" style="font-size: 1.3rem;">+1.5 Pts</span>
+                                    <span class="stat-label">Medium Victory</span>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding: 1rem;">
+                                <div class="stat-icon icon-hard">🔴</div>
+                                <div class="stat-content">
+                                    <span class="stat-value" style="font-size: 1.3rem;">+2.0 Pts</span>
+                                    <span class="stat-label">Hard Victory</span>
+                                </div>
+                            </div>
+                            <div class="stat-card" style="padding: 1rem;">
+                                <div class="stat-icon icon-draws">🤝</div>
+                                <div class="stat-content">
+                                    <span class="stat-value" style="font-size: 1.3rem;">0 Pts</span>
+                                    <span class="stat-label">Draws / Losses</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <p style="color: var(--text-secondary); line-height: 1.6;">
+                            Our conversion rate is fixed at <strong>100 Points = ₹1.00 INR</strong>. When you redeem, points are deducted from your balance, and a redemption order is logged to our backend system. The digital gift voucher is reviewed for anti-cheat verification and delivered directly to your registered email address within 24 to 48 hours.
+                        </p>
+                    </article>
+
                 </div>
             </section>
         </div>
@@ -518,7 +687,7 @@
                         <span class="section-tag">WHO WE ARE</span>
                         <h2>About Tic-Tac-Toe Pro</h2>
                         <p class="section-subtitle">
-                            An authentic, transparent, and rewarding skill-based gaming platform built with pure passion.
+                            An authentic, skill-based digital gaming platform engineered with passion, clean code, and zero deceptive practices.
                         </p>
                     </div>
 
@@ -564,8 +733,8 @@
                                 <span class="about-stat-val">Supabase PostgreSQL</span>
                             </div>
                             <div class="about-stat-row">
-                                <span class="about-stat-label">Player ID Sync</span>
-                                <span class="about-stat-val">Silent Realtime Cloud Ledger</span>
+                                <span class="about-stat-label">Authentication</span>
+                                <span class="about-stat-val">Email + Password Security</span>
                             </div>
                             <div class="about-stat-row">
                                 <span class="about-stat-label">Data Privacy</span>
@@ -624,55 +793,65 @@
                         <!-- FAQ Accordion -->
                         <div class="faq-card">
                             <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Frequently Asked Questions</h3>
-                            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.75rem;">Quick answers to common questions.</p>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.75rem;">Quick answers to common questions about gameplay, accounts, and rewards.</p>
 
                             <div class="faq-item">
                                 <button type="button" class="faq-question">
-                                    <span>How do I earn points?</span>
+                                    <span>How do I earn points in the game?</span>
                                     <span class="faq-icon">+</span>
                                 </button>
                                 <div class="faq-answer">
-                                    You earn points every time you win a match against the AI. Easy mode grants +1.0 Point, Medium mode gives +1.5 Points, and Hard mode gives +2.0 Points!
+                                    You earn points every time you win a match against the AI bot. Easy mode grants +1.0 Point, Medium mode awards +1.5 Points, and Hard mode awards +2.0 Points. Ties/draws and losses do not deduct points.
                                 </div>
                             </div>
 
                             <div class="faq-item">
                                 <button type="button" class="faq-question">
-                                    <span>How are Google Play rewards redeemed?</span>
+                                    <span>How are Google Play gift rewards issued?</span>
                                     <span class="faq-icon">+</span>
                                 </button>
                                 <div class="faq-answer">
-                                    Once you have accumulated enough points (1,000 Pts for ₹10, up to 10,000 Pts for ₹100), click the "Redeem" button on the desired card. Your request is submitted to our backend system where it is validated and dispatched securely.
+                                    Once you accumulate the required points (1,000 Pts for ₹10 up to 10,000 Pts for ₹100), click "Redeem" on your card. After automated anti-fraud validation, your digital Google Play redeem code will be sent to your registered account email within 24–48 business hours.
                                 </div>
                             </div>
 
                             <div class="faq-item">
                                 <button type="button" class="faq-question">
-                                    <span>Is Tic-Tac-Toe Pro free to play?</span>
+                                    <span>Is Tic-Tac-Toe Pro completely free to play?</span>
                                     <span class="faq-icon">+</span>
                                 </button>
                                 <div class="faq-answer">
-                                    Yes! Tic-Tac-Toe Pro is 100% free to play. There are no hidden fees, deposits, or paywalls required to play or earn points.
+                                    Yes! Tic-Tac-Toe Pro is 100% free to play. There are no registration fees, subscriptions, or financial paywalls.
                                 </div>
                             </div>
 
                             <div class="faq-item">
                                 <button type="button" class="faq-question">
-                                    <span>Do I need to sign in or create an account?</span>
+                                    <span>Why should I create an account?</span>
                                     <span class="faq-icon">+</span>
                                 </button>
                                 <div class="faq-answer">
-                                    No sign-in or login password is required! You are automatically assigned a persistent Anonymous Player ID (e.g. PLY-XXXXXX) that synchronizes your score and wallet to the cloud.
+                                    Registering with your Email + Password ensures your hard-earned points and match stats are securely backed up in the cloud, allowing you to access your balance across different devices and browsers.
                                 </div>
                             </div>
 
                             <div class="faq-item">
                                 <button type="button" class="faq-question">
-                                    <span>Are there any bots or cheat tools allowed?</span>
+                                    <span>Can the Hard AI Bot ever be beaten?</span>
                                     <span class="faq-icon">+</span>
                                 </button>
                                 <div class="faq-answer">
-                                    No. We strictly enforce fair play. Automated scripts, macro clickers, or bot exploits will result in permanent disqualification of points.
+                                    The Hard Bot operates on the Minimax algorithm with depth-9 tree evaluation. In game theory, optimal Tic-Tac-Toe play always results in a draw. However, if you open first with a corner and execute precise fork moves, you can force a victory!
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button type="button" class="faq-question">
+                                    <span>Are auto-clickers or bots allowed?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    No. We strictly enforce fair play. Any accounts detected using automated macro scripts, clickers, or bot exploits will have their points forfeited and accounts permanently closed.
                                 </div>
                             </div>
                         </div>
@@ -701,7 +880,7 @@
                             <ul class="footer-links-list">
                                 <li><a href="#home" class="footer-nav-link" data-tab="game">Home Arena</a></li>
                                 <li><a href="#game" class="footer-nav-link" data-tab="game">Play Match</a></li>
-                                <li><a href="#instructions" class="footer-nav-link" data-tab="rules">How to Play</a></li>
+                                <li><a href="#instructions" class="footer-nav-link" data-tab="rules">Strategy Guide</a></li>
                                 <li><a href="#stats" class="footer-nav-link" data-tab="stats">Player Stats</a></li>
                                 <li><a href="#rewards" class="footer-nav-link" data-tab="rewards">Rewards & Redeem</a></li>
                             </ul>
@@ -730,7 +909,7 @@
 
                     <div class="footer-bottom-bar">
                         <div class="footer-disclaimer">
-                            ⚖️ <strong>Compliance & Trademark Notice:</strong> Google Play and the Google Play logo are trademarks of Google LLC. This platform is independently operated and not sponsored or endorsed by Google. All game logic, AI routines, and sound synthesized systems are 100% original.
+                            ⚖️ <strong>Compliance & Trademark Notice:</strong> Google Play and Google Play Gift Cards are trademarks of Google LLC. This website is an independently operated game platform and is not affiliated with, sponsored by, or endorsed by Google LLC or Alphabet Inc.
                         </div>
                         <p class="footer-copyright">
                             © 2026 Tic-Tac-Toe Pro. All Rights Reserved. Built with clean code, zero deceptive ads, and player privacy first.
@@ -747,7 +926,65 @@
          MODALS
          ========================================================================== -->
 
-    <!-- 0. Post-Game Google AdSense Intermission Modal -->
+    <!-- 0. Email + Password Authentication Modal (Login / Register) -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-card auth-modal-card">
+            <button type="button" class="modal-close-btn" id="btnCloseAuthModal">✕</button>
+            
+            <div class="modal-icon-badge" style="background: rgba(0, 242, 254, 0.15); color: var(--cyan);">🔐</div>
+            <h3 class="modal-title" id="authModalTitle">Account Access</h3>
+            <p class="modal-subtitle" id="authModalSubtitle">Sign in or create an account to save your points securely in the cloud.</p>
+
+            <!-- Auth Mode Switcher Tabs -->
+            <div class="auth-tabs-container">
+                <button type="button" class="auth-tab-btn active" id="authTabSignIn">Sign In</button>
+                <button type="button" class="auth-tab-btn" id="authTabRegister">New Account</button>
+            </div>
+
+            <!-- Inline Alert Message -->
+            <div id="authAlertBox" style="display: none; margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.88rem; text-align: center;"></div>
+
+            <!-- Form 1: Sign In Form -->
+            <form id="formSignIn" class="auth-form-body">
+                <div class="form-group">
+                    <label for="signInEmail">Email Address</label>
+                    <input type="email" id="signInEmail" class="form-input" placeholder="name@example.com" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="signInPassword">Password</label>
+                    <input type="password" id="signInPassword" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary" id="btnSubmitSignIn" style="width: 100%; margin-top: 0.5rem;">
+                    <span>Sign In</span>
+                </button>
+            </form>
+
+            <!-- Form 2: Register Form (Hidden by default) -->
+            <form id="formRegister" class="auth-form-body" style="display: none;">
+                <div class="form-group">
+                    <label for="registerEmail">Email Address</label>
+                    <input type="email" id="registerEmail" class="form-input" placeholder="name@example.com" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password (Min 6 Characters)</label>
+                    <input type="password" id="registerPassword" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label for="registerConfirmPassword">Confirm Password</label>
+                    <input type="password" id="registerConfirmPassword" class="form-input" placeholder="••••••••" required minlength="6" autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn btn-primary" id="btnSubmitRegister" style="width: 100%; margin-top: 0.5rem;">
+                    <span>Create Free Account</span>
+                </button>
+            </form>
+
+            <div class="auth-footnote" style="margin-top: 1.25rem; font-size: 0.78rem; color: var(--text-muted); text-align: center;">
+                🔒 Strictly Email + Password. No spam, no social trackers, and zero OTP delays.
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. Post-Game Google AdSense Intermission Modal -->
     <div class="modal-overlay ad-intermission-overlay" id="adIntermissionModal">
         <div class="modal-card ad-intermission-card">
             <div class="ad-intermission-header">
@@ -756,7 +993,12 @@
             </div>
             
             <div class="ad-container-interstitial" id="adInterstitialContainer">
-                <!-- Google AdSense Unit -->
+                <ins class="adsbygoogle"
+                     style="display:block; min-height: 250px; width: 100%;"
+                     data-ad-client="ca-pub-2711605087755702"
+                     data-ad-slot="4293059609"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
             </div>
 
             <div class="ad-intermission-footer">
@@ -767,7 +1009,7 @@
         </div>
     </div>
 
-    <!-- 1. Game Result Modal -->
+    <!-- 2. Game Result Modal -->
     <div class="modal-overlay" id="resultModal">
         <div class="modal-card">
             <div class="modal-icon-badge badge-win" id="resultIconBadge">🏆</div>
@@ -790,7 +1032,14 @@
             </div>
 
             <!-- AdSense Result Banner Unit -->
-            <div class="ad-result-box" id="adResultBannerContainer"></div>
+            <div class="ad-result-box" id="adResultBannerContainer">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-2711605087755702"
+                     data-ad-slot="4293059609"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            </div>
 
             <div class="modal-actions">
                 <button type="button" class="btn btn-primary" id="btnModalPlayAgain">
@@ -803,7 +1052,7 @@
         </div>
     </div>
 
-    <!-- 2. Redeem Confirmation Modal -->
+    <!-- 3. Redeem Confirmation Modal -->
     <div class="modal-overlay" id="confirmRedeemModal">
         <div class="modal-card">
             <button type="button" class="modal-close-btn" id="btnCloseConfirmModal">✕</button>
@@ -837,7 +1086,7 @@
         </div>
     </div>
 
-    <!-- 3. Redeem Success Confirmation Modal -->
+    <!-- 4. Redeem Success Confirmation Modal -->
     <div class="modal-overlay" id="successRedeemModal">
         <div class="modal-card">
             <button type="button" class="modal-close-btn" id="btnCloseSuccessModal">✕</button>
@@ -847,8 +1096,8 @@
                 Your request for <strong id="successRewardLabel" style="color: var(--cyan);">₹10 Google Play Reward</strong> has been logged to your account.
             </p>
             <div class="modal-stats-box" style="text-align: left; font-size: 0.85rem; color: var(--text-secondary);">
-                <p>📌 <strong>Request Status:</strong> Pending Verification & Processing</p>
-                <p style="margin-top: 4px;">Points have been deducted from your active balance.</p>
+                <p>📌 <strong>Request Status:</strong> Pending Anti-Fraud Verification</p>
+                <p style="margin-top: 4px;">Points have been deducted. Your gift code will be delivered to your registered email address within 24 to 48 hours.</p>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-primary" id="btnSuccessClose">
@@ -858,7 +1107,7 @@
         </div>
     </div>
 
-    <!-- 6. Privacy Policy Modal -->
+    <!-- 5. Privacy Policy Modal -->
     <div class="modal-overlay" id="privacyModal">
         <div class="modal-card legal-modal-card">
             <button type="button" class="modal-close-btn" id="btnClosePrivacyModal">✕</button>
@@ -870,7 +1119,7 @@
                 <div class="legal-section-block">
                     <h4>1. Introduction & Overview</h4>
                     <p>
-                        Welcome to Tic-Tac-Toe Pro ("we", "our", or "us"). We are committed to protecting your personal data and upholding high standards of data security, transparency, and user privacy. This Privacy Policy details how we collect, store, and process your information when you access or use our web platform.
+                        Welcome to Tic-Tac-Toe Pro ("we", "our", or "us"). We are committed to protecting your personal data and upholding the highest standards of user privacy, transparency, and data security. This Privacy Policy details how we handle user information on our web platform.
                     </p>
                 </div>
 
@@ -878,9 +1127,10 @@
                     <h4>2. Information We Collect</h4>
                     <p>We only collect data strictly necessary to provide and secure our gaming and rewards service:</p>
                     <ul class="legal-list">
+                        <li><strong>Account Details:</strong> Your registered email address and encrypted password hash managed by Supabase Authentication.</li>
                         <li><strong>Gameplay & Statistics:</strong> Match scores, games played, wins, losses, draws, and accumulated points balance.</li>
-                        <li><strong>Reward Redemptions:</strong> Record of redemption requests (date, reward tier, points deducted, fulfillment status).</li>
-                        <li><strong>Local Preferences:</strong> Audio sound toggle, dark mode preferences, and difficulty selection saved in your browser's Local Storage.</li>
+                        <li><strong>Reward Redemptions:</strong> Records of requested redemptions (date, reward tier, points deducted, email delivery status).</li>
+                        <li><strong>Preferences:</strong> Audio sound toggle and difficulty selection saved in your browser's Local Storage.</li>
                     </ul>
                 </div>
 
@@ -896,23 +1146,30 @@
                 </div>
 
                 <div class="legal-section-block">
-                    <h4>4. Data Security & Storage</h4>
+                    <h4>4. Cookies & Third-Party Advertising</h4>
                     <p>
-                        Our database is hosted with Supabase PostgreSQL, secured by Row Level Security (RLS) policies ensuring users can only read and modify their own authorized records. All web traffic is encrypted via HTTPS / TLS 1.3.
+                        We use Google AdSense to serve advertisements. Google may use cookies (such as the DoubleClick cookie) to serve ads based on your prior visits to this website or other websites. You may opt out of personalized advertising by visiting Google Ads Settings.
                     </p>
                 </div>
 
                 <div class="legal-section-block">
-                    <h4>5. No Sale of Personal Data</h4>
+                    <h4>5. Data Security & Storage</h4>
                     <p>
-                        We do <strong>not</strong> sell, rent, or trade your personal information to any third-party advertisers, data brokers, or marketing networks.
+                        Our database is hosted on Supabase PostgreSQL, secured by Row Level Security (RLS) policies ensuring users can only read and modify their own authorized records. All web traffic is encrypted via HTTPS / TLS 1.3.
                     </p>
                 </div>
 
                 <div class="legal-section-block">
-                    <h4>6. Data Retention & Deletion</h4>
+                    <h4>6. No Sale of Personal Data</h4>
                     <p>
-                        You retain full rights to request the deletion of your account and associated game statistics. Contact our support team to request complete data erasure.
+                        We do <strong>not</strong> sell, rent, or trade your personal information to third-party data brokers or marketing lists.
+                    </p>
+                </div>
+
+                <div class="legal-section-block">
+                    <h4>7. User Rights & Data Deletion</h4>
+                    <p>
+                        You retain full rights to request the deletion of your account and associated game statistics at any time by contacting us via our support form.
                     </p>
                 </div>
             </div>
@@ -925,7 +1182,7 @@
         </div>
     </div>
 
-    <!-- 7. Terms of Service Modal -->
+    <!-- 6. Terms of Service Modal -->
     <div class="modal-overlay" id="termsModal">
         <div class="modal-card legal-modal-card">
             <button type="button" class="modal-close-btn" id="btnCloseTermsModal">✕</button>
@@ -944,7 +1201,7 @@
                 <div class="legal-section-block">
                     <h4>2. Fair Play & Anti-Cheat Policy</h4>
                     <p>
-                        Tic-Tac-Toe Pro is a skill-based recreational game. You agree to play fairly and manually. The use of automated bots, click scripts, code tampering, or exploits to manipulate points or rewards is strictly prohibited and will result in permanent account banning and forfeiture of all points.
+                        Tic-Tac-Toe Pro is a skill-based recreational game. You agree to play fairly and manually. The use of automated bots, click scripts, code tampering, or exploits to manipulate points or rewards is strictly prohibited and will result in immediate account banning and forfeiture of all points.
                     </p>
                 </div>
 
@@ -968,7 +1225,7 @@
                 <div class="legal-section-block">
                     <h4>5. Disclaimer & Third-Party Notice</h4>
                     <p>
-                        Tic-Tac-Toe Pro is an independent game platform. Google Play is a trademark of Google LLC. This platform is not sponsored, endorsed, or affiliated with Google LLC.
+                        Tic-Tac-Toe Pro is an independent game platform. Google Play and Google Play Gift Cards are trademarks of Google LLC. This platform is not sponsored, endorsed, or affiliated with Google LLC.
                     </p>
                 </div>
             </div>
@@ -997,7 +1254,7 @@
         </button>
         <button type="button" class="mobile-nav-item" data-tab="rules" id="mobNavRules">
             <span class="mob-nav-icon">📖</span>
-            <span class="mob-nav-label">Rules</span>
+            <span class="mob-nav-label">Guide</span>
         </button>
         <button type="button" class="mobile-nav-item" data-tab="about" id="mobNavAbout">
             <span class="mob-nav-icon">ℹ️</span>
@@ -1007,13 +1264,6 @@
 
     <!-- Background Cloud Sync, AdSense & Game Scripts -->
     <script src="backend/supabase-client.js"></script>
-    <script src="js/ads-config.js"></script>
-    <script src="js/script.js"></script>
-</body>
-</html>av>
-
-    <!-- Background Cloud Sync, AdSense & Game Scripts -->
-    <script src="../backend/supabase-client.js"></script>
     <script src="js/ads-config.js"></script>
     <script src="js/script.js"></script>
 </body>

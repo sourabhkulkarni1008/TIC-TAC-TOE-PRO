@@ -1,5 +1,5 @@
 /**
- * Tic-Tac-Toe Pro - Game Engine, AI Logic, Points & Rewards System
+ * Tic-Tac-Toe Pro - Game Engine, AI Logic, Points, Rewards & Supabase Auth
  */
 
 // ============================================================================
@@ -64,6 +64,10 @@ const elements = {
     // Header & Navigation
     headerPointsVal: document.getElementById('headerPointsVal'),
     navLinks: document.querySelectorAll('.nav-link'),
+    navBtnOpenAuth: document.getElementById('navBtnOpenAuth'),
+    navAuthUserPill: document.getElementById('navAuthUserPill'),
+    navUserEmail: document.getElementById('navUserEmail'),
+    navBtnLogout: document.getElementById('navBtnLogout'),
 
     // Hero Section
     heroPointsDisplay: document.getElementById('heroPointsDisplay'),
@@ -97,6 +101,19 @@ const elements = {
     redemptionHistoryList: document.getElementById('redemptionHistoryList'),
 
     // Modals
+    authModal: document.getElementById('authModal'),
+    btnCloseAuthModal: document.getElementById('btnCloseAuthModal'),
+    authTabSignIn: document.getElementById('authTabSignIn'),
+    authTabRegister: document.getElementById('authTabRegister'),
+    authAlertBox: document.getElementById('authAlertBox'),
+    formSignIn: document.getElementById('formSignIn'),
+    signInEmail: document.getElementById('signInEmail'),
+    signInPassword: document.getElementById('signInPassword'),
+    formRegister: document.getElementById('formRegister'),
+    registerEmail: document.getElementById('registerEmail'),
+    registerPassword: document.getElementById('registerPassword'),
+    registerConfirmPassword: document.getElementById('registerConfirmPassword'),
+
     resultModal: document.getElementById('resultModal'),
     resultIconBadge: document.getElementById('resultIconBadge'),
     resultTitle: document.getElementById('resultTitle'),
@@ -290,23 +307,212 @@ function initGame() {
         console.warn("Confetti init warning:", e);
     }
 
-    // 1. Load saved points and stats from LocalStorage
+    // 1. Initialize Authentication & Cloud Sync
+    initAuth();
+
+    // 2. Load saved points and stats from Cloud / LocalStorage
     loadUserProfile();
 
-    // 2. Attach all UI and game event listeners
+    // 3. Attach all UI and game event listeners
     setupEventListeners();
     initLegalAndInfoListeners();
 
-    // 3. Render initial state
+    // 4. Render initial state
     renderUI();
 }
 
-// Load points and stats directly with silent background Cloud Sync
+// ============================================================================
+// AUTHENTICATION SYSTEM (EMAIL + PASSWORD ONLY)
+// ============================================================================
+function initAuth() {
+    // Check initial auth state & listen for changes
+    if (window.backendService) {
+        window.backendService.onAuthChange((user) => {
+            updateAuthHeader(user);
+            loadUserProfile();
+        });
+    }
+
+    // Auth Open & Close
+    if (elements.navBtnOpenAuth) {
+        elements.navBtnOpenAuth.addEventListener('click', () => {
+            showAuthAlert('', '');
+            openModal(elements.authModal);
+        });
+    }
+
+    if (elements.btnCloseAuthModal) {
+        elements.btnCloseAuthModal.addEventListener('click', () => {
+            closeModal(elements.authModal);
+        });
+    }
+
+    // Auth Tabs Switcher
+    if (elements.authTabSignIn && elements.authTabRegister) {
+        elements.authTabSignIn.addEventListener('click', () => {
+            elements.authTabSignIn.classList.add('active');
+            elements.authTabRegister.classList.remove('active');
+            if (elements.formSignIn) elements.formSignIn.style.display = 'flex';
+            if (elements.formRegister) elements.formRegister.style.display = 'none';
+            showAuthAlert('', '');
+        });
+
+        elements.authTabRegister.addEventListener('click', () => {
+            elements.authTabRegister.classList.add('active');
+            elements.authTabSignIn.classList.remove('active');
+            if (elements.formRegister) elements.formRegister.style.display = 'flex';
+            if (elements.formSignIn) elements.formSignIn.style.display = 'none';
+            showAuthAlert('', '');
+        });
+    }
+
+    // Sign In Form Submit
+    if (elements.formSignIn) {
+        elements.formSignIn.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = elements.signInEmail.value.trim();
+            const password = elements.signInPassword.value;
+            const submitBtn = document.getElementById('btnSubmitSignIn');
+
+            if (!email || !password) {
+                showAuthAlert('Please fill in both email and password.', 'error');
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span>Verifying...</span>';
+            }
+
+            try {
+                if (window.backendService) {
+                    await window.backendService.signIn(email, password);
+                    showAuthAlert('✅ Successfully signed in! Loading your data...', 'success');
+                    setTimeout(() => {
+                        closeModal(elements.authModal);
+                        if (elements.formSignIn) elements.formSignIn.reset();
+                    }, 800);
+                } else {
+                    showAuthAlert('Database service not connected.', 'error');
+                }
+            } catch (err) {
+                console.error("Sign In Error:", err);
+                const msg = err.message || 'Invalid email or password.';
+                showAuthAlert(`⚠️ ${msg}`, 'error');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<span>Sign In</span>';
+                }
+            }
+        });
+    }
+
+    // Register Form Submit
+    if (elements.formRegister) {
+        elements.formRegister.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = elements.registerEmail.value.trim();
+            const password = elements.registerPassword.value;
+            const confirmPassword = elements.registerConfirmPassword.value;
+            const submitBtn = document.getElementById('btnSubmitRegister');
+
+            if (!email || !password || !confirmPassword) {
+                showAuthAlert('Please complete all registration fields.', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAuthAlert('Password must be at least 6 characters long.', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAuthAlert('Passwords do not match. Please retype carefully.', 'error');
+                return;
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span>Creating Account...</span>';
+            }
+
+            try {
+                if (window.backendService) {
+                    await window.backendService.signUp(email, password);
+                    showAuthAlert('✅ Account created successfully! Synced wallet.', 'success');
+                    setTimeout(() => {
+                        closeModal(elements.authModal);
+                        if (elements.formRegister) elements.formRegister.reset();
+                    }, 1000);
+                } else {
+                    showAuthAlert('Database service not connected.', 'error');
+                }
+            } catch (err) {
+                console.error("Registration Error:", err);
+                const msg = err.message || 'Registration failed. Try a different email.';
+                showAuthAlert(`⚠️ ${msg}`, 'error');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<span>Create Free Account</span>';
+                }
+            }
+        });
+    }
+
+    // Logout Button Click
+    if (elements.navBtnLogout) {
+        elements.navBtnLogout.addEventListener('click', async () => {
+            if (window.backendService) {
+                await window.backendService.signOut();
+            }
+            updateAuthHeader(null);
+            renderUI();
+        });
+    }
+}
+
+function updateAuthHeader(user) {
+    if (user && user.email) {
+        if (elements.navBtnOpenAuth) elements.navBtnOpenAuth.style.display = 'none';
+        if (elements.navAuthUserPill) elements.navAuthUserPill.style.display = 'inline-flex';
+        if (elements.navUserEmail) elements.navUserEmail.textContent = user.email;
+        if (elements.playerDisplayName) {
+            elements.playerDisplayName.textContent = user.email.split('@')[0];
+        }
+    } else {
+        if (elements.navBtnOpenAuth) elements.navBtnOpenAuth.style.display = 'inline-flex';
+        if (elements.navAuthUserPill) elements.navAuthUserPill.style.display = 'none';
+        if (elements.playerDisplayName) {
+            elements.playerDisplayName.textContent = 'Player (Guest)';
+        }
+    }
+}
+
+function showAuthAlert(message, type = 'error') {
+    if (!elements.authAlertBox) return;
+    if (!message) {
+        elements.authAlertBox.style.display = 'none';
+        return;
+    }
+
+    elements.authAlertBox.style.display = 'block';
+    if (type === 'success') {
+        elements.authAlertBox.style.background = 'rgba(16, 185, 129, 0.15)';
+        elements.authAlertBox.style.color = '#6ee7b7';
+        elements.authAlertBox.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+    } else {
+        elements.authAlertBox.style.background = 'rgba(239, 68, 68, 0.15)';
+        elements.authAlertBox.style.color = '#fca5a5';
+        elements.authAlertBox.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+    }
+    elements.authAlertBox.textContent = message;
+}
+
+// Load points and stats directly with Cloud Sync
 async function loadUserProfile() {
     if (window.backendService) {
-        if (elements.playerDisplayName) {
-            elements.playerDisplayName.textContent = window.backendService.playerName;
-        }
         try {
             const data = await window.backendService.loadUserData();
             if (data) {
@@ -331,7 +537,7 @@ async function loadUserProfile() {
     }
 }
 
-// Sync and Save User Data locally & to Cloud database silently
+// Sync and Save User Data locally & to Cloud database
 async function saveState() {
     if (window.backendService) {
         await window.backendService.saveUserData({
@@ -500,272 +706,245 @@ function setupEventListeners() {
         });
     });
 
-    // Footer internal navigation links
+    // Mobile Bottom Nav Items
+    elements.mobNavItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const targetTab = item.getAttribute('data-tab');
+            switchView(targetTab);
+        });
+    });
+
+    // Footer In-View Links
     document.querySelectorAll('.footer-nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
             const tab = link.getAttribute('data-tab');
-            if (tab && window.innerWidth <= 768) {
-                e.preventDefault();
-                switchView(tab);
+            if (tab) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    switchView(tab);
+                }
             }
         });
     });
-
-    // Mobile Bottom Nav Links
-    elements.mobNavItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            e.preventDefault();
-            const tab = item.getAttribute('data-tab');
-            switchView(tab);
-        });
-    });
 }
 
 // ============================================================================
-// TIC-TAC-TOE CORE GAME LOGIC
+// GAME LOGIC & BOARD OPERATIONS
 // ============================================================================
 
-function setDifficulty(diff) {
-    if (!['easy', 'medium', 'hard'].includes(diff)) return;
-    state.selectedDifficulty = diff;
+function setDifficulty(difficulty) {
+    if (!['easy', 'medium', 'hard'].includes(difficulty)) return;
+    state.selectedDifficulty = difficulty;
 
-    // Update difficulty buttons UI
+    // Update Difficulty Buttons active state
     elements.diffButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.getAttribute('data-diff') === diff);
+        btn.classList.toggle('active', btn.getAttribute('data-diff') === difficulty);
     });
 
     // Update Arena Badge
-    const pts = DIFFICULTY_POINTS[diff];
-    const diffUpper = diff.toUpperCase();
-    elements.currentDiffName.textContent = `${diffUpper} (+${pts.toFixed(1)} Pt${pts > 1 ? 's' : ''})`;
-
-    if (diff === 'easy') {
-        elements.currentDiffBadge.style.color = 'var(--emerald)';
-        elements.currentDiffBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-    } else if (diff === 'medium') {
-        elements.currentDiffBadge.style.color = 'var(--gold)';
-        elements.currentDiffBadge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-    } else {
-        elements.currentDiffBadge.style.color = 'var(--magenta)';
-        elements.currentDiffBadge.style.borderColor = 'rgba(243, 85, 218, 0.4)';
+    const points = DIFFICULTY_POINTS[difficulty];
+    const diffUpper = difficulty.toUpperCase();
+    if (elements.currentDiffName) {
+        elements.currentDiffName.textContent = `${diffUpper} (+${points.toFixed(1)} Pt${points > 1 ? 's' : ''})`;
     }
+
+    if (elements.currentDiffBadge) {
+        elements.currentDiffBadge.className = 'current-diff-badge';
+        if (difficulty === 'easy') elements.currentDiffBadge.classList.add('badge-diff-easy');
+        else if (difficulty === 'medium') elements.currentDiffBadge.classList.add('badge-diff-medium');
+        else if (difficulty === 'hard') elements.currentDiffBadge.classList.add('badge-diff-hard');
+    }
+
+    resetBoard();
 }
 
-// User Move Handler
-function handleUserMove(cellIndex) {
-    if (!state.isGameActive || state.isAiTurn) return;
-    if (state.board[cellIndex] !== '') return; // Cell occupied
-
-    // Apply User Move ('X')
-    makeMove(cellIndex, 'X');
-    soundFX.playMoveSound(true);
-
-    // Check if User Won
-    const winResult = checkWinner(state.board);
-    if (winResult) {
-        handleGameOver('user', winResult.combination);
-        return;
-    }
-
-    // Check if Board is Full (Draw)
-    if (isBoardFull(state.board)) {
-        handleGameOver('draw');
-        return;
-    }
-
-    // Switch to AI Turn
-    state.isAiTurn = true;
-    state.currentPlayer = 'O';
-    updateTurnIndicator();
-
-    // AI Turn with smooth realistic thinking delay (350ms - 550ms)
-    setTimeout(() => {
-        if (!state.isGameActive) return;
-        makeAiMove();
-    }, 450);
-}
-
-// Execute move on board and UI
-function makeMove(index, player) {
-    state.board[index] = player;
-    const cellEl = elements.cells[index];
-    cellEl.textContent = player === 'X' ? '✕' : '○';
-    cellEl.classList.add(player === 'X' ? 'mark-x' : 'mark-o', 'occupied');
-}
-
-// AI Turn Logic
-function makeAiMove() {
-    let chosenIndex = null;
-
-    if (state.selectedDifficulty === 'easy') {
-        chosenIndex = getEasyAiMove(state.board);
-    } else if (state.selectedDifficulty === 'medium') {
-        chosenIndex = getMediumAiMove(state.board);
-    } else {
-        chosenIndex = getHardAiMove(state.board);
-    }
-
-    if (chosenIndex !== null && chosenIndex >= 0) {
-        makeMove(chosenIndex, 'O');
-        soundFX.playMoveSound(false);
-
-        // Check if AI Won
-        const winResult = checkWinner(state.board);
-        if (winResult) {
-            handleGameOver('ai', winResult.combination);
-            return;
-        }
-
-        // Check for Draw
-        if (isBoardFull(state.board)) {
-            handleGameOver('draw');
-            return;
-        }
-    }
-
-    // Switch back to User
-    state.isAiTurn = false;
-    state.currentPlayer = 'X';
-    updateTurnIndicator();
-}
-
-// Reset Board State (Keeps user points and stats intact)
 function resetBoard() {
     state.board = Array(9).fill('');
     state.currentPlayer = 'X';
     state.isGameActive = true;
     state.isAiTurn = false;
 
+    // Reset cell visuals
     elements.cells.forEach(cell => {
         cell.textContent = '';
         cell.className = 'cell';
+        cell.removeAttribute('disabled');
     });
 
     updateTurnIndicator();
 }
 
-// Update Active Turn Indicator
+function handleUserMove(index) {
+    if (!state.isGameActive || state.isAiTurn || state.board[index] !== '') {
+        return;
+    }
+
+    // Place Player Move
+    makeMove(index, 'X');
+    soundFX.playMoveSound(true);
+
+    const winInfo = checkWinner(state.board);
+    if (winInfo) {
+        handleGameOver('user', winInfo.combination);
+        return;
+    }
+
+    if (isBoardFull(state.board)) {
+        handleGameOver('draw');
+        return;
+    }
+
+    // Pass turn to AI
+    state.isAiTurn = true;
+    state.currentPlayer = 'O';
+    updateTurnIndicator();
+
+    // AI Bot Thinking Latency (400ms - 750ms for realistic pacing)
+    const latency = Math.floor(Math.random() * 350) + 400;
+    setTimeout(() => {
+        if (!state.isGameActive) return;
+        makeAiMove();
+    }, latency);
+}
+
+function makeMove(index, player) {
+    state.board[index] = player;
+    const cell = elements.cells[index];
+    cell.textContent = player === 'X' ? '✕' : '○';
+    cell.classList.add(player === 'X' ? 'cell-x' : 'cell-o');
+    cell.setAttribute('disabled', 'true');
+}
+
 function updateTurnIndicator() {
     if (!state.isGameActive) {
-        elements.turnIndicator.textContent = 'Game Over';
         elements.playerUserBox.classList.remove('active-turn');
         elements.playerAiBox.classList.remove('active-turn');
+        elements.turnIndicator.textContent = 'Game Over';
         return;
     }
 
     if (state.currentPlayer === 'X') {
-        elements.turnIndicator.textContent = 'Your Turn (✕)';
-        elements.turnIndicator.style.color = 'var(--cyan)';
         elements.playerUserBox.classList.add('active-turn');
         elements.playerAiBox.classList.remove('active-turn');
+        elements.turnIndicator.textContent = 'Your Turn (✕)';
+        elements.turnIndicator.style.color = 'var(--cyan)';
     } else {
-        elements.turnIndicator.textContent = 'AI is thinking (○)...';
-        elements.turnIndicator.style.color = 'var(--magenta)';
         elements.playerUserBox.classList.remove('active-turn');
         elements.playerAiBox.classList.add('active-turn');
+        elements.turnIndicator.textContent = 'AI Thinking (○)...';
+        elements.turnIndicator.style.color = 'var(--magenta)';
     }
 }
 
 // ============================================================================
-// AI DIFFICULTY ALGORITHMS
+// AI BOT STRATEGY ENGINES (Easy, Medium, Hard Minimax)
 // ============================================================================
 
-/**
- * EASY AI (Casual & Enjoyable - Player Wins ~75%):
- * - Calibrated so the user wins approx 75-80% of matches naturally.
- * - Only 15% chance to block the player's winning move (giving the player 85% win conversion).
- * - Only 15% chance to take an instant AI win.
- * - Plays casual, open moves for the remaining 85% of turns.
- */
-function getEasyAiMove(board) {
-    const available = getAvailableIndices(board);
-    if (available.length === 0) return null;
+function makeAiMove() {
+    let moveIndex;
 
-    // 1. Only 15% chance: Take instant AI win if available
-    if (Math.random() < 0.15) {
-        for (let idx of available) {
-            const tempBoard = [...board];
-            tempBoard[idx] = 'O';
-            if (checkWinner(tempBoard)) return idx;
-        }
+    switch (state.selectedDifficulty) {
+        case 'easy':
+            moveIndex = getEasyAiMove();
+            break;
+        case 'medium':
+            moveIndex = getMediumAiMove();
+            break;
+        case 'hard':
+            moveIndex = getHardAiMove();
+            break;
+        default:
+            moveIndex = getEasyAiMove();
     }
 
-    // 2. Only 15% chance: Block player's immediate win (giving user an 85% opening to score!)
-    if (Math.random() < 0.15) {
-        for (let idx of available) {
-            const tempBoard = [...board];
-            tempBoard[idx] = 'X';
-            if (checkWinner(tempBoard)) return idx;
-        }
-    }
+    if (moveIndex !== undefined && moveIndex !== -1) {
+        makeMove(moveIndex, 'O');
+        soundFX.playMoveSound(false);
 
-    // 3. Otherwise pick casual available move
-    return available[Math.floor(Math.random() * available.length)];
+        const winInfo = checkWinner(state.board);
+        if (winInfo) {
+            handleGameOver('ai', winInfo.combination);
+            return;
+        }
+
+        if (isBoardFull(state.board)) {
+            handleGameOver('draw');
+            return;
+        }
+
+        // Pass turn back to User
+        state.isAiTurn = false;
+        state.currentPlayer = 'X';
+        updateTurnIndicator();
+    }
 }
 
-/**
- * MEDIUM AI (Moderate/Intermediate Challenge):
- * - 80% chance to take immediate win.
- * - 75% chance to block user's winning move.
- * - Prioritizes center and corners.
- */
-function getMediumAiMove(board) {
-    const available = getAvailableIndices(board);
-    if (available.length === 0) return null;
+// 1. Easy AI: Simple Random Heuristic
+function getEasyAiMove() {
+    const available = getAvailableIndices(state.board);
+    if (available.length === 0) return -1;
+    const randomIndex = Math.floor(Math.random() * available.length);
+    return available[randomIndex];
+}
 
-    // 1. Check if AI can win in one move (80% probability)
-    if (Math.random() < 0.80) {
-        for (let idx of available) {
-            const tempBoard = [...board];
-            tempBoard[idx] = 'O';
-            if (checkWinner(tempBoard)) return idx;
+// 2. Medium AI: Rule-based Heuristic (Wins if possible, blocks if necessary, otherwise smart move)
+function getMediumAiMove() {
+    const available = getAvailableIndices(state.board);
+    if (available.length === 0) return -1;
+
+    // Check if AI can win on this turn
+    for (let idx of available) {
+        state.board[idx] = 'O';
+        if (checkWinner(state.board)) {
+            state.board[idx] = '';
+            return idx;
+        }
+        state.board[idx] = '';
+    }
+
+    // Check if User can win on their next turn and block them
+    for (let idx of available) {
+        state.board[idx] = 'X';
+        if (checkWinner(state.board)) {
+            state.board[idx] = '';
+            return idx;
+        }
+        state.board[idx] = '';
+    }
+
+    // 40% chance of picking optimal move, 60% random
+    if (Math.random() > 0.4) {
+        // Take center if available
+        if (state.board[4] === '') return 4;
+        // Take random corner
+        const corners = [0, 2, 6, 8].filter(c => state.board[c] === '');
+        if (corners.length > 0) {
+            return corners[Math.floor(Math.random() * corners.length)];
         }
     }
 
-    // 2. 75% probability of blocking user's immediate win
-    if (Math.random() < 0.75) {
-        for (let idx of available) {
-            const tempBoard = [...board];
-            tempBoard[idx] = 'X';
-            if (checkWinner(tempBoard)) return idx;
-        }
-    }
+    return getEasyAiMove();
+}
 
-    // 3. Take center cell with high probability
-    if (board[4] === '' && Math.random() < 0.65) {
-        return 4;
-    }
+// 3. Hard AI: Unbeatable Minimax Algorithm with Alpha-Beta Pruning
+function getHardAiMove() {
+    const available = getAvailableIndices(state.board);
+    if (available.length === 0) return -1;
 
-    // 4. Pick strategic corner
-    const corners = [0, 2, 6, 8].filter(c => board[c] === '');
-    if (corners.length > 0 && Math.random() < 0.50) {
+    // If whole board is empty, open on corner for speed & variety
+    if (available.length === 9) {
+        const corners = [0, 2, 6, 8];
         return corners[Math.floor(Math.random() * corners.length)];
     }
-
-    // 5. Otherwise pick random available
-    return available[Math.floor(Math.random() * available.length)];
-}
-
-/**
- * HARD AI (Unbeatable Minimax Algorithm):
- * - Evaluates every possible future branch to find the optimal move.
- * - Blocks all user chances, capitalizes on every opening.
- */
-function getHardAiMove(board) {
-    const available = getAvailableIndices(board);
-    if (available.length === 0) return null;
-
-    // If starting or empty, center or corner is optimal
-    if (available.length === 9) return 4;
-    if (available.length === 8 && board[4] === '') return 4;
 
     let bestScore = -Infinity;
     let bestMove = available[0];
 
     for (let idx of available) {
-        const tempBoard = [...board];
-        tempBoard[idx] = 'O';
-        const score = minimax(tempBoard, 0, false, -Infinity, Infinity);
+        state.board[idx] = 'O';
+        const score = minimax(state.board, 0, false, -Infinity, Infinity);
+        state.board[idx] = '';
+
         if (score > bestScore) {
             bestScore = score;
             bestMove = idx;
@@ -775,16 +954,14 @@ function getHardAiMove(board) {
     return bestMove;
 }
 
-// Minimax Algorithm with Depth Decay & Alpha-Beta Pruning
 function minimax(board, depth, isMaximizing, alpha, beta) {
-    const winnerResult = checkWinner(board);
-
-    if (winnerResult) {
-        if (winnerResult.winner === 'O') return 10 - depth; // AI Win
-        if (winnerResult.winner === 'X') return depth - 10; // User Win
+    const winInfo = checkWinner(board);
+    if (winInfo) {
+        return winInfo.winner === 'O' ? (10 - depth) : (depth - 10);
     }
-
-    if (isBoardFull(board)) return 0; // Draw
+    if (isBoardFull(board)) {
+        return 0;
+    }
 
     const available = getAvailableIndices(board);
 
@@ -910,7 +1087,6 @@ function handleGameOver(result, winningCombination = null) {
         if (window.adsManager && typeof window.adsManager.triggerPostGameAd === 'function') {
             window.adsManager.triggerPostGameAd(() => {
                 openModal(elements.resultModal);
-                // Automatically refresh/reset the board so it is fresh and ready for the next round
                 resetBoard();
             });
         } else {
@@ -987,19 +1163,19 @@ function renderUI() {
     const cashValue = (state.points / 100).toFixed(2);
 
     // Points in Header & Hero
-    elements.headerPointsVal.textContent = formattedPoints;
-    elements.heroPointsDisplay.textContent = formattedPoints;
-    elements.heroCashEquiv.innerHTML = `<span>₹${cashValue}</span> Value`;
+    if (elements.headerPointsVal) elements.headerPointsVal.textContent = formattedPoints;
+    if (elements.heroPointsDisplay) elements.heroPointsDisplay.textContent = formattedPoints;
+    if (elements.heroCashEquiv) elements.heroCashEquiv.innerHTML = `<span>₹${cashValue}</span> Value`;
 
     // Statistics Section
-    elements.statTotalPoints.textContent = formattedPoints;
-    elements.statTotalGames.textContent = state.stats.totalGames;
-    elements.statUserWins.textContent = state.stats.userWins;
-    elements.statAiWins.textContent = state.stats.aiWins;
-    elements.statDraws.textContent = state.stats.draws;
-    elements.statEasyWins.textContent = state.stats.easyWins;
-    elements.statMediumWins.textContent = state.stats.mediumWins;
-    elements.statHardWins.textContent = state.stats.hardWins;
+    if (elements.statTotalPoints) elements.statTotalPoints.textContent = formattedPoints;
+    if (elements.statTotalGames) elements.statTotalGames.textContent = state.stats.totalGames;
+    if (elements.statUserWins) elements.statUserWins.textContent = state.stats.userWins;
+    if (elements.statAiWins) elements.statAiWins.textContent = state.stats.aiWins;
+    if (elements.statDraws) elements.statDraws.textContent = state.stats.draws;
+    if (elements.statEasyWins) elements.statEasyWins.textContent = state.stats.easyWins;
+    if (elements.statMediumWins) elements.statMediumWins.textContent = state.stats.mediumWins;
+    if (elements.statHardWins) elements.statHardWins.textContent = state.stats.hardWins;
 
     // Update Reward Cards (Progress Bar, Status Tag, Button State)
     REDEEM_REWARDS.forEach(reward => {
@@ -1046,6 +1222,8 @@ function renderRedemptionHistory() {
             history = [];
         }
     }
+
+    if (!elements.redemptionHistoryList) return;
 
     if (!history || history.length === 0) {
         elements.redemptionHistoryList.innerHTML = `
@@ -1156,15 +1334,8 @@ function initLegalAndInfoListeners() {
     if (btnCloseTerms) btnCloseTerms.addEventListener('click', () => closeModal(termsModal));
     if (btnAcceptTerms) btnAcceptTerms.addEventListener('click', () => closeModal(termsModal));
 
-    // Daily Bonus Footer Link
-    const footerDaily = document.getElementById('footerBtnDailyBonus');
-    const dailyModal = document.getElementById('dailyBonusModal');
-    if (footerDaily && dailyModal) {
-        footerDaily.addEventListener('click', () => openModal(dailyModal));
-    }
-
-    // Close on backdrop click for legal modals
-    [privacyModal, termsModal].forEach(m => {
+    // Close on backdrop click for legal & auth modals
+    [privacyModal, termsModal, elements.authModal].forEach(m => {
         if (m) {
             m.addEventListener('click', (e) => {
                 if (e.target === m) closeModal(m);

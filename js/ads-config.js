@@ -7,15 +7,15 @@ const ADS_CONFIG = {
     // Official Google AdSense Publisher ID
     publisherId: 'ca-pub-2711605087755702',
 
-    // Replace with your Google AdSense Ad Slot IDs created in your AdSense dashboard
+    // Official Google AdSense Ad Slot IDs
     slots: {
-        postGameInterstitial: '1234567890',  // Triggered after every match
-        topBanner: '1234567891',            // Displayed above the Game Arena
-        bottomBanner: '1234567892',         // Displayed below the Game Arena
-        resultModalBanner: '1234567893'     // Displayed inside Victory/Result modal
+        postGameInterstitial: '4293059609',  // Triggered after match intermission
+        topBanner: '4293059609',             // Displayed above the Game Arena
+        bottomBanner: '4293059609',          // Displayed below the Game Arena
+        resultModalBanner: '4293059609'      // Displayed inside Victory/Result modal
     },
 
-    // Ad Trigger Frequency: 1 = Show an ad after every single game
+    // Ad Trigger Frequency: Show ad after every match
     showAdEveryNMatches: 1,
 
     // Intermission countdown timer in seconds before allowing continue
@@ -36,10 +36,8 @@ class AdsManager {
     }
 
     init() {
-        // Verify if Google AdSense script is present and configured
         this.checkAdSenseScript();
         
-        // Initialize in-page banners on page load
         window.addEventListener('DOMContentLoaded', () => {
             this.refreshInPageBanners();
         });
@@ -50,7 +48,7 @@ class AdsManager {
             this.adSenseLoaded = true;
             console.log('⚡ Google AdSense Engine detected & ready.');
         } else {
-            console.log('ℹ️ Google AdSense: Using configured ad slots (Live ads will render once Publisher ID is verified).');
+            console.log('ℹ️ Google AdSense: Using publisher ca-pub-2711605087755702 and slot 4293059609.');
         }
     }
 
@@ -65,135 +63,128 @@ class AdsManager {
         }
 
         this.matchCount++;
-
-        // Check if this match qualifies for an ad break
         if (this.matchCount % this.config.showAdEveryNMatches !== 0) {
             if (typeof onComplete === 'function') onComplete();
             return;
         }
 
         const modal = document.getElementById('adIntermissionModal');
-        const countdownEl = document.getElementById('adTimerCountdown');
-        const skipCountdownEl = document.getElementById('adSkipCountdown');
+        const container = document.getElementById('adInterstitialContainer');
+        const timerBadge = document.getElementById('adTimerCountdown');
         const skipBtn = document.getElementById('btnSkipAd');
+        const skipCountdown = document.getElementById('adSkipCountdown');
 
-        if (!modal) {
+        if (!modal || !container) {
             if (typeof onComplete === 'function') onComplete();
             return;
         }
 
         this.isAdShowing = true;
-        let remainingSeconds = this.config.countdownSeconds;
-
-        // Reset and display modal
         modal.classList.add('active');
-        if (countdownEl) countdownEl.textContent = remainingSeconds;
-        if (skipCountdownEl) skipCountdownEl.textContent = remainingSeconds;
-        
-        if (skipBtn) {
-            skipBtn.disabled = true;
-            skipBtn.innerHTML = `<span>⏳ Please wait (${remainingSeconds}s)...</span>`;
+
+        // Render AdSense Unit inside Interstitial modal
+        container.innerHTML = `
+            <ins class="adsbygoogle"
+                 style="display:block; min-height: 250px; width: 100%;"
+                 data-ad-client="${this.config.publisherId}"
+                 data-ad-slot="${this.config.slots.postGameInterstitial}"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+        `;
+
+        try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (e) {
+            console.log('AdSense interstitial push notice:', e);
         }
 
-        // Render / push Google AdSense slot
-        this.renderAdSlot('adInterstitialContainer', this.config.slots.postGameInterstitial);
+        // Setup Countdown
+        let remaining = this.config.countdownSeconds;
+        if (timerBadge) timerBadge.textContent = remaining;
+        if (skipCountdown) skipCountdown.textContent = remaining;
+        if (skipBtn) {
+            skipBtn.disabled = true;
+            skipBtn.innerHTML = `<span>⏳ Please wait (<span id="adSkipCountdown">${remaining}</span>s)...</span>`;
+        }
 
-        // Countdown Timer
+        const finishAd = () => {
+            if (this.timerInterval) clearInterval(this.timerInterval);
+            this.timerInterval = null;
+            this.isAdShowing = false;
+            modal.classList.remove('active');
+            if (typeof onComplete === 'function') onComplete();
+        };
+
         if (this.timerInterval) clearInterval(this.timerInterval);
-        
         this.timerInterval = setInterval(() => {
-            remainingSeconds--;
+            remaining--;
+            const countEl = document.getElementById('adSkipCountdown');
+            if (countEl) countEl.textContent = remaining;
+            if (timerBadge) timerBadge.textContent = remaining;
 
-            if (countdownEl) countdownEl.textContent = remainingSeconds;
-            if (skipCountdownEl) skipCountdownEl.textContent = remainingSeconds;
-
-            if (remainingSeconds <= 0) {
+            if (remaining <= 0) {
                 clearInterval(this.timerInterval);
                 this.timerInterval = null;
-
                 if (skipBtn) {
                     skipBtn.disabled = false;
-                    skipBtn.classList.add('btn-ready');
-                    skipBtn.innerHTML = `<span>⚡ Continue to Results ›</span>`;
-                }
-            } else {
-                if (skipBtn) {
-                    skipBtn.innerHTML = `<span>⏳ Please wait (${remainingSeconds}s)...</span>`;
+                    skipBtn.innerHTML = `<span>▶ Continue to Results</span>`;
+                    skipBtn.onclick = finishAd;
                 }
             }
         }, 1000);
-
-        // One-time click handler for the continue button
-        const handleCloseAd = () => {
-            if (this.timerInterval) {
-                clearInterval(this.timerInterval);
-                this.timerInterval = null;
-            }
-            modal.classList.remove('active');
-            this.isAdShowing = false;
-            skipBtn.removeEventListener('click', handleCloseAd);
-
-            // Execute the post-ad callback (e.g. open game result modal)
-            if (typeof onComplete === 'function') {
-                onComplete();
-            }
-        };
-
-        if (skipBtn) {
-            skipBtn.onclick = handleCloseAd;
-        }
     }
 
     /**
-     * Safely pushes or renders a Google AdSense ad unit
-     */
-    renderAdSlot(containerId, slotId) {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        const isRealPubId = this.config.publisherId && 
-                            this.config.publisherId.startsWith('ca-pub-') && 
-                            !this.config.publisherId.includes('XXXX');
-
-        if (isRealPubId) {
-            try {
-                container.innerHTML = `
-                    <ins class="adsbygoogle"
-                         style="display:block"
-                         data-ad-client="${this.config.publisherId}"
-                         data-ad-slot="${slotId}"
-                         data-ad-format="auto"
-                         data-full-width-responsive="true"></ins>
-                `;
-                (window.adsbygoogle = window.adsbygoogle || []).push({});
-            } catch (e) {
-                console.warn('AdSense push notice:', e);
-            }
-        } else {
-            // High-fidelity Ad placeholder for development / testing mode
-            container.innerHTML = `
-                <div class="ad-placeholder-box">
-                    <div class="ad-placeholder-badge">GOOGLE ADSENSE</div>
-                    <div class="ad-placeholder-title">⚡ High-Value Ad Placement Slot</div>
-                    <p class="ad-placeholder-desc">
-                        Post-game ad displays here after every match.<br>
-                        Add your <strong>Publisher ID (${this.config.publisherId})</strong> in <code>js/ads-config.js</code> to go live.
-                    </p>
-                    <div class="ad-placeholder-dimensions">Responsive Multi-Size Unit (300x250 • 336x280 • 728x90)</div>
-                </div>
-            `;
-        }
-    }
-
-    /**
-     * Refreshes all stationary in-page ad banners
+     * Renders responsive in-page banner ads into containers
      */
     refreshInPageBanners() {
-        this.renderAdSlot('adBannerTopContainer', this.config.slots.topBanner);
-        this.renderAdSlot('adBannerBottomContainer', this.config.slots.bottomBanner);
-        this.renderAdSlot('adResultBannerContainer', this.config.slots.resultModalBanner);
+        if (!this.config.enabled) return;
+
+        // Top Banner
+        const topContainer = document.getElementById('adBannerTopContainer');
+        if (topContainer) {
+            topContainer.innerHTML = `
+                <div class="ad-unit-label">SPONSORED ADVERTISEMENT</div>
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="${this.config.publisherId}"
+                     data-ad-slot="${this.config.slots.topBanner}"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            `;
+            try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+        }
+
+        // Bottom Banner
+        const bottomContainer = document.getElementById('adBannerBottomContainer');
+        if (bottomContainer) {
+            bottomContainer.innerHTML = `
+                <div class="ad-unit-label">SPONSORED ADVERTISEMENT</div>
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="${this.config.publisherId}"
+                     data-ad-slot="${this.config.slots.bottomBanner}"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            `;
+            try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+        }
+
+        // Result Modal Banner
+        const resultContainer = document.getElementById('adResultBannerContainer');
+        if (resultContainer) {
+            resultContainer.innerHTML = `
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="${this.config.publisherId}"
+                     data-ad-slot="${this.config.slots.resultModalBanner}"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+            `;
+            try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch (e) {}
+        }
     }
 }
 
-// Global Ad Manager Instance
+// Instantiate global AdsManager instance
 window.adsManager = new AdsManager(ADS_CONFIG);
