@@ -126,39 +126,25 @@ const elements = {
     btnSuccessClose: document.getElementById('btnSuccessClose'),
     btnCloseSuccessModal: document.getElementById('btnCloseSuccessModal'),
 
-    // Authentication Modal & Forms
+    // Authentication Modal & Forms (Strictly Email & Password)
     authModal: document.getElementById('authModal'),
     btnCloseAuthModal: document.getElementById('btnCloseAuthModal'),
     authModalTitle: document.getElementById('authModalTitle'),
     authModalSubtitle: document.getElementById('authModalSubtitle'),
-    tabOtp: document.getElementById('tabOtp'),
     tabSignIn: document.getElementById('tabSignIn'),
     tabSignUp: document.getElementById('tabSignUp'),
     authAlert: document.getElementById('authAlert'),
-    btnAuthGoogle: document.getElementById('btnAuthGoogle'),
-    
-    // OTP Form Elements
-    otpContainer: document.getElementById('otpContainer'),
-    otpSendForm: document.getElementById('otpSendForm'),
-    otpEmail: document.getElementById('otpEmail'),
-    btnSendOtp: document.getElementById('btnSendOtp'),
-    otpVerifyForm: document.getElementById('otpVerifyForm'),
-    otpTargetEmail: document.getElementById('otpTargetEmail'),
-    otpCodeInput: document.getElementById('otpCodeInput'),
-    btnVerifyOtp: document.getElementById('btnVerifyOtp'),
-    btnResendOtp: document.getElementById('btnResendOtp'),
-    btnChangeOtpEmail: document.getElementById('btnChangeOtpEmail'),
 
-    // Password Forms
+    // Forms
     signInForm: document.getElementById('signInForm'),
     signInEmail: document.getElementById('signInEmail'),
     signInPassword: document.getElementById('signInPassword'),
+    btnSubmitSignIn: document.getElementById('btnSubmitSignIn'),
+
     signUpForm: document.getElementById('signUpForm'),
-    signUpName: document.getElementById('signUpName'),
     signUpEmail: document.getElementById('signUpEmail'),
     signUpPassword: document.getElementById('signUpPassword'),
     signUpPasswordConfirm: document.getElementById('signUpPasswordConfirm'),
-    btnSubmitSignIn: document.getElementById('btnSubmitSignIn'),
     btnSubmitSignUp: document.getElementById('btnSubmitSignUp'),
 
     // Mobile Navigation Items
@@ -536,174 +522,28 @@ function setupEventListeners() {
 
     let currentOtpEmail = '';
 
-    // Auth Tabs Switching (OTP vs Password vs Sign Up)
+    // Auth Tabs Switching (Sign In vs Register)
     function switchAuthTab(tabName) {
         clearAuthAlert();
-        if (elements.tabOtp) elements.tabOtp.classList.toggle('active', tabName === 'otp');
         if (elements.tabSignIn) elements.tabSignIn.classList.toggle('active', tabName === 'signin');
         if (elements.tabSignUp) elements.tabSignUp.classList.toggle('active', tabName === 'signup');
 
-        if (elements.otpContainer) elements.otpContainer.style.display = tabName === 'otp' ? 'block' : 'none';
         if (elements.signInForm) elements.signInForm.style.display = tabName === 'signin' ? 'flex' : 'none';
         if (elements.signUpForm) elements.signUpForm.style.display = tabName === 'signup' ? 'flex' : 'none';
 
-        if (tabName === 'otp') {
-            if (elements.authModalTitle) elements.authModalTitle.textContent = 'Sign In to Your Account';
-            if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Get a 6-digit OTP code in your email to instantly play & save points.';
-        } else if (tabName === 'signin') {
+        if (tabName === 'signin') {
             if (elements.authModalTitle) elements.authModalTitle.textContent = 'Welcome Back';
-            if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Sign in with your email and password.';
+            if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Sign in with your email and password to access your points.';
         } else {
             if (elements.authModalTitle) elements.authModalTitle.textContent = 'Create Player Account';
-            if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Register to save your high scores and Google Play credits.';
+            if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Register to save your scores, points, and reward progress.';
         }
     }
 
-    if (elements.tabOtp) elements.tabOtp.addEventListener('click', () => switchAuthTab('otp'));
     if (elements.tabSignIn) elements.tabSignIn.addEventListener('click', () => switchAuthTab('signin'));
     if (elements.tabSignUp) elements.tabSignUp.addEventListener('click', () => switchAuthTab('signup'));
 
-    // 1. Send OTP Form Submission
-    if (elements.otpSendForm) {
-        elements.otpSendForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            clearAuthAlert();
-            const email = elements.otpEmail.value.trim();
-            if (!email) {
-                showAuthAlert('Please enter a valid email address.', 'error');
-                return;
-            }
-
-            elements.btnSendOtp.disabled = true;
-            elements.btnSendOtp.textContent = 'Sending OTP code...';
-
-            try {
-                const { data, error } = await window.backendService.sendEmailOtp(email);
-                if (error) {
-                    if (error.message && error.message.toLowerCase().includes('rate limit')) {
-                        showAuthAlert('⚠️ Email rate limit reached on Supabase free tier. You can switch to the "Password" or "Sign Up" tab to log in immediately without waiting!', 'error');
-                    } else {
-                        showAuthAlert(error.message || 'Failed to send OTP. Please check your email.', 'error');
-                    }
-                } else {
-                    currentOtpEmail = email;
-                    if (elements.otpTargetEmail) elements.otpTargetEmail.textContent = email;
-                    elements.otpSendForm.style.display = 'none';
-                    elements.otpVerifyForm.style.display = 'flex';
-                    if (data?.mockOtp) {
-                        showAuthAlert(`[Local Mode Test OTP]: ${data.mockOtp}`, 'success');
-                    } else {
-                        showAuthAlert('6-digit OTP code sent! Please check your inbox.', 'success');
-                    }
-                    if (elements.otpCodeInput) {
-                        elements.otpCodeInput.value = '';
-                        elements.otpCodeInput.focus();
-                    }
-                }
-            } catch (err) {
-                console.error("OTP send error:", err);
-                showAuthAlert('An unexpected error occurred. Please try again.', 'error');
-            } finally {
-                elements.btnSendOtp.disabled = false;
-                elements.btnSendOtp.textContent = '📩 Send 6-Digit OTP Code';
-            }
-        });
-    }
-
-    // 2. Verify OTP Form Submission
-    if (elements.otpVerifyForm) {
-        elements.otpVerifyForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            clearAuthAlert();
-            const token = elements.otpCodeInput.value.trim();
-
-            if (!token || token.length !== 6) {
-                showAuthAlert('Please enter the complete 6-digit code.', 'error');
-                return;
-            }
-
-            elements.btnVerifyOtp.disabled = true;
-            elements.btnVerifyOtp.textContent = 'Verifying...';
-
-            try {
-                const { data, error } = await window.backendService.verifyEmailOtp(currentOtpEmail, token);
-                if (error) {
-                    showAuthAlert(error.message || 'Invalid or expired OTP code.', 'error');
-                } else {
-                    showAuthAlert('Verified successfully! Logging in...', 'success');
-                    updateAuthDisplay(data.user);
-                    await loadUserProfile();
-                    renderUI();
-                    setTimeout(() => closeModal(elements.authModal), 600);
-                }
-            } catch (err) {
-                console.error("OTP verification error:", err);
-                showAuthAlert('Verification failed. Please try again.', 'error');
-            } finally {
-                elements.btnVerifyOtp.disabled = false;
-                elements.btnVerifyOtp.textContent = '⚡ Verify OTP & Sign In';
-            }
-        });
-    }
-
-    // Resend OTP
-    if (elements.btnResendOtp) {
-        elements.btnResendOtp.addEventListener('click', async () => {
-            clearAuthAlert();
-            if (!currentOtpEmail) return;
-            elements.btnResendOtp.textContent = 'Resending...';
-            try {
-                const { data, error } = await window.backendService.sendEmailOtp(currentOtpEmail);
-                if (error) {
-                    showAuthAlert(error.message || 'Failed to resend code.', 'error');
-                } else {
-                    if (data?.mockOtp) {
-                        showAuthAlert(`[New Local Test OTP]: ${data.mockOtp}`, 'success');
-                    } else {
-                        showAuthAlert('New 6-digit OTP code sent!', 'success');
-                    }
-                }
-            } catch (err) {
-                showAuthAlert('Failed to resend code.', 'error');
-            } finally {
-                elements.btnResendOtp.textContent = 'Resend Code';
-            }
-        });
-    }
-
-    // Change Email
-    if (elements.btnChangeOtpEmail) {
-        elements.btnChangeOtpEmail.addEventListener('click', () => {
-            clearAuthAlert();
-            elements.otpVerifyForm.style.display = 'none';
-            elements.otpSendForm.style.display = 'flex';
-        });
-    }
-
-    // Modal Google OAuth Button
-    if (elements.btnAuthGoogle) {
-        elements.btnAuthGoogle.addEventListener('click', async () => {
-            clearAuthAlert();
-            try {
-                const { user, error } = await window.backendService.signInWithGoogle();
-                if (error) {
-                    showAuthAlert(error.message || 'Google Sign-in error.', 'error');
-                    return;
-                }
-                if (user) {
-                    updateAuthDisplay(user);
-                    await loadUserProfile();
-                    renderUI();
-                    closeModal(elements.authModal);
-                }
-            } catch (err) {
-                console.error("Google sign in error:", err);
-                showAuthAlert('Google Sign-in failed.', 'error');
-            }
-        });
-    }
-
-    // Sign In Form Submission
+    // 1. Sign In Form Submission (Returning User)
     if (elements.signInForm) {
         elements.signInForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -711,79 +551,94 @@ function setupEventListeners() {
             const email = elements.signInEmail.value.trim();
             const password = elements.signInPassword.value;
 
-            if (!email || !password) {
-                showAuthAlert('Please enter both email and password.', 'error');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                showAuthAlert('Please enter a valid email address.', 'error');
+                return;
+            }
+
+            if (!password) {
+                showAuthAlert('Please enter your password.', 'error');
                 return;
             }
 
             elements.btnSubmitSignIn.disabled = true;
-            elements.btnSubmitSignIn.textContent = 'Signing in...';
+            elements.btnSubmitSignIn.innerHTML = '<span>⚡ Signing in...</span>';
 
             try {
-                const { data, error } = await window.backendService.signInWithEmail(email, password);
+                const { data, error } = await window.backendService.signIn(email, password);
                 if (error) {
-                    showAuthAlert(error.message || 'Invalid credentials.', 'error');
+                    let msg = error.message || 'Invalid email or password.';
+                    if (msg.toLowerCase().includes('invalid login credentials')) {
+                        msg = 'Incorrect email or password. Please try again.';
+                    } else if (msg.toLowerCase().includes('email not confirmed')) {
+                        msg = 'Please check your inbox to confirm your email before signing in.';
+                    }
+                    showAuthAlert(msg, 'error');
                 } else {
+                    showAuthAlert('Signed in successfully!', 'success');
                     updateAuthDisplay(data.user);
                     await loadUserProfile();
                     renderUI();
-                    closeModal(elements.authModal);
+                    setTimeout(() => closeModal(elements.authModal), 400);
                 }
             } catch (err) {
-                console.error("Sign in error:", err);
-                showAuthAlert('Sign in failed. Please check your credentials.', 'error');
+                showAuthAlert('Network error during sign in. Please try again.', 'error');
             } finally {
                 elements.btnSubmitSignIn.disabled = false;
-                elements.btnSubmitSignIn.textContent = 'Sign In';
+                elements.btnSubmitSignIn.innerHTML = '<span>⚡ Sign In</span>';
             }
         });
     }
 
-    // Sign Up Form Submission
+    // 2. Sign Up Form Submission (New User Registration)
     if (elements.signUpForm) {
         elements.signUpForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             clearAuthAlert();
-            const name = elements.signUpName.value.trim();
             const email = elements.signUpEmail.value.trim();
             const password = elements.signUpPassword.value;
             const confirmPass = elements.signUpPasswordConfirm.value;
 
-            if (!name || !email || !password) {
-                showAuthAlert('Please fill in all required fields.', 'error');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                showAuthAlert('Please enter a valid email address.', 'error');
                 return;
             }
 
-            if (password.length < 6) {
-                showAuthAlert('Password must be at least 6 characters.', 'error');
+            if (!password || password.length < 6) {
+                showAuthAlert('Password must be at least 6 characters long.', 'error');
                 return;
             }
 
             if (password !== confirmPass) {
-                showAuthAlert('Passwords do not match.', 'error');
+                showAuthAlert('Passwords do not match. Please enter the same password.', 'error');
                 return;
             }
 
             elements.btnSubmitSignUp.disabled = true;
-            elements.btnSubmitSignUp.textContent = 'Creating account...';
+            elements.btnSubmitSignUp.innerHTML = '<span>✨ Creating Account...</span>';
 
             try {
-                const { data, error } = await window.backendService.signUpWithEmail(name, email, password);
+                const { data, error } = await window.backendService.signUp(email, password);
                 if (error) {
-                    showAuthAlert(error.message || 'Failed to create account.', 'error');
+                    let msg = error.message || 'Failed to create account.';
+                    if (msg.toLowerCase().includes('user already registered') || msg.toLowerCase().includes('already exists')) {
+                        msg = 'An account with this email is already registered. Please switch to Sign In.';
+                    }
+                    showAuthAlert(msg, 'error');
                 } else {
-                    showAuthAlert('Account created successfully!', 'success');
+                    showAuthAlert('Account created successfully! Logging you in...', 'success');
                     updateAuthDisplay(data.user);
                     await loadUserProfile();
                     renderUI();
-                    setTimeout(() => closeModal(elements.authModal), 600);
+                    setTimeout(() => closeModal(elements.authModal), 500);
                 }
             } catch (err) {
-                console.error("Sign up error:", err);
-                showAuthAlert('Account creation failed.', 'error');
+                showAuthAlert('Network error during registration. Please try again.', 'error');
             } finally {
                 elements.btnSubmitSignUp.disabled = false;
-                elements.btnSubmitSignUp.textContent = 'Create Account';
+                elements.btnSubmitSignUp.innerHTML = '<span>✨ Register</span>';
             }
         });
     }

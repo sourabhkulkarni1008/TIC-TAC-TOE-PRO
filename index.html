@@ -797,29 +797,28 @@
         </div>
     </div>
 
-    <!-- 4. Dedicated Authentication Modal (Email Password & OTP) -->
+    <!-- 4. Dedicated Authentication Modal (Strictly Email & Password) -->
     <div class="modal-overlay" id="authModal">
         <div class="modal-card auth-modal-card">
             <button type="button" class="modal-close-btn" id="btnCloseAuthModal">✕</button>
             <div class="modal-icon-badge badge-redeem" style="font-size: 1.8rem;">👤</div>
-            <h3 class="modal-title" id="authModalTitle">Welcome Back</h3>
-            <p class="modal-subtitle" id="authModalSubtitle">Sign in to your player account to save your points and redeem Google Play rewards.</p>
+            <h3 class="modal-title" id="authModalTitle">Welcome to Tic-Tac-Toe Pro</h3>
+            <p class="modal-subtitle" id="authModalSubtitle">Sign in or register with your email to save your points and rewards.</p>
 
             <!-- Auth Switch Tabs -->
             <div class="auth-tabs">
                 <button type="button" class="auth-tab active" id="tabSignIn">Sign In</button>
-                <button type="button" class="auth-tab" id="tabSignUp">Create Account</button>
-                <button type="button" class="auth-tab" id="tabOtp">Email OTP</button>
+                <button type="button" class="auth-tab" id="tabSignUp">Register</button>
             </div>
 
             <!-- Error/Success Notification Alert -->
             <div class="auth-alert" id="authAlert" style="display: none;"></div>
 
-            <!-- 1. EMAIL & PASSWORD SIGN IN (Default Active) -->
+            <!-- 1. EMAIL & PASSWORD SIGN IN (Returning User) -->
             <form id="signInForm" class="auth-form" style="display: flex;" onsubmit="return false;">
                 <div class="form-group">
-                    <label for="signInEmail">Email Address</label>
-                    <input type="email" id="signInEmail" placeholder="player@gmail.com" required autocomplete="email">
+                    <label for="signInEmail">Email</label>
+                    <input type="email" id="signInEmail" placeholder="player@example.com" required autocomplete="email">
                 </div>
                 <div class="form-group">
                     <label for="signInPassword">Password</label>
@@ -830,61 +829,24 @@
                 </button>
             </form>
 
-            <!-- 2. EMAIL & PASSWORD SIGN UP -->
+            <!-- 2. EMAIL & PASSWORD REGISTRATION (New User) -->
             <form id="signUpForm" class="auth-form" style="display: none;" onsubmit="return false;">
                 <div class="form-group">
-                    <label for="signUpName">Full Name / Gamer Tag</label>
-                    <input type="text" id="signUpName" placeholder="Pro Gamer" required autocomplete="name">
-                </div>
-                <div class="form-group">
-                    <label for="signUpEmail">Email Address</label>
-                    <input type="email" id="signUpEmail" placeholder="player@gmail.com" required autocomplete="email">
+                    <label for="signUpEmail">Email</label>
+                    <input type="email" id="signUpEmail" placeholder="player@example.com" required autocomplete="email">
                 </div>
                 <div class="form-group">
                     <label for="signUpPassword">Password</label>
-                    <input type="password" id="signUpPassword" placeholder="At least 6 characters" required autocomplete="new-password">
+                    <input type="password" id="signUpPassword" placeholder="••••••••" required autocomplete="new-password">
                 </div>
                 <div class="form-group">
                     <label for="signUpPasswordConfirm">Confirm Password</label>
-                    <input type="password" id="signUpPasswordConfirm" placeholder="Repeat password" required autocomplete="new-password">
+                    <input type="password" id="signUpPasswordConfirm" placeholder="••••••••" required autocomplete="new-password">
                 </div>
                 <button type="submit" class="btn btn-primary btn-full" id="btnSubmitSignUp">
-                    <span>✨ Create Free Account</span>
+                    <span>✨ Register</span>
                 </button>
             </form>
-
-            <!-- 3. EMAIL 6-DIGIT OTP FLOW -->
-            <div id="otpContainer" style="display: none;">
-                <!-- Step 1: Request OTP -->
-                <form id="otpSendForm" class="auth-form" onsubmit="return false;">
-                    <div class="form-group">
-                        <label for="otpEmail">Enter Your Email Address</label>
-                        <input type="email" id="otpEmail" placeholder="player@gmail.com" required autocomplete="email">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full" id="btnSendOtp">
-                        <span>📩 Send 6-Digit OTP Code</span>
-                    </button>
-                </form>
-
-                <!-- Step 2: Verify 6-Digit OTP (Hidden Initially) -->
-                <form id="otpVerifyForm" class="auth-form" style="display: none;" onsubmit="return false;">
-                    <div class="otp-instructions">
-                        We sent a 6-digit verification code to <strong id="otpTargetEmail" style="color: var(--cyan);"></strong>.
-                    </div>
-                    <div class="form-group">
-                        <label for="otpCodeInput">6-Digit Code</label>
-                        <input type="text" id="otpCodeInput" class="otp-code-field" placeholder="123456" maxlength="6" inputmode="numeric" pattern="[0-9]*" required autocomplete="one-time-code">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-full" id="btnVerifyOtp">
-                        <span>⚡ Verify OTP & Sign In</span>
-                    </button>
-                    <div class="otp-helper-links">
-                        <button type="button" class="btn-link" id="btnResendOtp">Resend Code</button>
-                        <span>•</span>
-                        <button type="button" class="btn-link" id="btnChangeOtpEmail">Change Email</button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 
