@@ -14,6 +14,9 @@
     <!-- Supabase JS Client (v2) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
+    <!-- Google AdSense Script (Replace ca-pub-XXXXXXXXXXXXXXXX with your real AdSense ID) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    
     <!-- Main Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -148,6 +151,11 @@
              ========================================================================== -->
         <section class="game-section" id="game">
             <div class="container">
+                <!-- Top Google AdSense Banner Slot -->
+                <div class="ad-banner-section" style="padding-top: 0;">
+                    <div class="ad-banner-wrapper" id="adBannerTopContainer"></div>
+                </div>
+
                 <div class="game-arena-card">
                     
                     <div class="game-header">
@@ -210,6 +218,11 @@
                         </button>
                     </div>
 
+                </div>
+
+                <!-- Bottom Google AdSense Banner Slot -->
+                <div class="ad-banner-section" style="padding-bottom: 0;">
+                    <div class="ad-banner-wrapper" id="adBannerBottomContainer"></div>
                 </div>
             </div>
         </section>
@@ -673,6 +686,26 @@
          MODALS
          ========================================================================== -->
 
+    <!-- 0. Post-Game Google AdSense Intermission Modal -->
+    <div class="modal-overlay ad-intermission-overlay" id="adIntermissionModal">
+        <div class="modal-card ad-intermission-card">
+            <div class="ad-intermission-header">
+                <span class="ad-badge">SPONSORED ADVERTISEMENT</span>
+                <span class="ad-timer" id="adTimerBadge">Next match in <strong id="adTimerCountdown">4</strong>s</span>
+            </div>
+            
+            <div class="ad-container-interstitial" id="adInterstitialContainer">
+                <!-- Google AdSense Unit -->
+            </div>
+
+            <div class="ad-intermission-footer">
+                <button type="button" class="btn btn-primary" id="btnSkipAd" disabled>
+                    <span>⏳ Please wait (<span id="adSkipCountdown">4</span>s)...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 1. Game Result Modal -->
     <div class="modal-overlay" id="resultModal">
         <div class="modal-card">
@@ -694,6 +727,9 @@
                     <strong id="resultModalTotal" style="color: var(--gold);">48.5 Pts</strong>
                 </div>
             </div>
+
+            <!-- AdSense Result Banner Unit -->
+            <div class="ad-result-box" id="adResultBannerContainer"></div>
 
             <div class="modal-actions">
                 <button type="button" class="btn btn-primary" id="btnModalPlayAgain">
@@ -1064,8 +1100,9 @@
         </div>
     </footer>
 
-    <!-- Backend & Frontend Scripts -->
+    <!-- Backend, AdSense & Frontend Scripts -->
     <script src="../backend/supabase-client.js"></script>
+    <script src="js/ads-config.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>

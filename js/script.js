@@ -1227,12 +1227,19 @@ function handleGameOver(result, winningCombination = null) {
     renderUI();
     updateTurnIndicator();
 
-    // Show Result Modal after brief pause, and automatically refresh the board
+    // Show Post-Game Ad Intermission Break (AdSense) before Result Modal
     setTimeout(() => {
-        openModal(elements.resultModal);
-        // Automatically refresh/reset the board so it is fresh and ready for the next round
-        resetBoard();
-    }, 700);
+        if (window.adsManager && typeof window.adsManager.triggerPostGameAd === 'function') {
+            window.adsManager.triggerPostGameAd(() => {
+                openModal(elements.resultModal);
+                // Automatically refresh/reset the board so it is fresh and ready for the next round
+                resetBoard();
+            });
+        } else {
+            openModal(elements.resultModal);
+            resetBoard();
+        }
+    }, 600);
 }
 
 // ============================================================================

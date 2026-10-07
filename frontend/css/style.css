@@ -2176,5 +2176,192 @@ body {
     }
 }
 
+/* ==========================================================================
+   GOOGLE ADSENSE - POST-GAME INTERMISSION MODAL & BANNERS
+   ========================================================================== */
+.ad-intermission-overlay {
+    z-index: 10000;
+}
+
+.ad-intermission-card {
+    max-width: 520px;
+    width: 95%;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(10, 15, 30, 0.98));
+    border: 1px solid rgba(0, 242, 254, 0.35);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 242, 254, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.ad-intermission-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.ad-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.ad-timer {
+    font-size: 0.85rem;
+    color: var(--cyan);
+    font-weight: 600;
+}
+
+.ad-container-interstitial {
+    min-height: 260px;
+    max-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin-bottom: 1.25rem;
+    padding: 0.5rem;
+}
+
+.ad-intermission-footer {
+    display: flex;
+    justify-content: center;
+}
+
+#btnSkipAd {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    border-radius: var(--radius-md);
+    transition: var(--transition-normal);
+}
+
+#btnSkipAd:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-muted);
+}
+
+#btnSkipAd.btn-ready {
+    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+    border-color: #00f2fe;
+    color: #050b14;
+    box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
+    animation: pulseAdBtn 1.5s infinite;
+}
+
+@keyframes pulseAdBtn {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(0, 242, 254, 0.4); }
+    50% { transform: scale(1.02); box-shadow: 0 0 35px rgba(0, 242, 254, 0.7); }
+}
+
+/* In-Page Ad Banners */
+.ad-banner-section {
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.ad-banner-wrapper {
+    max-width: 728px;
+    width: 100%;
+    min-height: 90px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin: 0.5rem auto;
+}
+
+/* Result Modal Inline Ad Box */
+.ad-result-box {
+    margin: 1rem 0;
+    min-height: 120px;
+    border-radius: var(--radius-md);
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px dashed rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* Polished AdSense Placeholder */
+.ad-placeholder-box {
+    text-align: center;
+    padding: 1.25rem 1rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.ad-placeholder-badge {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    background: rgba(0, 242, 254, 0.15);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    color: var(--cyan);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.ad-placeholder-title {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #ffffff;
+}
+
+.ad-placeholder-desc {
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--text-muted);
+    max-width: 360px;
+}
+
+.ad-placeholder-desc strong {
+    color: var(--cyan);
+}
+
+.ad-placeholder-desc code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #fca5a5;
+    font-size: 0.75rem;
+}
+
+.ad-placeholder-dimensions {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    opacity: 0.7;
+    margin-top: 0.25rem;
+}
+
+
 
 
