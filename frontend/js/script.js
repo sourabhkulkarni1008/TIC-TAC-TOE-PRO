@@ -522,7 +522,7 @@ function setupEventListeners() {
 
     let currentOtpEmail = '';
 
-    // Auth Tabs Switching (Sign In vs Register)
+    // Auth Tabs Switching (Login vs Register)
     function switchAuthTab(tabName) {
         clearAuthAlert();
         if (elements.tabSignIn) elements.tabSignIn.classList.toggle('active', tabName === 'signin');
@@ -533,7 +533,7 @@ function setupEventListeners() {
 
         if (tabName === 'signin') {
             if (elements.authModalTitle) elements.authModalTitle.textContent = 'Welcome Back';
-            if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Sign in with your email and password to access your points.';
+            if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Login with your email and password to access your points.';
         } else {
             if (elements.authModalTitle) elements.authModalTitle.textContent = 'Create Player Account';
             if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Register to save your scores, points, and reward progress.';
@@ -543,7 +543,7 @@ function setupEventListeners() {
     if (elements.tabSignIn) elements.tabSignIn.addEventListener('click', () => switchAuthTab('signin'));
     if (elements.tabSignUp) elements.tabSignUp.addEventListener('click', () => switchAuthTab('signup'));
 
-    // 1. Sign In Form Submission (Returning User)
+    // 1. Login Form Submission (Returning User)
     if (elements.signInForm) {
         elements.signInForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -563,7 +563,7 @@ function setupEventListeners() {
             }
 
             elements.btnSubmitSignIn.disabled = true;
-            elements.btnSubmitSignIn.innerHTML = '<span>⚡ Signing in...</span>';
+            elements.btnSubmitSignIn.innerHTML = '<span>⚡ Logging in...</span>';
 
             try {
                 const { data, error } = await window.backendService.signIn(email, password);
@@ -572,21 +572,21 @@ function setupEventListeners() {
                     if (msg.toLowerCase().includes('invalid login credentials')) {
                         msg = 'Incorrect email or password. Please try again.';
                     } else if (msg.toLowerCase().includes('email not confirmed')) {
-                        msg = 'Please check your inbox to confirm your email before signing in.';
+                        msg = 'Please check your inbox to confirm your email before logging in.';
                     }
                     showAuthAlert(msg, 'error');
                 } else {
-                    showAuthAlert('Signed in successfully!', 'success');
+                    showAuthAlert('Logged in successfully!', 'success');
                     updateAuthDisplay(data.user);
                     await loadUserProfile();
                     renderUI();
                     setTimeout(() => closeModal(elements.authModal), 400);
                 }
             } catch (err) {
-                showAuthAlert('Network error during sign in. Please try again.', 'error');
+                showAuthAlert('Network error during login. Please try again.', 'error');
             } finally {
                 elements.btnSubmitSignIn.disabled = false;
-                elements.btnSubmitSignIn.innerHTML = '<span>⚡ Sign In</span>';
+                elements.btnSubmitSignIn.innerHTML = '<span>⚡ Login</span>';
             }
         });
     }
@@ -624,7 +624,7 @@ function setupEventListeners() {
                 if (error) {
                     let msg = error.message || 'Failed to create account.';
                     if (msg.toLowerCase().includes('user already registered') || msg.toLowerCase().includes('already exists')) {
-                        msg = 'An account with this email is already registered. Please switch to Sign In.';
+                        msg = 'An account with this email is already registered. Please switch to Login.';
                     }
                     showAuthAlert(msg, 'error');
                 } else {

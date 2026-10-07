@@ -57,7 +57,7 @@
                 <!-- User Profile / Auth Area -->
                 <div id="authContainer">
                     <button class="btn btn-primary" id="btnGoogleSignIn" style="padding: 0.6rem 1.15rem; font-size: 0.9rem;">
-                        <span>👤 Sign In / Register</span>
+                        <span>👤 Login / Register</span>
                     </button>
                     <div class="user-profile-pill" id="userProfilePill" style="display: none;">
                         <div class="user-avatar-small" id="userAvatar">U</div>
@@ -803,18 +803,18 @@
             <button type="button" class="modal-close-btn" id="btnCloseAuthModal">✕</button>
             <div class="modal-icon-badge badge-redeem" style="font-size: 1.8rem;">👤</div>
             <h3 class="modal-title" id="authModalTitle">Welcome to Tic-Tac-Toe Pro</h3>
-            <p class="modal-subtitle" id="authModalSubtitle">Sign in or register with your email to save your points and rewards.</p>
+            <p class="modal-subtitle" id="authModalSubtitle">Login or register with your email to save your points and rewards.</p>
 
             <!-- Auth Switch Tabs -->
             <div class="auth-tabs">
-                <button type="button" class="auth-tab active" id="tabSignIn">Sign In</button>
+                <button type="button" class="auth-tab active" id="tabSignIn">Login</button>
                 <button type="button" class="auth-tab" id="tabSignUp">Register</button>
             </div>
 
             <!-- Error/Success Notification Alert -->
             <div class="auth-alert" id="authAlert" style="display: none;"></div>
 
-            <!-- 1. EMAIL & PASSWORD SIGN IN (Returning User) -->
+            <!-- 1. EMAIL & PASSWORD LOGIN (Returning User) -->
             <form id="signInForm" class="auth-form" style="display: flex;" onsubmit="return false;">
                 <div class="form-group">
                     <label for="signInEmail">Email</label>
@@ -825,7 +825,7 @@
                     <input type="password" id="signInPassword" placeholder="••••••••" required autocomplete="current-password">
                 </div>
                 <button type="submit" class="btn btn-primary btn-full" id="btnSubmitSignIn">
-                    <span>⚡ Sign In</span>
+                    <span>⚡ Login</span>
                 </button>
             </form>
 
