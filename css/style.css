@@ -1582,9 +1582,18 @@ body {
         padding-bottom: calc(90px + env(safe-area-inset-bottom, 20px));
     }
 
-    /* Top Navbar Mobile Polish */
+    /* Top Navbar Mobile Single-Line Ultra-Premium Polish */
     .navbar {
-        padding: 0.6rem 0;
+        padding: 0.45rem 0;
+    }
+
+    .nav-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.35rem;
+        flex-wrap: nowrap;
+        padding: 0 0.75rem;
     }
 
     .nav-links {
@@ -1595,128 +1604,220 @@ body {
         display: flex;
     }
 
+    .logo {
+        gap: 0.4rem;
+        flex-shrink: 0;
+        min-width: 0;
+    }
+
     .logo-icon {
-        width: 34px;
-        height: 34px;
-        font-size: 1.05rem;
+        width: 28px;
+        height: 28px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        flex-shrink: 0;
     }
 
     .logo-text {
-        font-size: 1.15rem;
+        font-size: 0.92rem;
+        font-weight: 800;
+        white-space: nowrap;
+        letter-spacing: -0.3px;
+    }
+
+    .logo-tag {
+        font-size: 0.55rem;
+        padding: 1px 4px;
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        flex-shrink: 0;
+        flex-wrap: nowrap;
     }
 
     .points-pill {
-        padding: 0.3rem 0.65rem;
-        font-size: 0.8rem;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+        gap: 0.25rem;
+        white-space: nowrap;
+        border-radius: var(--radius-full);
+    }
+
+    .btn-auth-nav {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        gap: 0.25rem;
+        border-radius: var(--radius-full);
+    }
+
+    .auth-user-pill {
+        padding: 0.2rem 0.35rem 0.2rem 0.55rem;
+        gap: 0.35rem;
+        border-radius: var(--radius-full);
+    }
+
+    .auth-user-email {
+        max-width: 75px;
+        font-size: 0.72rem;
+    }
+
+    .btn-logout {
+        padding: 0.15rem 0.45rem;
+        font-size: 0.68rem;
     }
 
     /* Hero Section Mobile */
     .hero-section {
-        padding: 1.75rem 0 1.25rem;
+        padding: 1.5rem 0 1rem;
     }
 
     .hero-content h1 {
-        font-size: clamp(1.75rem, 5.5vw, 2.4rem);
+        font-size: clamp(1.6rem, 5.2vw, 2.2rem);
         line-height: 1.2;
         margin-bottom: 0.75rem;
     }
 
     .hero-subtitle {
-        font-size: 0.95rem;
-        margin-bottom: 1.25rem;
+        font-size: 0.92rem;
+        margin-bottom: 1.15rem;
     }
 
     .hero-cta-group {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
+        gap: 0.65rem;
+        margin-bottom: 1.25rem;
     }
 
     .hero-cta-group .btn {
         width: 100%;
-        padding: 0.75rem 0.5rem;
-        font-size: 0.85rem;
+        padding: 0.7rem 0.45rem;
+        font-size: 0.82rem;
     }
 
     .difficulty-options {
-        gap: 0.5rem;
+        gap: 0.45rem;
     }
 
     .diff-btn {
-        padding: 0.6rem 0.35rem;
+        padding: 0.55rem 0.3rem;
     }
 
     .diff-name {
-        font-size: 0.85rem;
+        font-size: 0.82rem;
     }
 
     .diff-pts {
-        font-size: 0.68rem;
+        font-size: 0.65rem;
     }
 
     /* Points Showcase Card Mobile */
     .points-showcase-card {
-        padding: 1.25rem;
+        padding: 1.15rem;
         border-radius: var(--radius-md);
     }
 
     .points-card-val {
-        font-size: 2.5rem;
+        font-size: 2.3rem;
     }
 
     /* Game Arena Section Mobile */
     .game-section {
-        padding: 1.5rem 0;
+        padding: 1.25rem 0;
     }
 
     .game-arena-card {
-        padding: 1.25rem 0.85rem;
+        padding: 1.1rem 0.75rem;
         border-radius: var(--radius-md);
+        overflow: hidden;
     }
 
     .game-header {
-        margin-bottom: 1rem;
-        padding-bottom: 0.75rem;
+        margin-bottom: 0.85rem;
+        padding-bottom: 0.65rem;
+        gap: 0.5rem;
     }
 
     .game-title-group h2 {
-        font-size: 1.35rem;
+        font-size: 1.25rem;
     }
 
-    /* Scoreboard Mobile */
+    /* Scoreboard Mobile (Fixed 100% Contained Layout) */
     .scoreboard {
-        gap: 0.5rem;
-        padding: 0.65rem 0.75rem;
-        margin-bottom: 1.25rem;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.55rem 0.45rem;
+        margin-bottom: 1rem;
+        border-radius: var(--radius-sm);
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
     }
 
     .player-box {
-        gap: 0.6rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    .player-box.player-ai {
+        justify-content: flex-end;
+        text-align: right;
     }
 
     .player-avatar {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        font-size: 0.92rem;
         border-radius: 8px;
+        flex-shrink: 0;
     }
 
     .player-info-title {
-        font-size: 0.65rem;
-    }
-
-    .player-info-name {
-        font-size: 0.82rem;
-        max-width: 80px;
+        font-size: 0.6rem;
+        line-height: 1.1;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
+    .player-info-name {
+        font-size: 0.76rem;
+        font-weight: 800;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 75px;
+    }
+
+    .turn-vs-indicator {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        flex-shrink: 0;
+        min-width: 75px;
+        text-align: center;
+    }
+
+    .vs-badge {
+        font-size: 0.62rem;
+        padding: 1px 5px;
+    }
+
     .turn-pill {
-        font-size: 0.7rem;
-        padding: 0.15rem 0.45rem;
+        font-size: 0.66rem;
+        padding: 0.15rem 0.35rem;
+        white-space: nowrap;
     }
 
     /* Tic-Tac-Toe Board Mobile */
