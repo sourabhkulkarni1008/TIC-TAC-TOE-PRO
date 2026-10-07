@@ -35,9 +35,14 @@ class BackendService {
                 this.supabase.auth.onAuthStateChange(async (event, session) => {
                     if (session?.user) {
                         this.currentUser = session.user;
+                        localStorage.setItem("tictactoe_auth_user", JSON.stringify(session.user));
                         if (typeof window.onUserAuthenticated === 'function') {
                             window.onUserAuthenticated(session.user);
                         }
+                    } else if (event === 'SIGNED_OUT') {
+                        this.currentUser = null;
+                        localStorage.removeItem("tictactoe_auth_user");
+                        localStorage.removeItem("tictactoe_local_auth");
                     }
                 });
             } catch (err) {
@@ -64,6 +69,7 @@ class BackendService {
                 }
             };
             localStorage.setItem("tictactoe_local_auth", JSON.stringify(mockUser));
+            localStorage.setItem("tictactoe_auth_user", JSON.stringify(mockUser));
             this.currentUser = mockUser;
             return { user: mockUser, error: null };
         }
@@ -126,6 +132,7 @@ class BackendService {
                         }
                     };
                     localStorage.setItem("tictactoe_local_auth", JSON.stringify(mockUser));
+                    localStorage.setItem("tictactoe_auth_user", JSON.stringify(mockUser));
                     this.currentUser = mockUser;
                     return { data: { user: mockUser }, error: null };
                 }
@@ -140,8 +147,9 @@ class BackendService {
                 type: 'email'
             });
             if (error) throw error;
-            if (data.user) {
+            if (data?.user) {
                 this.currentUser = data.user;
+                localStorage.setItem("tictactoe_auth_user", JSON.stringify(data.user));
             }
             return { data, error: null };
         } catch (error) {
@@ -170,6 +178,7 @@ class BackendService {
             existingUsers.push(newUser);
             localStorage.setItem("tictactoe_local_accounts", JSON.stringify(existingUsers));
             localStorage.setItem("tictactoe_local_auth", JSON.stringify(newUser));
+            localStorage.setItem("tictactoe_auth_user", JSON.stringify(newUser));
             this.currentUser = newUser;
             return { data: { user: newUser }, error: null };
         }
@@ -186,8 +195,9 @@ class BackendService {
                 }
             });
             if (error) throw error;
-            if (data.user) {
+            if (data?.user) {
                 this.currentUser = data.user;
+                localStorage.setItem("tictactoe_auth_user", JSON.stringify(data.user));
             }
             return { data, error: null };
         } catch (error) {
@@ -211,10 +221,12 @@ class BackendService {
                     }
                 };
                 localStorage.setItem("tictactoe_local_auth", JSON.stringify(fallbackUser));
+                localStorage.setItem("tictactoe_auth_user", JSON.stringify(fallbackUser));
                 this.currentUser = fallbackUser;
                 return { data: { user: fallbackUser }, error: null };
             }
             localStorage.setItem("tictactoe_local_auth", JSON.stringify(userMatch));
+            localStorage.setItem("tictactoe_auth_user", JSON.stringify(userMatch));
             this.currentUser = userMatch;
             return { data: { user: userMatch }, error: null };
         }
@@ -225,8 +237,9 @@ class BackendService {
                 password: password
             });
             if (error) throw error;
-            if (data.user) {
+            if (data?.user) {
                 this.currentUser = data.user;
+                localStorage.setItem("tictactoe_auth_user", JSON.stringify(data.user));
             }
             return { data, error: null };
         } catch (error) {
@@ -237,46 +250,51 @@ class BackendService {
 
     // Sign Out
     async signOut() {
-        if (!this.isCloudEnabled) {
-            localStorage.removeItem("tictactoe_local_auth");
-            this.currentUser = null;
-            return { error: null };
-        }
+        localStorage.removeItem("tictactoe_auth_user");
+        localStorage.removeItem("tictactoe_local_auth");
+        this.currentUser = null;
 
-        try {
-            const { error } = await this.supabase.auth.signOut();
-            this.currentUser = null;
-            return { error };
-        } catch (error) {
-            console.error("Sign out error:", error);
-            return { error };
+        if (this.isCloudEnabled && this.supabase) {
+            try {
+                await this.supabase.auth.signOut();
+            } catch (error) {
+                console.error("Sign out error:", error);
+            }
         }
+        return { error: null };
     }
 
-    // Get Current Authenticated Session
+    // Get Current Authenticated Session (Fast, Persistent across Refreshes)
     async getSessionUser() {
-        if (!this.isCloudEnabled) {
-            const stored = localStorage.getItem("tictactoe_local_auth");
-            if (stored) {
-                try {
-                    this.currentUser = JSON.parse(stored);
-                    return this.currentUser;
-                } catch (e) {
-                    return null;
+        // 1. Check memory instance
+        if (this.currentUser) return this.currentUser;
+
+        // 2. Check Supabase session if cloud is active
+        if (this.isCloudEnabled && this.supabase) {
+            try {
+                const { data: { session }, error } = await this.supabase.auth.getSession();
+                if (session?.user) {
+                    this.currentUser = session.user;
+                    localStorage.setItem("tictactoe_auth_user", JSON.stringify(session.user));
+                    return session.user;
                 }
+            } catch (e) {
+                console.warn("Failed to get session from Supabase:", e);
             }
+        }
+
+        // 3. Fallback to persistent localStorage backup
+        try {
+            const stored = localStorage.getItem("tictactoe_auth_user") || localStorage.getItem("tictactoe_local_auth");
+            if (stored) {
+                this.currentUser = JSON.parse(stored);
+                return this.currentUser;
+            }
+        } catch (e) {
             return null;
         }
 
-        try {
-            const { data: { session }, error } = await this.supabase.auth.getSession();
-            if (error || !session) return null;
-            this.currentUser = session.user;
-            return session.user;
-        } catch (e) {
-            console.warn("Failed to get session:", e);
-            return null;
-        }
+        return null;
     }
 
     // Load User Profile Data (Points, Stats)

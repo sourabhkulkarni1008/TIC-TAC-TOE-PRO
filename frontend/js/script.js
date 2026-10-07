@@ -336,11 +336,12 @@ async function initGame() {
 
     // 1. Immediately attach all event listeners so buttons & cells are 100% responsive
     setupEventListeners();
+    initLegalAndInfoListeners();
 
     // 2. Render initial state immediately
     renderUI();
 
-    // 3. Safely load profile in background without blocking interaction
+    // 3. Safely load session & user profile in background
     try {
         await loadUserProfile();
         renderUI();
@@ -1484,13 +1485,6 @@ function initLegalAndInfoListeners() {
         }
     });
 }
-
-// Update initGame to call initLegalAndInfoListeners
-const originalInitGame = initGame;
-initGame = function() {
-    originalInitGame();
-    initLegalAndInfoListeners();
-};
 
 // ============================================================================
 // START APPLICATION
