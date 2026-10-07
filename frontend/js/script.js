@@ -351,6 +351,48 @@ async function saveState() {
 }
 
 // ============================================================================
+// MOBILE & DESKTOP MULTI-VIEW NAVIGATION CONTROLLER
+// ============================================================================
+function switchView(viewName) {
+    if (!viewName) return;
+
+    // Normalization for aliases
+    if (viewName === 'home' || viewName === 'play') viewName = 'game';
+    if (viewName === 'instructions') viewName = 'rules';
+    if (viewName === 'contact') viewName = 'about';
+
+    // 1. Update active app view container
+    const appViews = document.querySelectorAll('.app-view');
+    const targetView = document.querySelector(`.app-view[data-view="${viewName}"]`);
+
+    if (targetView) {
+        appViews.forEach(v => v.classList.remove('active-view'));
+        targetView.classList.add('active-view');
+    }
+
+    // 2. Update Bottom Nav Active Indicator
+    const bottomNavItems = document.querySelectorAll('.mobile-nav-item');
+    bottomNavItems.forEach(item => {
+        const tab = item.getAttribute('data-tab');
+        item.classList.toggle('active', tab === viewName);
+    });
+
+    // 3. Update Desktop Navbar Links
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        const href = link.getAttribute('href')?.replace('#', '');
+        const isMatch = (href === viewName) ||
+                        (href === 'home' && viewName === 'game') ||
+                        (href === 'instructions' && viewName === 'rules') ||
+                        (href === 'contact' && viewName === 'about');
+        link.classList.toggle('active', isMatch);
+    });
+
+    // 4. Scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================================
 // EVENT LISTENERS SETUP
 // ============================================================================
 function setupEventListeners() {
@@ -381,9 +423,53 @@ function setupEventListeners() {
 
     elements.btnModalGoRewards.addEventListener('click', () => {
         closeModal(elements.resultModal);
+        switchView('rewards');
         const rewardsSec = document.getElementById('rewards');
-        if (rewardsSec) rewardsSec.scrollIntoView({ behavior: 'smooth' });
+        if (rewardsSec && window.innerWidth > 768) {
+            rewardsSec.scrollIntoView({ behavior: 'smooth' });
+        }
     });
+
+    // Hero buttons & CTA view switching
+    if (elements.btnHeroPlay) {
+        elements.btnHeroPlay.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                switchView('game');
+                const gameSec = document.getElementById('game');
+                if (gameSec) gameSec.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    }
+
+    if (elements.btnHeroRewards) {
+        elements.btnHeroRewards.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                switchView('rewards');
+            }
+        });
+    }
+
+    // Header Live Points Pill -> Opens Rewards Tab
+    const headerPointsPill = document.getElementById('headerPointsPill');
+    if (headerPointsPill) {
+        headerPointsPill.style.cursor = 'pointer';
+        headerPointsPill.addEventListener('click', () => {
+            switchView('rewards');
+        });
+    }
+
+    // Nav Logo -> Returns to Game View
+    const navLogo = document.getElementById('navLogo');
+    if (navLogo) {
+        navLogo.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                switchView('game');
+            }
+        });
+    }
 
     // Reward Redeem Buttons
     REDEEM_REWARDS.forEach(reward => {
@@ -402,17 +488,35 @@ function setupEventListeners() {
 
     // Desktop Nav Links
     elements.navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            elements.navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
+        link.addEventListener('click', (e) => {
+            const target = link.getAttribute('href')?.replace('#', '');
+            if (target && window.innerWidth <= 768) {
+                e.preventDefault();
+                switchView(target);
+            } else {
+                elements.navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            }
+        });
+    });
+
+    // Footer internal navigation links
+    document.querySelectorAll('.footer-nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const tab = link.getAttribute('data-tab');
+            if (tab && window.innerWidth <= 768) {
+                e.preventDefault();
+                switchView(tab);
+            }
         });
     });
 
     // Mobile Bottom Nav Links
     elements.mobNavItems.forEach(item => {
-        item.addEventListener('click', () => {
-            elements.mobNavItems.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tab = item.getAttribute('data-tab');
+            switchView(tab);
         });
     });
 }

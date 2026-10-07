@@ -65,605 +65,681 @@
     <main>
 
         <!-- ==========================================================================
-             1. HOME & HERO DASHBOARD SECTION
+             VIEW 1: GAME & ARENA VIEW (Home Dashboard + Interactive Board)
              ========================================================================== -->
-        <section class="hero-section" id="home">
-            <div class="container hero-grid">
-                
-                <div class="hero-content">
-                    <h1>Play Tic-Tac-Toe, Win Matches & <span class="hero-gradient-text">Earn Rewards</span></h1>
-                    <p class="hero-subtitle">
-                        Test your tactics against smart AI opponents. Select your challenge level, accumulate points with every victory, and redeem exclusive Google Play reward credits.
-                    </p>
-
-                    <div class="hero-cta-group">
-                        <a href="#game" class="btn btn-primary" id="btnHeroPlay">
-                            <span>🎮 Play Game Now</span>
-                        </a>
-                        <a href="#rewards" class="btn btn-secondary" id="btnHeroRewards">
-                            <span>🎁 View Rewards</span>
-                        </a>
-                    </div>
-
-                    <!-- Quick Difficulty Switcher in Hero -->
-                    <div class="difficulty-selector-box">
-                        <span class="selector-label">Choose Difficulty to Begin:</span>
-                        <div class="difficulty-options">
-                            <button type="button" class="diff-btn diff-easy active" data-diff="easy" id="diffEasyBtn">
-                                <span class="diff-name">🟢 Easy</span>
-                                <span class="diff-pts">+1.0 Pt / Win</span>
-                            </button>
-                            <button type="button" class="diff-btn diff-medium" data-diff="medium" id="diffMediumBtn">
-                                <span class="diff-name">🟡 Medium</span>
-                                <span class="diff-pts">+1.5 Pts / Win</span>
-                            </button>
-                            <button type="button" class="diff-btn diff-hard" data-diff="hard" id="diffHardBtn">
-                                <span class="diff-name">🔴 Hard</span>
-                                <span class="diff-pts">+2.0 Pts / Win</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Points Showcase Card -->
-                <div class="points-showcase-card">
-                    <div class="points-card-header">
-                        <span class="points-card-label">Your Wallet Balance</span>
-                        <span class="points-pill-icon">⚡</span>
-                    </div>
-
-                    <div class="points-card-val-wrapper">
-                        <span class="points-card-val" id="heroPointsDisplay">0.0</span>
-                        <span class="points-unit">Points</span>
-                    </div>
-
-                    <div>
-                        <span class="cash-equiv-tag" id="heroCashEquiv">
-                            <span>₹0.00</span> Value
-                        </span>
-                    </div>
-
-                    <div class="quick-conversion-note">
-                        💡 <strong>Conversion Rate:</strong> 100 Points = ₹1.00 INR
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- ==========================================================================
-             2. TIC-TAC-TOE GAME ARENA SECTION
-             ========================================================================== -->
-        <section class="game-section" id="game">
-            <div class="container">
-                <!-- Top Google AdSense Banner Slot -->
-                <div class="ad-banner-section" style="padding-top: 0;">
-                    <div class="ad-banner-wrapper" id="adBannerTopContainer"></div>
-                </div>
-
-                <div class="game-arena-card">
+        <div class="app-view active-view" data-view="game" id="viewGame">
+            
+            <!-- 1. HOME & HERO DASHBOARD SECTION -->
+            <section class="hero-section" id="home">
+                <div class="container hero-grid">
                     
-                    <div class="game-header">
-                        <div class="game-title-group">
-                            <h2>Tic-Tac-Toe Arena</h2>
+                    <div class="hero-content">
+                        <h1>Play Tic-Tac-Toe, Win Matches & <span class="hero-gradient-text">Earn Rewards</span></h1>
+                        <p class="hero-subtitle">
+                            Test your tactics against smart AI opponents. Select your challenge level, accumulate points with every victory, and redeem exclusive Google Play reward credits.
+                        </p>
+
+                        <div class="hero-cta-group">
+                            <a href="#game" class="btn btn-primary" id="btnHeroPlay">
+                                <span>🎮 Play Game Now</span>
+                            </a>
+                            <a href="#rewards" class="btn btn-secondary" id="btnHeroRewards">
+                                <span>🎁 View Rewards</span>
+                            </a>
                         </div>
+
+                        <!-- Quick Difficulty Switcher in Hero -->
+                        <div class="difficulty-selector-box">
+                            <span class="selector-label">Choose Difficulty to Begin:</span>
+                            <div class="difficulty-options">
+                                <button type="button" class="diff-btn diff-easy active" data-diff="easy" id="diffEasyBtn">
+                                    <span class="diff-name">🟢 Easy</span>
+                                    <span class="diff-pts">+1.0 Pt / Win</span>
+                                </button>
+                                <button type="button" class="diff-btn diff-medium" data-diff="medium" id="diffMediumBtn">
+                                    <span class="diff-name">🟡 Medium</span>
+                                    <span class="diff-pts">+1.5 Pts / Win</span>
+                                </button>
+                                <button type="button" class="diff-btn diff-hard" data-diff="hard" id="diffHardBtn">
+                                    <span class="diff-name">🔴 Hard</span>
+                                    <span class="diff-pts">+2.0 Pts / Win</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Points Showcase Card -->
+                    <div class="points-showcase-card">
+                        <div class="points-card-header">
+                            <span class="points-card-label">Your Wallet Balance</span>
+                            <span class="points-pill-icon">⚡</span>
+                        </div>
+
+                        <div class="points-card-val-wrapper">
+                            <span class="points-card-val" id="heroPointsDisplay">0.0</span>
+                            <span class="points-unit">Points</span>
+                        </div>
+
                         <div>
-                            <span class="current-diff-badge" id="currentDiffBadge">
-                                Mode: <strong id="currentDiffName" style="margin-left: 4px;">EASY (+1.0 Pt)</strong>
+                            <span class="cash-equiv-tag" id="heroCashEquiv">
+                                <span>₹0.00</span> Value
                             </span>
                         </div>
+
+                        <div class="quick-conversion-note">
+                            💡 <strong>Conversion Rate:</strong> 100 Points = ₹1.00 INR
+                        </div>
                     </div>
 
-                    <!-- Scoreboard & Active Turn Indicator -->
-                    <div class="scoreboard">
-                        <!-- Player X (User) -->
-                        <div class="player-box player-user active-turn" id="playerUserBox">
-                            <div class="player-avatar">✕</div>
+                </div>
+            </section>
+
+            <!-- 2. TIC-TAC-TOE GAME ARENA SECTION -->
+            <section class="game-section" id="game">
+                <div class="container">
+                    <!-- Top Google AdSense Banner Slot -->
+                    <div class="ad-banner-section" style="padding-top: 0;">
+                        <div class="ad-banner-wrapper" id="adBannerTopContainer"></div>
+                    </div>
+
+                    <div class="game-arena-card">
+                        
+                        <div class="game-header">
+                            <div class="game-title-group">
+                                <h2>Tic-Tac-Toe Arena</h2>
+                            </div>
                             <div>
-                                <div class="player-info-title">Player (You)</div>
-                                <div class="player-info-name" id="playerDisplayName">User</div>
+                                <span class="current-diff-badge" id="currentDiffBadge">
+                                    Mode: <strong id="currentDiffName" style="margin-left: 4px;">EASY (+1.0 Pt)</strong>
+                                </span>
                             </div>
                         </div>
 
-                        <!-- Turn Indicator Status -->
-                        <div class="turn-vs-indicator">
-                            <span class="vs-badge">VS</span>
-                            <span class="turn-pill" id="turnIndicator">Your Turn (✕)</span>
-                        </div>
-
-                        <!-- Player O (AI) -->
-                        <div class="player-box player-ai" id="playerAiBox">
-                            <div>
-                                <div class="player-info-title">Opponent</div>
-                                <div class="player-info-name">AI Bot (○)</div>
+                        <!-- Scoreboard & Active Turn Indicator -->
+                        <div class="scoreboard">
+                            <!-- Player X (User) -->
+                            <div class="player-box player-user active-turn" id="playerUserBox">
+                                <div class="player-avatar">✕</div>
+                                <div>
+                                    <div class="player-info-title">Player (You)</div>
+                                    <div class="player-info-name" id="playerDisplayName">User</div>
+                                </div>
                             </div>
-                            <div class="player-avatar">○</div>
+
+                            <!-- Turn Indicator Status -->
+                            <div class="turn-vs-indicator">
+                                <span class="vs-badge">VS</span>
+                                <span class="turn-pill" id="turnIndicator">Your Turn (✕)</span>
+                            </div>
+
+                            <!-- Player O (AI) -->
+                            <div class="player-box player-ai" id="playerAiBox">
+                                <div>
+                                    <div class="player-info-title">Opponent</div>
+                                    <div class="player-info-name">AI Bot (○)</div>
+                                </div>
+                                <div class="player-avatar">○</div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- 3x3 Tic-Tac-Toe Board -->
-                    <div class="board-container">
-                        <div class="board" id="gameBoard" role="grid" aria-label="Tic-Tac-Toe Grid">
-                            <button type="button" class="cell" data-index="0" id="cell-0" aria-label="Cell 1"></button>
-                            <button type="button" class="cell" data-index="1" id="cell-1" aria-label="Cell 2"></button>
-                            <button type="button" class="cell" data-index="2" id="cell-2" aria-label="Cell 3"></button>
-                            <button type="button" class="cell" data-index="3" id="cell-3" aria-label="Cell 4"></button>
-                            <button type="button" class="cell" data-index="4" id="cell-4" aria-label="Cell 5"></button>
-                            <button type="button" class="cell" data-index="5" id="cell-5" aria-label="Cell 6"></button>
-                            <button type="button" class="cell" data-index="6" id="cell-6" aria-label="Cell 7"></button>
-                            <button type="button" class="cell" data-index="7" id="cell-7" aria-label="Cell 8"></button>
-                            <button type="button" class="cell" data-index="8" id="cell-8" aria-label="Cell 9"></button>
+                        <!-- 3x3 Tic-Tac-Toe Board -->
+                        <div class="board-container">
+                            <div class="board" id="gameBoard" role="grid" aria-label="Tic-Tac-Toe Grid">
+                                <button type="button" class="cell" data-index="0" id="cell-0" aria-label="Cell 1"></button>
+                                <button type="button" class="cell" data-index="1" id="cell-1" aria-label="Cell 2"></button>
+                                <button type="button" class="cell" data-index="2" id="cell-2" aria-label="Cell 3"></button>
+                                <button type="button" class="cell" data-index="3" id="cell-3" aria-label="Cell 4"></button>
+                                <button type="button" class="cell" data-index="4" id="cell-4" aria-label="Cell 5"></button>
+                                <button type="button" class="cell" data-index="5" id="cell-5" aria-label="Cell 6"></button>
+                                <button type="button" class="cell" data-index="6" id="cell-6" aria-label="Cell 7"></button>
+                                <button type="button" class="cell" data-index="7" id="cell-7" aria-label="Cell 8"></button>
+                                <button type="button" class="cell" data-index="8" id="cell-8" aria-label="Cell 9"></button>
+                            </div>
                         </div>
+
+                        <!-- Game Control Buttons -->
+                        <div class="game-controls">
+                            <button type="button" class="btn btn-secondary" id="btnRestartGame">
+                                <span>🔄 New Game / Reset Board</span>
+                            </button>
+                        </div>
+
                     </div>
 
-                    <!-- Game Control Buttons -->
-                    <div class="game-controls">
-                        <button type="button" class="btn btn-secondary" id="btnRestartGame">
-                            <span>🔄 New Game / Reset Board</span>
-                        </button>
+                    <!-- Bottom Google AdSense Banner Slot -->
+                    <div class="ad-banner-section" style="padding-bottom: 0;">
+                        <div class="ad-banner-wrapper" id="adBannerBottomContainer"></div>
                     </div>
-
                 </div>
+            </section>
 
-                <!-- Bottom Google AdSense Banner Slot -->
-                <div class="ad-banner-section" style="padding-bottom: 0;">
-                    <div class="ad-banner-wrapper" id="adBannerBottomContainer"></div>
-                </div>
-            </div>
-        </section>
+        </div>
 
         <!-- ==========================================================================
-             3. GAME STATISTICS SECTION
+             VIEW 2: STATS VIEW
              ========================================================================== -->
-        <section class="stats-section" id="stats">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-subtitle-tag">Track Record</span>
-                    <h2 class="section-title">Player Statistics</h2>
+        <div class="app-view" data-view="stats" id="viewStats">
+            <!-- 3. GAME STATISTICS SECTION -->
+            <section class="stats-section" id="stats">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle-tag">Track Record</span>
+                        <h2 class="section-title">Player Statistics</h2>
+                    </div>
+
+                    <div class="stats-grid">
+                        <!-- Total Points -->
+                        <div class="stat-card">
+                            <div class="stat-icon icon-points">🪙</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="statTotalPoints">0.0</span>
+                                <span class="stat-label">Total Points</span>
+                            </div>
+                        </div>
+
+                        <!-- Total Games -->
+                        <div class="stat-card">
+                            <div class="stat-icon icon-games">🎮</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="statTotalGames">0</span>
+                                <span class="stat-label">Total Games</span>
+                            </div>
+                        </div>
+
+                        <!-- User Wins -->
+                        <div class="stat-card">
+                            <div class="stat-icon icon-wins">🏆</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="statUserWins">0</span>
+                                <span class="stat-label">User Wins</span>
+                            </div>
+                        </div>
+
+                        <!-- AI Wins -->
+                        <div class="stat-card">
+                            <div class="stat-icon icon-ai">🤖</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="statAiWins">0</span>
+                                <span class="stat-label">AI Wins</span>
+                            </div>
+                        </div>
+
+                        <!-- Draws -->
+                        <div class="stat-card">
+                            <div class="stat-icon icon-draws">🤝</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="statDraws">0</span>
+                                <span class="stat-label">Draws</span>
+                            </div>
+                        </div>
+
+                        <!-- Easy Wins -->
+                        <div class="stat-card">
+                            <div class="stat-icon icon-easy">🟢</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="statEasyWins">0</span>
+                                <span class="stat-label">Easy Wins (+1.0)</span>
+                            </div>
+                        </div>
+
+                        <!-- Medium Wins -->
+                        <div class="stat-card">
+                            <div class="stat-icon icon-medium">🟡</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="statMediumWins">0</span>
+                                <span class="stat-label">Medium Wins (+1.5)</span>
+                            </div>
+                        </div>
+
+                        <!-- Hard Wins -->
+                        <div class="stat-card">
+                            <div class="stat-icon icon-hard">🔴</div>
+                            <div class="stat-content">
+                                <span class="stat-value" id="statHardWins">0</span>
+                                <span class="stat-label">Hard Wins (+2.0)</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="stats-grid">
-                    <!-- Total Points -->
-                    <div class="stat-card">
-                        <div class="stat-icon icon-points">🪙</div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statTotalPoints">0.0</span>
-                            <span class="stat-label">Total Points</span>
-                        </div>
-                    </div>
-
-                    <!-- Total Games -->
-                    <div class="stat-card">
-                        <div class="stat-icon icon-games">🎮</div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statTotalGames">0</span>
-                            <span class="stat-label">Total Games</span>
-                        </div>
-                    </div>
-
-                    <!-- User Wins -->
-                    <div class="stat-card">
-                        <div class="stat-icon icon-wins">🏆</div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statUserWins">0</span>
-                            <span class="stat-label">User Wins</span>
-                        </div>
-                    </div>
-
-                    <!-- AI Wins -->
-                    <div class="stat-card">
-                        <div class="stat-icon icon-ai">🤖</div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statAiWins">0</span>
-                            <span class="stat-label">AI Wins</span>
-                        </div>
-                    </div>
-
-                    <!-- Draws -->
-                    <div class="stat-card">
-                        <div class="stat-icon icon-draws">🤝</div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statDraws">0</span>
-                            <span class="stat-label">Draws</span>
-                        </div>
-                    </div>
-
-                    <!-- Easy Wins -->
-                    <div class="stat-card">
-                        <div class="stat-icon icon-easy">🟢</div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statEasyWins">0</span>
-                            <span class="stat-label">Easy Wins (+1.0)</span>
-                        </div>
-                    </div>
-
-                    <!-- Medium Wins -->
-                    <div class="stat-card">
-                        <div class="stat-icon icon-medium">🟡</div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statMediumWins">0</span>
-                            <span class="stat-label">Medium Wins (+1.5)</span>
-                        </div>
-                    </div>
-
-                    <!-- Hard Wins -->
-                    <div class="stat-card">
-                        <div class="stat-icon icon-hard">🔴</div>
-                        <div class="stat-content">
-                            <span class="stat-value" id="statHardWins">0</span>
-                            <span class="stat-label">Hard Wins (+2.0)</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
         <!-- ==========================================================================
-             4. REWARDS & GOOGLE PLAY REDEEM SECTION
+             VIEW 3: REWARDS VIEW
              ========================================================================== -->
-        <section class="rewards-section" id="rewards">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-subtitle-tag">Rewards Hub</span>
-                    <h2 class="section-title">Google Play Gift Cards</h2>
-                </div>
-
-                <!-- Conversion Information Banner -->
-                <div class="conversion-banner">
-                    <div class="conversion-text">
-                        <h3>🪙 Point Conversion Rate: 100 Points = ₹1 INR</h3>
-                        <p>Accumulate points by winning games. Once you reach the required threshold, you can request a redemption.</p>
-                    </div>
-                    <div class="conversion-pills">
-                        <div class="conv-pill">100 Pts = ₹1</div>
-                        <div class="conv-pill">1,000 Pts = ₹10</div>
-                        <div class="conv-pill">2,000 Pts = ₹20</div>
-                        <div class="conv-pill">5,000 Pts = ₹50</div>
-                        <div class="conv-pill">10,000 Pts = ₹100</div>
-                    </div>
-                </div>
-
-                <!-- Google Play Reward Cards -->
-                <div class="rewards-grid">
-                    
-                    <!-- ₹10 Card -->
-                    <div class="reward-card" data-amount="10" data-points="1000">
-                        <div class="reward-gp-logo">
-                            <!-- Google Play Icon SVG -->
-                            <svg class="gp-triangle" viewBox="0 0 48 48">
-                                <path fill="#4CAF50" d="M6.9 3.2L24.3 20.6 6.9 38z"/>
-                                <path fill="#FFC107" d="M30.4 26.7l-6.1-6.1L6.9 3.2C7.7 2.4 9 2 10.4 2.8l24.4 13.9-4.4 10z"/>
-                                <path fill="#FF3D00" d="M30.4 21.3L10.4 33.2c-1.4.8-2.7.4-3.5-.4l17.4-17.4 6.1 5.9z"/>
-                                <path fill="#00B0FF" d="M41.1 22.3l-6.3-3.6-4.4 2.6 4.4 5.4 6.3-3.6c1.2-.7 1.2-1.9 0-2.8z"/>
-                            </svg>
-                            <span class="gp-brand-title">Google Play</span>
-                        </div>
-                        <div class="reward-denomination">₹10</div>
-                        <div class="reward-points-req">Required Points: <strong>1,000</strong></div>
-                        <div class="reward-progress-bar-container">
-                            <div class="reward-progress-bar-fill" id="progBar10" style="width: 0%;"></div>
-                        </div>
-                        <span class="reward-status-tag status-locked" id="statusTag10">Points Needed</span>
-                        <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem10" disabled>
-                            <span>REDEEM ₹10</span>
-                        </button>
+        <div class="app-view" data-view="rewards" id="viewRewards">
+            <!-- 4. REWARDS & GOOGLE PLAY REDEEM SECTION -->
+            <section class="rewards-section" id="rewards">
+                <div class="container">
+                    <div class="section-header">
+                        <span class="section-subtitle-tag">Rewards Hub</span>
+                        <h2 class="section-title">Google Play Gift Cards</h2>
                     </div>
 
-                    <!-- ₹20 Card -->
-                    <div class="reward-card" data-amount="20" data-points="2000">
-                        <div class="reward-gp-logo">
-                            <svg class="gp-triangle" viewBox="0 0 48 48">
-                                <path fill="#4CAF50" d="M6.9 3.2L24.3 20.6 6.9 38z"/>
-                                <path fill="#FFC107" d="M30.4 26.7l-6.1-6.1L6.9 3.2C7.7 2.4 9 2 10.4 2.8l24.4 13.9-4.4 10z"/>
-                                <path fill="#FF3D00" d="M30.4 21.3L10.4 33.2c-1.4.8-2.7.4-3.5-.4l17.4-17.4 6.1 5.9z"/>
-                                <path fill="#00B0FF" d="M41.1 22.3l-6.3-3.6-4.4 2.6 4.4 5.4 6.3-3.6c1.2-.7 1.2-1.9 0-2.8z"/>
-                            </svg>
-                            <span class="gp-brand-title">Google Play</span>
+                    <!-- Conversion Information Banner -->
+                    <div class="conversion-banner">
+                        <div class="conversion-text">
+                            <h3>🪙 Point Conversion Rate: 100 Points = ₹1 INR</h3>
+                            <p>Accumulate points by winning games. Once you reach the required threshold, you can request a redemption.</p>
                         </div>
-                        <div class="reward-denomination">₹20</div>
-                        <div class="reward-points-req">Required Points: <strong>2,000</strong></div>
-                        <div class="reward-progress-bar-container">
-                            <div class="reward-progress-bar-fill" id="progBar20" style="width: 0%;"></div>
-                        </div>
-                        <span class="reward-status-tag status-locked" id="statusTag20">Points Needed</span>
-                        <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem20" disabled>
-                            <span>REDEEM ₹20</span>
-                        </button>
-                    </div>
-
-                    <!-- ₹50 Card -->
-                    <div class="reward-card" data-amount="50" data-points="5000">
-                        <div class="reward-gp-logo">
-                            <svg class="gp-triangle" viewBox="0 0 48 48">
-                                <path fill="#4CAF50" d="M6.9 3.2L24.3 20.6 6.9 38z"/>
-                                <path fill="#FFC107" d="M30.4 26.7l-6.1-6.1L6.9 3.2C7.7 2.4 9 2 10.4 2.8l24.4 13.9-4.4 10z"/>
-                                <path fill="#FF3D00" d="M30.4 21.3L10.4 33.2c-1.4.8-2.7.4-3.5-.4l17.4-17.4 6.1 5.9z"/>
-                                <path fill="#00B0FF" d="M41.1 22.3l-6.3-3.6-4.4 2.6 4.4 5.4 6.3-3.6c1.2-.7 1.2-1.9 0-2.8z"/>
-                            </svg>
-                            <span class="gp-brand-title">Google Play</span>
-                        </div>
-                        <div class="reward-denomination">₹50</div>
-                        <div class="reward-points-req">Required Points: <strong>5,000</strong></div>
-                        <div class="reward-progress-bar-container">
-                            <div class="reward-progress-bar-fill" id="progBar50" style="width: 0%;"></div>
-                        </div>
-                        <span class="reward-status-tag status-locked" id="statusTag50">Points Needed</span>
-                        <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem50" disabled>
-                            <span>REDEEM ₹50</span>
-                        </button>
-                    </div>
-
-                    <!-- ₹100 Card -->
-                    <div class="reward-card" data-amount="100" data-points="10000">
-                        <div class="reward-gp-logo">
-                            <svg class="gp-triangle" viewBox="0 0 48 48">
-                                <path fill="#4CAF50" d="M6.9 3.2L24.3 20.6 6.9 38z"/>
-                                <path fill="#FFC107" d="M30.4 26.7l-6.1-6.1L6.9 3.2C7.7 2.4 9 2 10.4 2.8l24.4 13.9-4.4 10z"/>
-                                <path fill="#FF3D00" d="M30.4 21.3L10.4 33.2c-1.4.8-2.7.4-3.5-.4l17.4-17.4 6.1 5.9z"/>
-                                <path fill="#00B0FF" d="M41.1 22.3l-6.3-3.6-4.4 2.6 4.4 5.4 6.3-3.6c1.2-.7 1.2-1.9 0-2.8z"/>
-                            </svg>
-                            <span class="gp-brand-title">Google Play</span>
-                        </div>
-                        <div class="reward-denomination">₹100</div>
-                        <div class="reward-points-req">Required Points: <strong>10,000</strong></div>
-                        <div class="reward-progress-bar-container">
-                            <div class="reward-progress-bar-fill" id="progBar100" style="width: 0%;"></div>
-                        </div>
-                        <span class="reward-status-tag status-locked" id="statusTag100">Points Needed</span>
-                        <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem100" disabled>
-                            <span>REDEEM ₹100</span>
-                        </button>
-                    </div>
-
-                </div>
-
-                <!-- Redemption Activity List -->
-                <div class="redemption-history-box">
-                    <div class="history-header">
-                        <h4>📋 Your Redemption Requests</h4>
-                    </div>
-                    <ul class="history-list" id="redemptionHistoryList">
-                        <li class="history-empty">No redemptions submitted yet. Earn points and redeem your first reward!</li>
-                    </ul>
-                </div>
-
-        <!-- ==========================================================================
-             5. GAME INSTRUCTIONS & HOW TO PLAY
-             ========================================================================== -->
-        <section class="instructions-section" id="instructions">
-            <div class="container">
-                <div class="section-heading text-center">
-                    <span class="section-tag">GUIDE & RULES</span>
-                    <h2>How to Play & Earn Rewards</h2>
-                    <p class="section-subtitle">
-                        Learn the rules of Tic-Tac-Toe Pro, understand our fair scoring system, and start collecting reward points today.
-                    </p>
-                </div>
-
-                <div class="instruction-cards-grid">
-                    <!-- Step 1 -->
-                    <div class="instruction-card">
-                        <div class="instruction-step-badge">1</div>
-                        <h3>Choose AI Difficulty</h3>
-                        <p>
-                            Select from Easy, Medium, or Hard before making your move. Higher difficulty challenges yield bigger rewards per victory!
-                        </p>
-                        <div class="instruction-highlight-box">
-                            🟢 Easy: <strong>+1.0 Pt</strong> | 🟡 Med: <strong>+1.5 Pts</strong> | 🔴 Hard: <strong>+2.0 Pts</strong>
+                        <div class="conversion-pills">
+                            <div class="conv-pill">100 Pts = ₹1</div>
+                            <div class="conv-pill">1,000 Pts = ₹10</div>
+                            <div class="conv-pill">2,000 Pts = ₹20</div>
+                            <div class="conv-pill">5,000 Pts = ₹50</div>
+                            <div class="conv-pill">10,000 Pts = ₹100</div>
                         </div>
                     </div>
 
-                    <!-- Step 2 -->
-                    <div class="instruction-card">
-                        <div class="instruction-step-badge">2</div>
-                        <h3>Make Your ✕ Moves</h3>
-                        <p>
-                            You play as mark <strong>✕</strong> on the classic 3×3 grid. Take turns against the AI to align three of your marks in a row horizontally, vertically, or diagonally.
-                        </p>
-                        <div class="instruction-highlight-box">
-                            💡 <strong>Tip:</strong> Control the center tile to maximize your winning angles!
+                    <!-- Google Play Reward Cards -->
+                    <div class="rewards-grid">
+                        
+                        <!-- ₹10 Card -->
+                        <div class="reward-card" data-amount="10" data-points="1000">
+                            <div class="reward-gp-logo">
+                                <svg class="gp-triangle" viewBox="0 0 48 48">
+                                    <path fill="#4CAF50" d="M6.9 3.2L24.3 20.6 6.9 38z"/>
+                                    <path fill="#FFC107" d="M30.4 26.7l-6.1-6.1L6.9 3.2C7.7 2.4 9 2 10.4 2.8l24.4 13.9-4.4 10z"/>
+                                    <path fill="#FF3D00" d="M30.4 21.3L10.4 33.2c-1.4.8-2.7.4-3.5-.4l17.4-17.4 6.1 5.9z"/>
+                                    <path fill="#00B0FF" d="M41.1 22.3l-6.3-3.6-4.4 2.6 4.4 5.4 6.3-3.6c1.2-.7 1.2-1.9 0-2.8z"/>
+                                </svg>
+                                <span class="gp-brand-title">Google Play</span>
+                            </div>
+                            <div class="reward-denomination">₹10</div>
+                            <div class="reward-points-req">Required Points: <strong>1,000</strong></div>
+                            <div class="reward-progress-bar-container">
+                                <div class="reward-progress-bar-fill" id="progBar10" style="width: 0%;"></div>
+                            </div>
+                            <span class="reward-status-tag status-locked" id="statusTag10">Points Needed</span>
+                            <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem10" disabled>
+                                <span>REDEEM ₹10</span>
+                            </button>
                         </div>
+
+                        <!-- ₹20 Card -->
+                        <div class="reward-card" data-amount="20" data-points="2000">
+                            <div class="reward-gp-logo">
+                                <svg class="gp-triangle" viewBox="0 0 48 48">
+                                    <path fill="#4CAF50" d="M6.9 3.2L24.3 20.6 6.9 38z"/>
+                                    <path fill="#FFC107" d="M30.4 26.7l-6.1-6.1L6.9 3.2C7.7 2.4 9 2 10.4 2.8l24.4 13.9-4.4 10z"/>
+                                    <path fill="#FF3D00" d="M30.4 21.3L10.4 33.2c-1.4.8-2.7.4-3.5-.4l17.4-17.4 6.1 5.9z"/>
+                                    <path fill="#00B0FF" d="M41.1 22.3l-6.3-3.6-4.4 2.6 4.4 5.4 6.3-3.6c1.2-.7 1.2-1.9 0-2.8z"/>
+                                </svg>
+                                <span class="gp-brand-title">Google Play</span>
+                            </div>
+                            <div class="reward-denomination">₹20</div>
+                            <div class="reward-points-req">Required Points: <strong>2,000</strong></div>
+                            <div class="reward-progress-bar-container">
+                                <div class="reward-progress-bar-fill" id="progBar20" style="width: 0%;"></div>
+                            </div>
+                            <span class="reward-status-tag status-locked" id="statusTag20">Points Needed</span>
+                            <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem20" disabled>
+                                <span>REDEEM ₹20</span>
+                            </button>
+                        </div>
+
+                        <!-- ₹50 Card -->
+                        <div class="reward-card" data-amount="50" data-points="5000">
+                            <div class="reward-gp-logo">
+                                <svg class="gp-triangle" viewBox="0 0 48 48">
+                                    <path fill="#4CAF50" d="M6.9 3.2L24.3 20.6 6.9 38z"/>
+                                    <path fill="#FFC107" d="M30.4 26.7l-6.1-6.1L6.9 3.2C7.7 2.4 9 2 10.4 2.8l24.4 13.9-4.4 10z"/>
+                                    <path fill="#FF3D00" d="M30.4 21.3L10.4 33.2c-1.4.8-2.7.4-3.5-.4l17.4-17.4 6.1 5.9z"/>
+                                    <path fill="#00B0FF" d="M41.1 22.3l-6.3-3.6-4.4 2.6 4.4 5.4 6.3-3.6c1.2-.7 1.2-1.9 0-2.8z"/>
+                                </svg>
+                                <span class="gp-brand-title">Google Play</span>
+                            </div>
+                            <div class="reward-denomination">₹50</div>
+                            <div class="reward-points-req">Required Points: <strong>5,000</strong></div>
+                            <div class="reward-progress-bar-container">
+                                <div class="reward-progress-bar-fill" id="progBar50" style="width: 0%;"></div>
+                            </div>
+                            <span class="reward-status-tag status-locked" id="statusTag50">Points Needed</span>
+                            <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem50" disabled>
+                                <span>REDEEM ₹50</span>
+                            </button>
+                        </div>
+
+                        <!-- ₹100 Card -->
+                        <div class="reward-card" data-amount="100" data-points="10000">
+                            <div class="reward-gp-logo">
+                                <svg class="gp-triangle" viewBox="0 0 48 48">
+                                    <path fill="#4CAF50" d="M6.9 3.2L24.3 20.6 6.9 38z"/>
+                                    <path fill="#FFC107" d="M30.4 26.7l-6.1-6.1L6.9 3.2C7.7 2.4 9 2 10.4 2.8l24.4 13.9-4.4 10z"/>
+                                    <path fill="#FF3D00" d="M30.4 21.3L10.4 33.2c-1.4.8-2.7.4-3.5-.4l17.4-17.4 6.1 5.9z"/>
+                                    <path fill="#00B0FF" d="M41.1 22.3l-6.3-3.6-4.4 2.6 4.4 5.4 6.3-3.6c1.2-.7 1.2-1.9 0-2.8z"/>
+                                </svg>
+                                <span class="gp-brand-title">Google Play</span>
+                            </div>
+                            <div class="reward-denomination">₹100</div>
+                            <div class="reward-points-req">Required Points: <strong>10,000</strong></div>
+                            <div class="reward-progress-bar-container">
+                                <div class="reward-progress-bar-fill" id="progBar100" style="width: 0%;"></div>
+                            </div>
+                            <span class="reward-status-tag status-locked" id="statusTag100">Points Needed</span>
+                            <button type="button" class="btn btn-primary btn-redeem" id="btnRedeem100" disabled>
+                                <span>REDEEM ₹100</span>
+                            </button>
+                        </div>
+
                     </div>
 
-                    <!-- Step 3 -->
-                    <div class="instruction-card">
-                        <div class="instruction-step-badge">3</div>
-                        <h3>Win Matches & Earn Points</h3>
-                        <p>
-                            Each time you defeat the AI, points are credited instantly to your real-time wallet balance and synced securely with your Supabase cloud profile.
-                        </p>
-                        <div class="instruction-highlight-box">
-                            ⚡ Real-time cloud sync with Google OAuth & Email OTP.
+                    <!-- Redemption Activity List -->
+                    <div class="redemption-history-box">
+                        <div class="history-header">
+                            <h4>📋 Your Redemption Requests</h4>
                         </div>
-                    </div>
-
-                    <!-- Step 4 -->
-                    <div class="instruction-card">
-                        <div class="instruction-step-badge">4</div>
-                        <h3>Redeem Google Play Cards</h3>
-                        <p>
-                            Accumulate points and exchange them for genuine Google Play gift cards at an exact conversion rate of <strong>100 Points = ₹1.00 INR</strong>.
-                        </p>
-                        <div class="instruction-highlight-box">
-                            🎁 Cards available: <strong>₹10, ₹20, ₹50, ₹100</strong>.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ==========================================================================
-             6. ABOUT US SECTION
-             ========================================================================== -->
-        <section class="about-section" id="about">
-            <div class="container">
-                <div class="section-heading text-center">
-                    <span class="section-tag">WHO WE ARE</span>
-                    <h2>About Tic-Tac-Toe Pro</h2>
-                    <p class="section-subtitle">
-                        An authentic, transparent, and rewarding skill-based gaming platform built with pure passion.
-                    </p>
-                </div>
-
-                <div class="about-grid">
-                    <div class="about-text">
-                        <h3>Original Gaming. Genuine Rewards. Zero Nonsense.</h3>
-                        <p>
-                            Tic-Tac-Toe Pro was designed from the ground up to bring the timeless strategy game into the modern era. We combine sleek cyberpunk visual design, responsive AI algorithms, and a fair point reward system.
-                        </p>
-                        <p>
-                            Unlike predatory platforms that rely on misleading fake download buttons, intrusive popups, or exaggerated claims, Tic-Tac-Toe Pro adheres strictly to transparent standards: 100% free-to-play, verified game mechanics, and genuine reward redemption processing.
-                        </p>
-
-                        <ul class="about-values-list">
-                            <li>
-                                <span class="val-icon">🛡️</span>
-                                <div><strong>100% Original Game Code:</strong> Custom-engineered AI logic, Web Audio synthesizer, and state management.</div>
-                            </li>
-                            <li>
-                                <span class="val-icon">⚡</span>
-                                <div><strong>Fair & Transparent Economics:</strong> Exact 100 Points = ₹1.00 conversion rate with clear ledger logs.</div>
-                            </li>
-                            <li>
-                                <span class="val-icon">🔒</span>
-                                <div><strong>Security & Privacy First:</strong> Zero spam, no selling personal data, and robust Row Level Security (RLS).</div>
-                            </li>
+                        <ul class="history-list" id="redemptionHistoryList">
+                            <li class="history-empty">No redemptions submitted yet. Earn points and redeem your first reward!</li>
                         </ul>
                     </div>
 
-                    <div class="about-highlights-card">
-                        <h4 style="margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--cyan);">🎮 Platform Highlights</h4>
-                        
-                        <div class="about-stat-row">
-                            <span class="about-stat-label">AI Engine</span>
-                            <span class="about-stat-val">Minimax & Heuristics</span>
-                        </div>
-                        <div class="about-stat-row">
-                            <span class="about-stat-label">Audio System</span>
-                            <span class="about-stat-val">Synthesized Web Audio</span>
-                        </div>
-                        <div class="about-stat-row">
-                            <span class="about-stat-label">Cloud Backend</span>
-                            <span class="about-stat-val">Supabase PostgreSQL</span>
-                        </div>
-                        <div class="about-stat-row">
-                            <span class="about-stat-label">Authentication</span>
-                            <span class="about-stat-val">Google OAuth + 6-Digit OTP</span>
-                        </div>
-                        <div class="about-stat-row">
-                            <span class="about-stat-label">Data Privacy</span>
-                            <span class="about-stat-val">Strict RLS & GDPR Aligned</span>
-                        </div>
-                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
 
         <!-- ==========================================================================
-             7. CONTACT US & FAQ SECTION
+             VIEW 4: RULES VIEW
              ========================================================================== -->
-        <section class="contact-section" id="contact">
-            <div class="container">
-                <div class="section-heading text-center">
-                    <span class="section-tag">SUPPORT & INQUIRIES</span>
-                    <h2>Contact Us & FAQ</h2>
-                    <p class="section-subtitle">
-                        Have a question, feedback, or need assistance with your reward redemption? We are here to help!
-                    </p>
-                </div>
-
-                <div class="contact-grid">
-                    <!-- Contact Form -->
-                    <div class="contact-form-card">
-                        <h3>Send Us a Message</h3>
-                        <p>Fill out the form below and our team will get back to you within 24 hours.</p>
-
-                        <form id="contactForm" onsubmit="event.preventDefault(); window.handleContactSubmit();">
-                            <div class="form-group">
-                                <label for="contactName">Your Name</label>
-                                <input type="text" id="contactName" class="form-input" placeholder="e.g. Rahul Sharma" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="contactEmail">Email Address</label>
-                                <input type="email" id="contactEmail" class="form-input" placeholder="e.g. rahul@example.com" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="contactSubject">Subject</label>
-                                <input type="text" id="contactSubject" class="form-input" placeholder="e.g. Reward Inquiry / Bug Report" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="contactMessage">Message</label>
-                                <textarea id="contactMessage" class="form-textarea" placeholder="Describe your question or feedback..." required></textarea>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" id="btnSubmitContact">
-                                <span>✉️ Send Message</span>
-                            </button>
-                            <div id="contactFormAlert" style="display:none; margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.9rem; text-align: center;"></div>
-                        </form>
+        <div class="app-view" data-view="rules" id="viewRules">
+            <!-- 5. GAME INSTRUCTIONS & HOW TO PLAY -->
+            <section class="instructions-section" id="instructions">
+                <div class="container">
+                    <div class="section-heading text-center">
+                        <span class="section-tag">GUIDE & RULES</span>
+                        <h2>How to Play & Earn Rewards</h2>
+                        <p class="section-subtitle">
+                            Learn the rules of Tic-Tac-Toe Pro, understand our fair scoring system, and start collecting reward points today.
+                        </p>
                     </div>
 
-                    <!-- FAQ Accordion -->
-                    <div class="faq-card">
-                        <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Frequently Asked Questions</h3>
-                        <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.75rem;">Quick answers to common questions.</p>
-
-                        <div class="faq-item">
-                            <button type="button" class="faq-question">
-                                <span>How do I earn points?</span>
-                                <span class="faq-icon">+</span>
-                            </button>
-                            <div class="faq-answer">
-                                You earn points every time you win a match against the AI. Easy mode grants +1.0 Point, Medium mode gives +1.5 Points, and Hard mode gives +2.0 Points. You can also spin the Daily Bonus wheel every 24 hours for free extra points!
+                    <div class="instruction-cards-grid">
+                        <!-- Step 1 -->
+                        <div class="instruction-card">
+                            <div class="instruction-step-badge">1</div>
+                            <h3>Choose AI Difficulty</h3>
+                            <p>
+                                Select from Easy, Medium, or Hard before making your move. Higher difficulty challenges yield bigger rewards per victory!
+                            </p>
+                            <div class="instruction-highlight-box">
+                                🟢 Easy: <strong>+1.0 Pt</strong> | 🟡 Med: <strong>+1.5 Pts</strong> | 🔴 Hard: <strong>+2.0 Pts</strong>
                             </div>
                         </div>
 
-                        <div class="faq-item">
-                            <button type="button" class="faq-question">
-                                <span>How are Google Play rewards redeemed?</span>
-                                <span class="faq-icon">+</span>
-                            </button>
-                            <div class="faq-answer">
-                                Once you have accumulated enough points (1,000 Pts for ₹10, up to 10,000 Pts for ₹100), click the "Redeem" button on the desired card. Your request is submitted to our backend system where it is validated and dispatched securely to your registered email address.
+                        <!-- Step 2 -->
+                        <div class="instruction-card">
+                            <div class="instruction-step-badge">2</div>
+                            <h3>Make Your ✕ Moves</h3>
+                            <p>
+                                You play as mark <strong>✕</strong> on the classic 3×3 grid. Take turns against the AI to align three of your marks in a row horizontally, vertically, or diagonally.
+                            </p>
+                            <div class="instruction-highlight-box">
+                                💡 <strong>Tip:</strong> Control the center tile to maximize your winning angles!
                             </div>
                         </div>
 
-                        <div class="faq-item">
-                            <button type="button" class="faq-question">
-                                <span>Is Tic-Tac-Toe Pro free to play?</span>
-                                <span class="faq-icon">+</span>
-                            </button>
-                            <div class="faq-answer">
-                                Yes! Tic-Tac-Toe Pro is 100% free to play. There are no hidden fees, deposits, or paywalls required to play or earn points.
+                        <!-- Step 3 -->
+                        <div class="instruction-card">
+                            <div class="instruction-step-badge">3</div>
+                            <h3>Win Matches & Earn Points</h3>
+                            <p>
+                                Each time you defeat the AI, points are credited instantly to your real-time wallet balance and synced securely with your Supabase cloud profile.
+                            </p>
+                            <div class="instruction-highlight-box">
+                                ⚡ Instant automatic cloud sync to your unique player ID.
                             </div>
                         </div>
 
-                        <div class="faq-item">
-                            <button type="button" class="faq-question">
-                                <span>Do I need to create an account?</span>
-                                <span class="faq-icon">+</span>
-                            </button>
-                            <div class="faq-answer">
-                                You can play immediately in guest/offline mode! However, signing in with Google OAuth or Email OTP links your wallet to the cloud so your points and rewards are never lost across devices.
-                            </div>
-                        </div>
-
-                        <div class="faq-item">
-                            <button type="button" class="faq-question">
-                                <span>Are there any bots or cheat tools allowed?</span>
-                                <span class="faq-icon">+</span>
-                            </button>
-                            <div class="faq-answer">
-                                No. We strictly enforce fair play. Automated scripts, macro clickers, or bot exploits will result in permanent disqualification of points and accounts.
+                        <!-- Step 4 -->
+                        <div class="instruction-card">
+                            <div class="instruction-step-badge">4</div>
+                            <h3>Redeem Google Play Cards</h3>
+                            <p>
+                                Accumulate points and exchange them for genuine Google Play gift cards at an exact conversion rate of <strong>100 Points = ₹1.00 INR</strong>.
+                            </p>
+                            <div class="instruction-highlight-box">
+                                🎁 Cards available: <strong>₹10, ₹20, ₹50, ₹100</strong>.
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
+
+        <!-- ==========================================================================
+             VIEW 5: ABOUT, FAQ & CONTACT VIEW
+             ========================================================================== -->
+        <div class="app-view" data-view="about" id="viewAbout">
+            
+            <!-- 6. ABOUT US SECTION -->
+            <section class="about-section" id="about">
+                <div class="container">
+                    <div class="section-heading text-center">
+                        <span class="section-tag">WHO WE ARE</span>
+                        <h2>About Tic-Tac-Toe Pro</h2>
+                        <p class="section-subtitle">
+                            An authentic, transparent, and rewarding skill-based gaming platform built with pure passion.
+                        </p>
+                    </div>
+
+                    <div class="about-grid">
+                        <div class="about-text">
+                            <h3>Original Gaming. Genuine Rewards. Zero Nonsense.</h3>
+                            <p>
+                                Tic-Tac-Toe Pro was designed from the ground up to bring the timeless strategy game into the modern era. We combine sleek cyberpunk visual design, responsive AI algorithms, and a fair point reward system.
+                            </p>
+                            <p>
+                                Unlike predatory platforms that rely on misleading fake download buttons, intrusive popups, or exaggerated claims, Tic-Tac-Toe Pro adheres strictly to transparent standards: 100% free-to-play, verified game mechanics, and genuine reward redemption processing.
+                            </p>
+
+                            <ul class="about-values-list">
+                                <li>
+                                    <span class="val-icon">🛡️</span>
+                                    <div><strong>100% Original Game Code:</strong> Custom-engineered AI logic, Web Audio synthesizer, and state management.</div>
+                                </li>
+                                <li>
+                                    <span class="val-icon">⚡</span>
+                                    <div><strong>Fair & Transparent Economics:</strong> Exact 100 Points = ₹1.00 conversion rate with clear ledger logs.</div>
+                                </li>
+                                <li>
+                                    <span class="val-icon">🔒</span>
+                                    <div><strong>Security & Privacy First:</strong> Zero spam, no selling personal data, and robust Row Level Security (RLS).</div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="about-highlights-card">
+                            <h4 style="margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--cyan);">🎮 Platform Highlights</h4>
+                            
+                            <div class="about-stat-row">
+                                <span class="about-stat-label">AI Engine</span>
+                                <span class="about-stat-val">Minimax & Heuristics</span>
+                            </div>
+                            <div class="about-stat-row">
+                                <span class="about-stat-label">Audio System</span>
+                                <span class="about-stat-val">Synthesized Web Audio</span>
+                            </div>
+                            <div class="about-stat-row">
+                                <span class="about-stat-label">Cloud Backend</span>
+                                <span class="about-stat-val">Supabase PostgreSQL</span>
+                            </div>
+                            <div class="about-stat-row">
+                                <span class="about-stat-label">Player ID Sync</span>
+                                <span class="about-stat-val">Silent Realtime Cloud Ledger</span>
+                            </div>
+                            <div class="about-stat-row">
+                                <span class="about-stat-label">Data Privacy</span>
+                                <span class="about-stat-val">Strict RLS & GDPR Aligned</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 7. CONTACT US & FAQ SECTION -->
+            <section class="contact-section" id="contact">
+                <div class="container">
+                    <div class="section-heading text-center">
+                        <span class="section-tag">SUPPORT & INQUIRIES</span>
+                        <h2>Contact Us & FAQ</h2>
+                        <p class="section-subtitle">
+                            Have a question, feedback, or need assistance with your reward redemption? We are here to help!
+                        </p>
+                    </div>
+
+                    <div class="contact-grid">
+                        <!-- Contact Form -->
+                        <div class="contact-form-card">
+                            <h3>Send Us a Message</h3>
+                            <p>Fill out the form below and our team will get back to you within 24 hours.</p>
+
+                            <form id="contactForm" onsubmit="event.preventDefault(); window.handleContactSubmit();">
+                                <div class="form-group">
+                                    <label for="contactName">Your Name</label>
+                                    <input type="text" id="contactName" class="form-input" placeholder="e.g. Rahul Sharma" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="contactEmail">Email Address</label>
+                                    <input type="email" id="contactEmail" class="form-input" placeholder="e.g. rahul@example.com" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="contactSubject">Subject</label>
+                                    <input type="text" id="contactSubject" class="form-input" placeholder="e.g. Reward Inquiry / Bug Report" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="contactMessage">Message</label>
+                                    <textarea id="contactMessage" class="form-textarea" placeholder="Describe your question or feedback..." required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;" id="btnSubmitContact">
+                                    <span>✉️ Send Message</span>
+                                </button>
+                                <div id="contactFormAlert" style="display:none; margin-top: 1rem; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.9rem; text-align: center;"></div>
+                            </form>
+                        </div>
+
+                        <!-- FAQ Accordion -->
+                        <div class="faq-card">
+                            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Frequently Asked Questions</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 0.75rem;">Quick answers to common questions.</p>
+
+                            <div class="faq-item">
+                                <button type="button" class="faq-question">
+                                    <span>How do I earn points?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    You earn points every time you win a match against the AI. Easy mode grants +1.0 Point, Medium mode gives +1.5 Points, and Hard mode gives +2.0 Points!
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button type="button" class="faq-question">
+                                    <span>How are Google Play rewards redeemed?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    Once you have accumulated enough points (1,000 Pts for ₹10, up to 10,000 Pts for ₹100), click the "Redeem" button on the desired card. Your request is submitted to our backend system where it is validated and dispatched securely.
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button type="button" class="faq-question">
+                                    <span>Is Tic-Tac-Toe Pro free to play?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    Yes! Tic-Tac-Toe Pro is 100% free to play. There are no hidden fees, deposits, or paywalls required to play or earn points.
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button type="button" class="faq-question">
+                                    <span>Do I need to sign in or create an account?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    No sign-in or login password is required! You are automatically assigned a persistent Anonymous Player ID (e.g. PLY-XXXXXX) that synchronizes your score and wallet to the cloud.
+                                </div>
+                            </div>
+
+                            <div class="faq-item">
+                                <button type="button" class="faq-question">
+                                    <span>Are there any bots or cheat tools allowed?</span>
+                                    <span class="faq-icon">+</span>
+                                </button>
+                                <div class="faq-answer">
+                                    No. We strictly enforce fair play. Automated scripts, macro clickers, or bot exploits will result in permanent disqualification of points.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Compliant Footer inside About View on mobile -->
+            <footer class="footer">
+                <div class="container">
+                    <div class="footer-grid">
+                        <!-- Brand Column -->
+                        <div class="footer-brand">
+                            <div class="logo">
+                                <div class="logo-icon">✕○</div>
+                                <span class="logo-text">TIC TAC TOE <span class="logo-tag">PRO</span></span>
+                            </div>
+                            <p>
+                                Original, skill-based Tic-Tac-Toe gaming platform. Play against AI, hone your strategic thinking, earn reward points, and redeem genuine Google Play credits.
+                            </p>
+                        </div>
+
+                        <!-- Navigation Links -->
+                        <div class="footer-col">
+                            <h4 class="footer-col-title">Navigation</h4>
+                            <ul class="footer-links-list">
+                                <li><a href="#home" class="footer-nav-link" data-tab="game">Home Arena</a></li>
+                                <li><a href="#game" class="footer-nav-link" data-tab="game">Play Match</a></li>
+                                <li><a href="#instructions" class="footer-nav-link" data-tab="rules">How to Play</a></li>
+                                <li><a href="#stats" class="footer-nav-link" data-tab="stats">Player Stats</a></li>
+                                <li><a href="#rewards" class="footer-nav-link" data-tab="rewards">Rewards & Redeem</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Company & Support -->
+                        <div class="footer-col">
+                            <h4 class="footer-col-title">Support & About</h4>
+                            <ul class="footer-links-list">
+                                <li><a href="#about" class="footer-nav-link" data-tab="about">About Platform</a></li>
+                                <li><a href="#contact" class="footer-nav-link" data-tab="about">Contact Support</a></li>
+                                <li><a href="#contact" class="footer-nav-link" data-tab="about">FAQ</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Legal & Compliance -->
+                        <div class="footer-col">
+                            <h4 class="footer-col-title">Legal & Trust</h4>
+                            <ul class="footer-links-list">
+                                <li><button type="button" id="footerBtnPrivacy">Privacy Policy</button></li>
+                                <li><button type="button" id="footerBtnTerms">Terms of Service</button></li>
+                                <li><button type="button" id="footerBtnFairPlay">Fair Play Guidelines</button></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="footer-bottom-bar">
+                        <div class="footer-disclaimer">
+                            ⚖️ <strong>Compliance & Trademark Notice:</strong> Google Play and the Google Play logo are trademarks of Google LLC. This platform is independently operated and not sponsored or endorsed by Google. All game logic, AI routines, and sound synthesized systems are 100% original.
+                        </div>
+                        <p class="footer-copyright">
+                            © 2026 Tic-Tac-Toe Pro. All Rights Reserved. Built with clean code, zero deceptive ads, and player privacy first.
+                        </p>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
 
     </main>
 
@@ -782,8 +858,6 @@
         </div>
     </div>
 
-
-
     <!-- 6. Privacy Policy Modal -->
     <div class="modal-overlay" id="privacyModal">
         <div class="modal-card legal-modal-card">
@@ -804,7 +878,6 @@
                     <h4>2. Information We Collect</h4>
                     <p>We only collect data strictly necessary to provide and secure our gaming and rewards service:</p>
                     <ul class="legal-list">
-                        <li><strong>Account Authentication:</strong> Email address, player display name, and avatar URL provided when signing in via Google OAuth, 6-Digit Email OTP, or password.</li>
                         <li><strong>Gameplay & Statistics:</strong> Match scores, games played, wins, losses, draws, and accumulated points balance.</li>
                         <li><strong>Reward Redemptions:</strong> Record of redemption requests (date, reward tier, points deducted, fulfillment status).</li>
                         <li><strong>Local Preferences:</strong> Audio sound toggle, dark mode preferences, and difficulty selection saved in your browser's Local Storage.</li>
@@ -815,7 +888,7 @@
                     <h4>3. How We Use Your Information</h4>
                     <p>Your information is used strictly to:</p>
                     <ul class="legal-list">
-                        <li>Maintain and synchronize your game points and account progress across devices.</li>
+                        <li>Maintain and synchronize your game points and account progress.</li>
                         <li>Process and verify Google Play gift card redemptions.</li>
                         <li>Detect and prevent fraud, automated bots, and anti-cheat violations.</li>
                         <li>Respond to customer support inquiries and provide technical assistance.</li>
@@ -832,14 +905,14 @@
                 <div class="legal-section-block">
                     <h4>5. No Sale of Personal Data</h4>
                     <p>
-                        We do <strong>not</strong> sell, rent, or trade your personal information or email addresses to any third-party advertisers, data brokers, or marketing networks.
+                        We do <strong>not</strong> sell, rent, or trade your personal information to any third-party advertisers, data brokers, or marketing networks.
                     </p>
                 </div>
 
                 <div class="legal-section-block">
                     <h4>6. Data Retention & Deletion</h4>
                     <p>
-                        You retain full rights to request the deletion of your account and associated game statistics. Contact our support team at <strong>support@tictactoepro.app</strong> to request complete data erasure.
+                        You retain full rights to request the deletion of your account and associated game statistics. Contact our support team to request complete data erasure.
                     </p>
                 </div>
             </div>
@@ -880,7 +953,7 @@
                     <ul class="legal-list">
                         <li>Points represent virtual loyalty score tokens earned through genuine gameplay victories.</li>
                         <li>Points possess no cash value and cannot be directly exchanged for currency, transferred between accounts, or refunded.</li>
-                        <li>Redemption requests for Google Play gift rewards are subject to anti-fraud review and delivery to the user's verified registered email address within 24–48 business hours.</li>
+                        <li>Redemption requests for Google Play gift rewards are subject to anti-fraud review.</li>
                         <li>The conversion rate is fixed at 100 Points = ₹1.00 INR unless updated by platform notice.</li>
                     </ul>
                 </div>
@@ -888,7 +961,7 @@
                 <div class="legal-section-block">
                     <h4>4. Intellectual Property & Original Code</h4>
                     <p>
-                        All original source code, AI algorithms, visual styling, sound synthesizer routines, and interface designs are the intellectual property of Tic-Tac-Toe Pro. Unauthorized scraping, duplication, or reproduction without permission is prohibited.
+                        All original source code, AI algorithms, visual styling, sound synthesizer routines, and interface designs are the intellectual property of Tic-Tac-Toe Pro.
                     </p>
                 </div>
 
@@ -908,88 +981,28 @@
         </div>
     </div>
 
-    <!-- Expanded Compliant Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <!-- Brand Column -->
-                <div class="footer-brand">
-                    <div class="logo">
-                        <div class="logo-icon">✕○</div>
-                        <span class="logo-text">TIC TAC TOE <span class="logo-tag">PRO</span></span>
-                    </div>
-                    <p>
-                        Original, skill-based Tic-Tac-Toe gaming platform. Play against AI, hone your strategic thinking, earn reward points, and redeem genuine Google Play credits.
-                    </p>
-                </div>
-
-                <!-- Navigation Links -->
-                <div class="footer-col">
-                    <h4 class="footer-col-title">Navigation</h4>
-                    <ul class="footer-links-list">
-                        <li><a href="#home">Home Arena</a></li>
-                        <li><a href="#game">Play Match</a></li>
-                        <li><a href="#instructions">How to Play</a></li>
-                        <li><a href="#stats">Player Stats</a></li>
-                        <li><a href="#rewards">Rewards & Redeem</a></li>
-                    </ul>
-                </div>
-
-                <!-- Company & Support -->
-                <div class="footer-col">
-                    <h4 class="footer-col-title">Support & About</h4>
-                    <ul class="footer-links-list">
-                        <li><a href="#about">About Platform</a></li>
-                        <li><a href="#contact">Contact Support</a></li>
-                        <li><a href="#contact">FAQ</a></li>
-                        <li><button type="button" id="footerBtnDailyBonus">Daily Bonus Wheel</button></li>
-                    </ul>
-                </div>
-
-                <!-- Legal & Compliance -->
-                <div class="footer-col">
-                    <h4 class="footer-col-title">Legal & Trust</h4>
-                    <ul class="footer-links-list">
-                        <li><button type="button" id="footerBtnPrivacy">Privacy Policy</button></li>
-                        <li><button type="button" id="footerBtnTerms">Terms of Service</button></li>
-                        <li><button type="button" id="footerBtnFairPlay">Fair Play Guidelines</button></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-bottom-bar">
-                <div class="footer-disclaimer">
-                    ⚖️ <strong>Compliance & Trademark Notice:</strong> Google Play and the Google Play logo are trademarks of Google LLC. This platform is independently operated and not sponsored or endorsed by Google. All game logic, AI routines, and sound synthesized systems are 100% original.
-                </div>
-                <p class="footer-copyright">
-                    © 2026 Tic-Tac-Toe Pro. All Rights Reserved. Built with clean code, zero deceptive ads, and player privacy first.
-                </p>
-            </div>
-        </div>
-    </footer>
-
     <!-- Native App Style Mobile Bottom Navigation Dock -->
     <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile Navigation">
-        <a href="#home" class="mobile-nav-item active" id="mobNavHome">
-            <span class="mob-nav-icon">🏠</span>
-            <span class="mob-nav-label">Home</span>
-        </a>
-        <a href="#game" class="mobile-nav-item" id="mobNavGame">
+        <button type="button" class="mobile-nav-item active" data-tab="game" id="mobNavGame">
             <span class="mob-nav-icon">🎮</span>
-            <span class="mob-nav-label">Play</span>
-        </a>
-        <a href="#stats" class="mobile-nav-item" id="mobNavStats">
+            <span class="mob-nav-label">Game</span>
+        </button>
+        <button type="button" class="mobile-nav-item" data-tab="stats" id="mobNavStats">
             <span class="mob-nav-icon">📊</span>
             <span class="mob-nav-label">Stats</span>
-        </a>
-        <a href="#rewards" class="mobile-nav-item" id="mobNavRewards">
+        </button>
+        <button type="button" class="mobile-nav-item" data-tab="rewards" id="mobNavRewards">
             <span class="mob-nav-icon">🎁</span>
             <span class="mob-nav-label">Rewards</span>
-        </a>
-        <a href="#instructions" class="mobile-nav-item" id="mobNavRules">
-            <span class="mob-nav-icon">ℹ️</span>
+        </button>
+        <button type="button" class="mobile-nav-item" data-tab="rules" id="mobNavRules">
+            <span class="mob-nav-icon">📖</span>
             <span class="mob-nav-label">Rules</span>
-        </a>
+        </button>
+        <button type="button" class="mobile-nav-item" data-tab="about" id="mobNavAbout">
+            <span class="mob-nav-icon">ℹ️</span>
+            <span class="mob-nav-label">About</span>
+        </button>
     </nav>
 
     <!-- Background Cloud Sync, AdSense & Game Scripts -->

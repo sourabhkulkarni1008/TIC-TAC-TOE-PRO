@@ -2462,6 +2462,283 @@ body {
     margin-top: 0.25rem;
 }
 
+/* ==========================================================================
+   MOBILE APP-VIEW ROUTING & BOTTOM DOCK NAVIGATION
+   ========================================================================== */
+
+/* Default Desktop Behavior (>= 769px) */
+@media (min-width: 769px) {
+    .app-view {
+        display: block !important;
+    }
+    
+    .mobile-bottom-nav {
+        display: none !important;
+    }
+}
+
+/* Mobile View Architecture (<= 768px) */
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 84px; /* Space for bottom dock */
+    }
+
+    /* Hide desktop navbar links to avoid duplicate nav clutter */
+    .navbar .nav-links {
+        display: none;
+    }
+    
+    .navbar {
+        padding: 0.65rem 0;
+    }
+    
+    .navbar .nav-content {
+        justify-content: space-between;
+    }
+
+    /* App View Multi-Page Logic */
+    .app-view {
+        display: none;
+        width: 100%;
+        animation: appViewFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .app-view.active-view {
+        display: block;
+    }
+
+    @keyframes appViewFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(12px) scale(0.99);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    /* Hero & Game Arena Mobile Tuning */
+    .hero-section {
+        padding: 1.25rem 0 1rem 0;
+    }
+
+    .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .hero-content h1 {
+        font-size: 1.85rem;
+        line-height: 1.25;
+    }
+
+    .hero-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .hero-cta-group {
+        display: flex;
+        flex-direction: row;
+        gap: 0.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .hero-cta-group .btn {
+        flex: 1;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.88rem;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .difficulty-selector-box {
+        padding: 1rem;
+    }
+
+    .difficulty-options {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .diff-btn {
+        padding: 0.6rem 0.4rem;
+        flex: 1;
+    }
+
+    .diff-name {
+        font-size: 0.85rem;
+    }
+
+    .diff-pts {
+        font-size: 0.7rem;
+    }
+
+    .game-section {
+        padding: 0.75rem 0 1.5rem 0;
+    }
+
+    .game-arena-card {
+        padding: 1.25rem 1rem;
+        border-radius: var(--radius-lg);
+    }
+
+    .scoreboard {
+        gap: 0.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .player-box {
+        padding: 0.6rem 0.75rem;
+    }
+
+    .player-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+
+    .turn-pill {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.6rem;
+    }
+
+    .board-container {
+        max-width: 330px;
+        margin: 0 auto 1.25rem auto;
+    }
+
+    .board {
+        gap: 8px;
+    }
+
+    .cell {
+        height: 95px;
+        font-size: 2.5rem;
+        border-radius: 12px;
+    }
+
+    /* Stats Grid Tuning */
+    .stats-section {
+        padding: 1.5rem 0;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.85rem;
+    }
+
+    .stat-card {
+        padding: 1rem;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+
+    /* Rewards Tuning */
+    .rewards-section {
+        padding: 1.5rem 0;
+    }
+
+    .rewards-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .conversion-banner {
+        padding: 1.25rem;
+    }
+
+    .conversion-pills {
+        gap: 0.4rem;
+    }
+
+    .conv-pill {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+    }
+
+    /* Rules & About Tuning */
+    .instructions-section, .about-section, .contact-section {
+        padding: 1.5rem 0;
+    }
+
+    .instruction-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    /* Bottom App Dock */
+    .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: rgba(9, 13, 22, 0.96);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.45rem 0.25rem max(0.45rem, env(safe-area-inset-bottom));
+        box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.6);
+    }
+
+    .mobile-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        background: none;
+        border: none;
+        padding: 0.45rem 0.25rem;
+        color: var(--text-muted);
+        cursor: pointer;
+        text-decoration: none;
+        border-radius: var(--radius-sm);
+        transition: all 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .mobile-nav-item:active {
+        transform: scale(0.92);
+    }
+
+    .mob-nav-icon {
+        font-size: 1.25rem;
+        line-height: 1;
+        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .mob-nav-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        font-family: var(--font-heading);
+        transition: color 0.2s ease;
+    }
+
+    .mobile-nav-item.active {
+        color: var(--cyan);
+    }
+
+    .mobile-nav-item.active .mob-nav-icon {
+        transform: translateY(-2px) scale(1.15);
+        filter: drop-shadow(0 0 8px var(--cyan-glow));
+    }
+
+    .mobile-nav-item.active .mob-nav-label {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+    }
+}
+
 
 
 
