@@ -740,17 +740,28 @@ body {
     cursor: not-allowed;
 }
 
-/* Neon Cyberpunk Marks */
+/* Neon Cyberpunk Marks - High Visibility */
+.cell.cell-x,
 .cell.mark-x {
-    color: #00f2fe;
-    text-shadow: 0 0 12px rgba(0, 242, 254, 0.9), 0 0 25px rgba(0, 242, 254, 0.6), 0 0 40px rgba(0, 242, 254, 0.3);
+    color: #00f2fe !important;
+    text-shadow: 0 0 10px rgba(0, 242, 254, 1), 0 0 20px rgba(0, 242, 254, 0.85), 0 0 35px rgba(0, 242, 254, 0.5) !important;
     animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 1 !important;
+    -webkit-text-fill-color: #00f2fe !important;
 }
 
+.cell.cell-o,
 .cell.mark-o {
-    color: #ff2a85;
-    text-shadow: 0 0 12px rgba(255, 42, 133, 0.9), 0 0 25px rgba(255, 42, 133, 0.6), 0 0 40px rgba(255, 42, 133, 0.3);
+    color: #ff2a85 !important;
+    text-shadow: 0 0 10px rgba(255, 42, 133, 1), 0 0 20px rgba(255, 42, 133, 0.85), 0 0 35px rgba(255, 42, 133, 0.5) !important;
     animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 1 !important;
+    -webkit-text-fill-color: #ff2a85 !important;
+}
+
+.cell:disabled {
+    opacity: 1 !important;
+    cursor: default;
 }
 
 /* Winning Cell Highlight */

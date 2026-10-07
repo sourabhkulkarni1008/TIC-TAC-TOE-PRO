@@ -811,7 +811,7 @@ function makeMove(index, player) {
     state.board[index] = player;
     const cell = elements.cells[index];
     cell.textContent = player === 'X' ? '✕' : '○';
-    cell.classList.add(player === 'X' ? 'cell-x' : 'cell-o');
+    cell.classList.add(player === 'X' ? 'cell-x' : 'cell-o', player === 'X' ? 'mark-x' : 'mark-o', 'occupied');
     cell.setAttribute('disabled', 'true');
 }
 
