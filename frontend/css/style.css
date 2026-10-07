@@ -1477,7 +1477,7 @@ body {
 }
 
 /* ==========================================================================
-   MOBILE BOTTOM NAVIGATION DOCK (NATIVE APP FEEL - PROMINENT & ACCESSIBLE)
+   MOBILE BOTTOM NAVIGATION DOCK (ONLY THIS BOTTOM AREA IS ENLARGED)
    ========================================================================== */
 .mobile-bottom-nav {
     display: none;
@@ -1487,14 +1487,14 @@ body {
     right: 0;
     z-index: 999999;
     background: rgba(9, 13, 22, 0.98);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-top: 2px solid rgba(0, 242, 254, 0.35);
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.9), 0 -2px 20px rgba(0, 242, 254, 0.2);
-    padding: 0.65rem 0.5rem max(0.85rem, env(safe-area-inset-bottom, 16px));
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.85), 0 -2px 15px rgba(0, 242, 254, 0.2);
+    padding: 0.55rem 0.35rem max(0.8rem, env(safe-area-inset-bottom, 16px));
     justify-content: space-around;
     align-items: center;
-    min-height: 72px;
+    min-height: 68px;
 }
 
 .mobile-nav-item {
@@ -1504,10 +1504,10 @@ body {
     justify-content: center;
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    padding: 0.45rem 0.4rem;
-    border-radius: var(--radius-md);
+    padding: 0.4rem 0.25rem;
+    border-radius: var(--radius-sm);
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     flex: 1;
     background: none;
@@ -1517,18 +1517,18 @@ body {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
     position: relative;
-    gap: 4px;
+    gap: 3px;
 }
 
 .mob-nav-icon {
-    font-size: 1.65rem;
+    font-size: 1.55rem;
     line-height: 1;
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .mob-nav-label {
     letter-spacing: 0.3px;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 700;
 }
 
@@ -1541,7 +1541,7 @@ body {
 }
 
 .mobile-nav-item.active .mob-nav-icon {
-    transform: translateY(-3px) scale(1.18);
+    transform: translateY(-2px) scale(1.15);
     filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.8));
 }
 
