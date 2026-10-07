@@ -1,0 +1,25 @@
+# Netlify Configuration for Tic-Tac-Toe Pro
+
+[build]
+  # Base directory (leave blank or use repository root)
+  base = ""
+  
+  # Build command (None needed for Vanilla JS & HTML)
+  command = ""
+  
+  # Publish directory containing index.html and assets
+  publish = "."
+
+# Custom Security & Optimization Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Single-Page Application & Clean URL Fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
