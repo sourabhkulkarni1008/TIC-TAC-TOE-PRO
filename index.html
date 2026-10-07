@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#090d16">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Tic-Tac-Toe Pro | Play, Win Points & Google Play Rewards</title>
     <meta name="description" content="Play interactive Tic-Tac-Toe against AI across Easy, Medium, and Hard difficulties. Earn points with every win and explore Google Play redeem rewards.">
     
@@ -985,6 +988,30 @@
             </div>
         </div>
     </footer>
+
+    <!-- Native App Style Mobile Bottom Navigation Dock -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav" aria-label="Mobile Navigation">
+        <a href="#home" class="mobile-nav-item active" id="mobNavHome">
+            <span class="mob-nav-icon">🏠</span>
+            <span class="mob-nav-label">Home</span>
+        </a>
+        <a href="#game" class="mobile-nav-item" id="mobNavGame">
+            <span class="mob-nav-icon">🎮</span>
+            <span class="mob-nav-label">Play</span>
+        </a>
+        <a href="#stats" class="mobile-nav-item" id="mobNavStats">
+            <span class="mob-nav-icon">📊</span>
+            <span class="mob-nav-label">Stats</span>
+        </a>
+        <a href="#rewards" class="mobile-nav-item" id="mobNavRewards">
+            <span class="mob-nav-icon">🎁</span>
+            <span class="mob-nav-label">Rewards</span>
+        </a>
+        <a href="#instructions" class="mobile-nav-item" id="mobNavRules">
+            <span class="mob-nav-icon">ℹ️</span>
+            <span class="mob-nav-label">Rules</span>
+        </a>
+    </nav>
 
     <!-- AdSense & Frontend Game Scripts -->
     <script src="js/ads-config.js"></script>

@@ -394,50 +394,6 @@ function setupEventListeners() {
     });
 }
 
-    // Modal Action Buttons
-    elements.btnModalPlayAgain.addEventListener('click', () => {
-        closeModal(elements.resultModal);
-        resetBoard();
-    });
-
-    elements.btnModalGoRewards.addEventListener('click', () => {
-        closeModal(elements.resultModal);
-        const rewardsSec = document.getElementById('rewards');
-        if (rewardsSec) rewardsSec.scrollIntoView({ behavior: 'smooth' });
-    });
-
-    // Reward Redeem Buttons
-    REDEEM_REWARDS.forEach(reward => {
-        const btn = document.getElementById(`btnRedeem${reward.amount}`);
-        if (btn) {
-            btn.addEventListener('click', () => promptRedemption(reward));
-        }
-    });
-
-    // Redeem Modal Actions
-    elements.btnExecuteRedeem.addEventListener('click', executeRedemption);
-    elements.btnCancelRedeem.addEventListener('click', () => closeModal(elements.confirmRedeemModal));
-    elements.btnCloseConfirmModal.addEventListener('click', () => closeModal(elements.confirmRedeemModal));
-    elements.btnSuccessClose.addEventListener('click', () => closeModal(elements.successRedeemModal));
-    elements.btnCloseSuccessModal.addEventListener('click', () => closeModal(elements.successRedeemModal));
-
-    // Desktop Nav Links
-    elements.navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            elements.navLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-        });
-    });
-
-    // Mobile Bottom Nav Links
-    elements.mobNavItems.forEach(item => {
-        item.addEventListener('click', () => {
-            elements.mobNavItems.forEach(i => i.classList.remove('active'));
-            item.classList.add('active');
-        });
-    });
-}
-
 // ============================================================================
 // TIC-TAC-TOE CORE GAME LOGIC
 // ============================================================================
