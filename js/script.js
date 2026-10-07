@@ -764,22 +764,27 @@ function resetBoard() {
     state.isGameActive = true;
     state.isAiTurn = false;
 
-    // Reset cell visuals
-    elements.cells.forEach(cell => {
+    // Reset all cell elements
+    const allCells = document.querySelectorAll('.cell');
+    allCells.forEach(cell => {
         cell.textContent = '';
         cell.className = 'cell';
         cell.removeAttribute('disabled');
+        cell.style.color = '#ffffff';
     });
 
     updateTurnIndicator();
 }
 
 function handleUserMove(index) {
-    if (!state.isGameActive || state.isAiTurn || state.board[index] !== '') {
+    if (!state.isGameActive) {
+        resetBoard();
+    }
+    if (state.isAiTurn || state.board[index] !== '') {
         return;
     }
 
-    // Place Player Move
+    // Place Player Move (✕)
     makeMove(index, 'X');
     soundFX.playMoveSound(true);
 
@@ -794,13 +799,13 @@ function handleUserMove(index) {
         return;
     }
 
-    // Pass turn to AI
+    // Pass turn to AI (○)
     state.isAiTurn = true;
     state.currentPlayer = 'O';
     updateTurnIndicator();
 
-    // AI Bot Thinking Latency (400ms - 750ms for realistic pacing)
-    const latency = Math.floor(Math.random() * 350) + 400;
+    // AI Bot Thinking Latency (300ms - 600ms)
+    const latency = Math.floor(Math.random() * 300) + 350;
     setTimeout(() => {
         if (!state.isGameActive) return;
         makeAiMove();
@@ -809,10 +814,11 @@ function handleUserMove(index) {
 
 function makeMove(index, player) {
     state.board[index] = player;
-    const cell = elements.cells[index];
+    const allCells = document.querySelectorAll('.cell');
+    const cell = allCells[index];
+    if (!cell) return;
     cell.textContent = player === 'X' ? '✕' : '○';
     cell.classList.add(player === 'X' ? 'cell-x' : 'cell-o', player === 'X' ? 'mark-x' : 'mark-o', 'occupied');
-    cell.setAttribute('disabled', 'true');
 }
 
 function updateTurnIndicator() {
