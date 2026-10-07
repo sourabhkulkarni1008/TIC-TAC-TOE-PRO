@@ -63,12 +63,6 @@ const state = {
 const elements = {
     // Header & Navigation
     headerPointsVal: document.getElementById('headerPointsVal'),
-    authContainer: document.getElementById('authContainer'),
-    btnGoogleSignIn: document.getElementById('btnGoogleSignIn'),
-    userProfilePill: document.getElementById('userProfilePill'),
-    userAvatar: document.getElementById('userAvatar'),
-    userName: document.getElementById('userName'),
-    btnSignOut: document.getElementById('btnSignOut'),
     navLinks: document.querySelectorAll('.nav-link'),
 
     // Hero Section
@@ -126,32 +120,8 @@ const elements = {
     btnSuccessClose: document.getElementById('btnSuccessClose'),
     btnCloseSuccessModal: document.getElementById('btnCloseSuccessModal'),
 
-    // Authentication Modal & Forms (Strictly Email & Password)
-    authModal: document.getElementById('authModal'),
-    btnCloseAuthModal: document.getElementById('btnCloseAuthModal'),
-    authModalTitle: document.getElementById('authModalTitle'),
-    authModalSubtitle: document.getElementById('authModalSubtitle'),
-    tabSignIn: document.getElementById('tabSignIn'),
-    tabSignUp: document.getElementById('tabSignUp'),
-    authAlert: document.getElementById('authAlert'),
-
-    // Forms
-    signInForm: document.getElementById('signInForm'),
-    signInEmail: document.getElementById('signInEmail'),
-    signInPassword: document.getElementById('signInPassword'),
-    btnSubmitSignIn: document.getElementById('btnSubmitSignIn'),
-
-    signUpForm: document.getElementById('signUpForm'),
-    signUpEmail: document.getElementById('signUpEmail'),
-    signUpPassword: document.getElementById('signUpPassword'),
-    signUpPasswordConfirm: document.getElementById('signUpPasswordConfirm'),
-    btnSubmitSignUp: document.getElementById('btnSubmitSignUp'),
-
     // Mobile Navigation Items
     mobNavItems: document.querySelectorAll('.mobile-nav-item'),
-    mobLinkProfile: document.getElementById('mobLinkProfile'),
-    mobProfileLabel: document.getElementById('mobProfileLabel'),
-    mobProfileIcon: document.getElementById('mobProfileIcon'),
 
     // Confetti Canvas
     confettiCanvas: document.getElementById('confettiCanvas')
@@ -313,160 +283,48 @@ let confetti = null;
 // ============================================================================
 // GAME INITIALIZATION & LIFECYCLE
 // ============================================================================
-async function initGame() {
+function initGame() {
     try {
         confetti = new ConfettiEngine(elements.confettiCanvas);
     } catch (e) {
         console.warn("Confetti init warning:", e);
     }
 
-    // 1. Immediately attach all event listeners so buttons & cells are 100% responsive
+    // 1. Load saved points and stats from LocalStorage
+    loadUserProfile();
+
+    // 2. Attach all UI and game event listeners
     setupEventListeners();
     initLegalAndInfoListeners();
 
-    // 2. Render initial state immediately
+    // 3. Render initial state
     renderUI();
+}
 
-    // 3. Safely load session & user profile in background
+// Load points and stats directly from LocalStorage
+function loadUserProfile() {
     try {
-        await loadUserProfile();
-        renderUI();
-    } catch (err) {
-        console.warn("User profile load error:", err);
+        const localData = localStorage.getItem("tictactoe_game_data");
+        if (localData) {
+            const parsed = JSON.parse(localData);
+            state.points = Number(parsed.points || 0);
+            state.stats = Object.assign(state.stats, parsed.stats || {});
+        }
+    } catch (e) {
+        console.warn("LocalStorage parse error:", e);
     }
 }
 
-// Global handler when session changes / redirects from email
-window.onUserAuthenticated = async function(user) {
-    if (user) {
-        updateAuthDisplay(user);
-        await loadUserProfile();
-        renderUI();
-        if (elements.authModal) closeModal(elements.authModal);
+// Sync and Save User Data to LocalStorage
+function saveState() {
+    try {
+        localStorage.setItem("tictactoe_game_data", JSON.stringify({
+            points: state.points,
+            stats: state.stats
+        }));
+    } catch (e) {
+        console.warn("LocalStorage save error:", e);
     }
-};
-
-// Load data from Supabase / LocalStorage with Seamless Guest Points Merge
-async function loadUserProfile() {
-    let sessionUser = null;
-    if (window.backendService) {
-        try {
-            sessionUser = await window.backendService.getSessionUser();
-        } catch (e) {
-            console.warn("Session user fetch error:", e);
-        }
-    }
-
-    const currentGuestPoints = state.points || 0;
-    const currentGuestStats = { ...state.stats };
-
-    if (sessionUser) {
-        updateAuthDisplay(sessionUser);
-        let cloudData = null;
-        try {
-            cloudData = await window.backendService.loadUserData(sessionUser.id);
-        } catch (e) {
-            console.warn("Cloud data fetch error:", e);
-        }
-
-        if (cloudData) {
-            const cloudPoints = Number(cloudData.points || 0);
-            const mergeKey = `tictactoe_merged_${sessionUser.id}`;
-            const alreadyMerged = sessionStorage.getItem(mergeKey);
-
-            // If user earned points as a guest before logging in, seamlessly merge into cloud
-            if (currentGuestPoints > 0 && !alreadyMerged) {
-                state.points = Number((cloudPoints + currentGuestPoints).toFixed(1));
-                state.stats.easyWins = (cloudData.easy_wins || 0) + (currentGuestStats.easyWins || 0);
-                state.stats.mediumWins = (cloudData.medium_wins || 0) + (currentGuestStats.mediumWins || 0);
-                state.stats.hardWins = (cloudData.hard_wins || 0) + (currentGuestStats.hardWins || 0);
-                state.stats.totalGames = (cloudData.total_games || 0) + (currentGuestStats.totalGames || 0);
-                state.stats.userWins = (cloudData.user_wins || 0) + (currentGuestStats.userWins || 0);
-                state.stats.aiWins = (cloudData.ai_wins || 0) + (currentGuestStats.aiWins || 0);
-                state.stats.draws = (cloudData.draws || 0) + (currentGuestStats.draws || 0);
-                sessionStorage.setItem(mergeKey, "true");
-                await saveState();
-                console.log(`✨ Successfully merged ${currentGuestPoints} guest points into cloud account! Total: ${state.points}`);
-            } else {
-                state.points = cloudPoints;
-                state.stats.easyWins = cloudData.easy_wins || 0;
-                state.stats.mediumWins = cloudData.medium_wins || 0;
-                state.stats.hardWins = cloudData.hard_wins || 0;
-                state.stats.totalGames = cloudData.total_games || 0;
-                state.stats.userWins = cloudData.user_wins || 0;
-                state.stats.aiWins = cloudData.ai_wins || 0;
-                state.stats.draws = cloudData.draws || 0;
-            }
-        } else {
-            // New user on cloud, initialize with any guest points earned so far
-            if (currentGuestPoints > 0) {
-                await saveState();
-            }
-        }
-    } else {
-        // LocalStorage fallback for offline/guest play
-        try {
-            const localData = localStorage.getItem("tictactoe_game_data");
-            if (localData) {
-                const parsed = JSON.parse(localData);
-                state.points = Number(parsed.points || 0);
-                state.stats = Object.assign(state.stats, parsed.stats || {});
-            }
-        } catch (e) {
-            console.warn("LocalStorage parse error:", e);
-        }
-    }
-}
-
-// Update authentication UI header
-function updateAuthDisplay(user) {
-    if (user) {
-        if (elements.btnGoogleSignIn) elements.btnGoogleSignIn.style.display = 'none';
-        if (elements.userProfilePill) elements.userProfilePill.style.display = 'flex';
-        const displayName = user.user_metadata?.full_name || user.email.split('@')[0];
-        if (elements.userName) elements.userName.textContent = displayName;
-        if (elements.playerDisplayName) elements.playerDisplayName.textContent = displayName;
-
-        if (elements.userAvatar) {
-            if (user.user_metadata?.avatar_url) {
-                elements.userAvatar.innerHTML = `<img src="${user.user_metadata.avatar_url}" alt="Avatar" referrerpolicy="no-referrer">`;
-            } else {
-                elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
-            }
-        }
-
-        // Update mobile bottom nav profile label
-        if (elements.mobProfileLabel) elements.mobProfileLabel.textContent = displayName.split(' ')[0];
-        if (elements.mobProfileIcon) elements.mobProfileIcon.textContent = '🟢';
-    } else {
-        if (elements.btnGoogleSignIn) elements.btnGoogleSignIn.style.display = 'inline-flex';
-        if (elements.userProfilePill) elements.userProfilePill.style.display = 'none';
-        if (elements.playerDisplayName) elements.playerDisplayName.textContent = 'Player (You)';
-        if (elements.mobProfileLabel) elements.mobProfileLabel.textContent = 'Account';
-        if (elements.mobProfileIcon) elements.mobProfileIcon.textContent = '👤';
-    }
-}
-
-// Sync and Save User Data
-async function saveState() {
-    await window.backendService.saveUserData({
-        points: state.points,
-        stats: state.stats
-    });
-}
-
-// Show alert message inside auth modal
-function showAuthAlert(message, type = 'error') {
-    if (!elements.authAlert) return;
-    elements.authAlert.textContent = message;
-    elements.authAlert.className = `auth-alert ${type}`;
-    elements.authAlert.style.display = 'block';
-}
-
-function clearAuthAlert() {
-    if (!elements.authAlert) return;
-    elements.authAlert.style.display = 'none';
-    elements.authAlert.textContent = '';
 }
 
 // ============================================================================
@@ -492,171 +350,49 @@ function setupEventListeners() {
         });
     });
 
-    // Auth Open Modal Triggers
-    if (elements.btnGoogleSignIn) {
-        elements.btnGoogleSignIn.addEventListener('click', () => {
-            clearAuthAlert();
-            openModal(elements.authModal);
-        });
-    }
+    // Modal Action Buttons
+    elements.btnModalPlayAgain.addEventListener('click', () => {
+        closeModal(elements.resultModal);
+        resetBoard();
+    });
 
-    if (elements.mobLinkProfile) {
-        elements.mobLinkProfile.addEventListener('click', () => {
-            const currentUser = window.backendService.currentUser;
-            if (currentUser) {
-                if (confirm(`Logged in as ${currentUser.email}.\nDo you want to sign out?`)) {
-                    window.backendService.signOut();
-                    updateAuthDisplay(null);
-                    renderUI();
-                }
-            } else {
-                clearAuthAlert();
-                openModal(elements.authModal);
-            }
-        });
-    }
+    elements.btnModalGoRewards.addEventListener('click', () => {
+        closeModal(elements.resultModal);
+        const rewardsSec = document.getElementById('rewards');
+        if (rewardsSec) rewardsSec.scrollIntoView({ behavior: 'smooth' });
+    });
 
-    if (elements.btnCloseAuthModal) {
-        elements.btnCloseAuthModal.addEventListener('click', () => closeModal(elements.authModal));
-    }
-
-    let currentOtpEmail = '';
-
-    // Auth Tabs Switching (Login vs Register)
-    function switchAuthTab(tabName) {
-        clearAuthAlert();
-        if (elements.tabSignIn) elements.tabSignIn.classList.toggle('active', tabName === 'signin');
-        if (elements.tabSignUp) elements.tabSignUp.classList.toggle('active', tabName === 'signup');
-
-        if (elements.signInForm) elements.signInForm.style.display = tabName === 'signin' ? 'flex' : 'none';
-        if (elements.signUpForm) elements.signUpForm.style.display = tabName === 'signup' ? 'flex' : 'none';
-
-        if (tabName === 'signin') {
-            if (elements.authModalTitle) elements.authModalTitle.textContent = 'Welcome Back';
-            if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Login with your email and password to access your points.';
-        } else {
-            if (elements.authModalTitle) elements.authModalTitle.textContent = 'Create Player Account';
-            if (elements.authModalSubtitle) elements.authModalSubtitle.textContent = 'Register to save your scores, points, and reward progress.';
+    // Reward Redeem Buttons
+    REDEEM_REWARDS.forEach(reward => {
+        const btn = document.getElementById(`btnRedeem${reward.amount}`);
+        if (btn) {
+            btn.addEventListener('click', () => promptRedemption(reward));
         }
-    }
+    });
 
-    if (elements.tabSignIn) elements.tabSignIn.addEventListener('click', () => switchAuthTab('signin'));
-    if (elements.tabSignUp) elements.tabSignUp.addEventListener('click', () => switchAuthTab('signup'));
+    // Redeem Modal Actions
+    elements.btnExecuteRedeem.addEventListener('click', executeRedemption);
+    elements.btnCancelRedeem.addEventListener('click', () => closeModal(elements.confirmRedeemModal));
+    elements.btnCloseConfirmModal.addEventListener('click', () => closeModal(elements.confirmRedeemModal));
+    elements.btnSuccessClose.addEventListener('click', () => closeModal(elements.successRedeemModal));
+    elements.btnCloseSuccessModal.addEventListener('click', () => closeModal(elements.successRedeemModal));
 
-    // 1. Login Form Submission (Returning User)
-    if (elements.signInForm) {
-        elements.signInForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            clearAuthAlert();
-            const email = elements.signInEmail.value.trim();
-            const password = elements.signInPassword.value;
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email || !emailRegex.test(email)) {
-                showAuthAlert('Please enter a valid email address.', 'error');
-                return;
-            }
-
-            if (!password) {
-                showAuthAlert('Please enter your password.', 'error');
-                return;
-            }
-
-            elements.btnSubmitSignIn.disabled = true;
-            elements.btnSubmitSignIn.innerHTML = '<span>⚡ Logging in...</span>';
-
-            try {
-                const { data, error } = await window.backendService.signIn(email, password);
-                if (error) {
-                    let msg = error.message || 'Invalid email or password.';
-                    if (msg.toLowerCase().includes('invalid login credentials')) {
-                        msg = 'Incorrect email or password. (Note: If you just registered, check if Supabase requires email confirmation in your inbox, or disable "Confirm email" in Supabase Dashboard).';
-                    } else if (msg.toLowerCase().includes('email not confirmed')) {
-                        msg = 'Please check your email inbox to confirm your account before logging in.';
-                    }
-                    showAuthAlert(msg, 'error');
-                } else {
-                    showAuthAlert('Logged in successfully!', 'success');
-                    updateAuthDisplay(data.user);
-                    await loadUserProfile();
-                    renderUI();
-                    setTimeout(() => closeModal(elements.authModal), 400);
-                }
-            } catch (err) {
-                showAuthAlert('Network error during login. Please try again.', 'error');
-            } finally {
-                elements.btnSubmitSignIn.disabled = false;
-                elements.btnSubmitSignIn.innerHTML = '<span>⚡ Login</span>';
-            }
+    // Desktop Nav Links
+    elements.navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            elements.navLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
         });
-    }
+    });
 
-    // 2. Sign Up Form Submission (New User Registration)
-    if (elements.signUpForm) {
-        elements.signUpForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            clearAuthAlert();
-            const email = elements.signUpEmail.value.trim();
-            const password = elements.signUpPassword.value;
-            const confirmPass = elements.signUpPasswordConfirm.value;
-
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!email || !emailRegex.test(email)) {
-                showAuthAlert('Please enter a valid email address.', 'error');
-                return;
-            }
-
-            if (!password || password.length < 6) {
-                showAuthAlert('Password must be at least 6 characters long.', 'error');
-                return;
-            }
-
-            if (password !== confirmPass) {
-                showAuthAlert('Passwords do not match. Please enter the same password.', 'error');
-                return;
-            }
-
-            elements.btnSubmitSignUp.disabled = true;
-            elements.btnSubmitSignUp.innerHTML = '<span>✨ Creating Account...</span>';
-
-            try {
-                const { data, error } = await window.backendService.signUp(email, password);
-                if (error) {
-                    let msg = error.message || 'Failed to create account.';
-                    if (msg.toLowerCase().includes('user already registered') || msg.toLowerCase().includes('already exists')) {
-                        msg = 'An account with this email is already registered. Please switch to Login.';
-                    }
-                    showAuthAlert(msg, 'error');
-                } else if (data?.user && data.user.identities && data.user.identities.length === 0) {
-                    showAuthAlert('An account with this email already exists in Supabase. Please switch to Login.', 'error');
-                } else if (data?.session) {
-                    showAuthAlert('Account created successfully! Logging you in...', 'success');
-                    updateAuthDisplay(data.user);
-                    await loadUserProfile();
-                    renderUI();
-                    setTimeout(() => closeModal(elements.authModal), 500);
-                } else {
-                    showAuthAlert('Account created! If your Supabase project has "Confirm email" enabled, please check your inbox (and spam) to confirm your account.', 'success');
-                }
-            } catch (err) {
-                showAuthAlert('Network error during registration. Please try again.', 'error');
-            } finally {
-                elements.btnSubmitSignUp.disabled = false;
-                elements.btnSubmitSignUp.innerHTML = '<span>✨ Register</span>';
-            }
+    // Mobile Bottom Nav Links
+    elements.mobNavItems.forEach(item => {
+        item.addEventListener('click', () => {
+            elements.mobNavItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
         });
-    }
-
-    // Sign Out Button
-    if (elements.btnSignOut) {
-        elements.btnSignOut.addEventListener('click', async () => {
-            if (confirm("Are you sure you want to sign out? Your points will stay securely stored in the cloud.")) {
-                await window.backendService.signOut();
-                updateAuthDisplay(null);
-                renderUI();
-            }
-        });
-    }
+    });
+}
 
     // Modal Action Buttons
     elements.btnModalPlayAgain.addEventListener('click', () => {
@@ -1117,7 +853,7 @@ function promptRedemption(reward) {
     openModal(elements.confirmRedeemModal);
 }
 
-async function executeRedemption() {
+function executeRedemption() {
     if (!state.pendingRedeem) return;
     const reward = state.pendingRedeem;
 
@@ -1129,11 +865,22 @@ async function executeRedemption() {
     // Deduct points
     state.points = Number((state.points - reward.requiredPoints).toFixed(1));
 
-    // Submit redemption record to database / local store
-    await window.backendService.submitRedemption(reward.amount, reward.requiredPoints);
+    // Store redemption locally
+    try {
+        const history = JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
+        history.unshift({
+            id: 'rd_' + Date.now(),
+            amount: reward.amount,
+            points_spent: reward.requiredPoints,
+            timestamp: new Date().toISOString()
+        });
+        localStorage.setItem("tictactoe_redemptions", JSON.stringify(history));
+    } catch (e) {
+        console.warn("Redemption store error:", e);
+    }
 
     // Save updated user data
-    await saveState();
+    saveState();
 
     // Close confirm modal and open success modal
     closeModal(elements.confirmRedeemModal);
@@ -1202,7 +949,13 @@ function renderUI() {
 }
 
 function renderRedemptionHistory() {
-    const history = window.backendService.getRedemptionHistory();
+    let history = [];
+    try {
+        history = JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
+    } catch (e) {
+        history = [];
+    }
+
     if (!history || history.length === 0) {
         elements.redemptionHistoryList.innerHTML = `
             <li class="history-empty">No redemptions submitted yet. Earn points and redeem your first reward!</li>

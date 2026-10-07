@@ -11,9 +11,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Supabase JS Client (v2) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <!-- Google AdSense Official Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2711605087755702"
          crossorigin="anonymous"></script>
@@ -53,25 +50,6 @@
                 <div class="points-pill" id="headerPointsPill" title="Your total accumulated points">
                     <span class="points-pill-icon">🪙</span>
                     <span id="headerPointsVal">0.0</span> <small>Pts</small>
-                </div>
-
-                <!-- User Profile / Auth Area -->
-                <div id="authContainer">
-                    <button class="btn btn-primary" id="btnGoogleSignIn" style="padding: 0.6rem 1.15rem; font-size: 0.9rem;">
-                        <span>👤 Login / Register</span>
-                    </button>
-                    <div class="user-profile-pill" id="userProfilePill" style="display: none;">
-                        <div class="user-avatar-small" id="userAvatar">U</div>
-                        <span class="user-name-small" id="userName">Player</span>
-                        <button class="btn-logout" id="btnSignOut" title="Log Out of Account" aria-label="Log Out">
-                            <svg class="logout-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                                <polyline points="16 17 21 12 16 7"></polyline>
-                                <line x1="21" y1="12" x2="9" y2="12"></line>
-                            </svg>
-                            <span class="logout-text">Logout</span>
-                        </button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -798,58 +776,7 @@
         </div>
     </div>
 
-    <!-- 4. Dedicated Authentication Modal (Strictly Email & Password) -->
-    <div class="modal-overlay" id="authModal">
-        <div class="modal-card auth-modal-card">
-            <button type="button" class="modal-close-btn" id="btnCloseAuthModal">✕</button>
-            <div class="modal-icon-badge badge-redeem" style="font-size: 1.8rem;">👤</div>
-            <h3 class="modal-title" id="authModalTitle">Welcome to Tic-Tac-Toe Pro</h3>
-            <p class="modal-subtitle" id="authModalSubtitle">Login or register with your email to save your points and rewards.</p>
 
-            <!-- Auth Switch Tabs -->
-            <div class="auth-tabs">
-                <button type="button" class="auth-tab active" id="tabSignIn">Login</button>
-                <button type="button" class="auth-tab" id="tabSignUp">Register</button>
-            </div>
-
-            <!-- Error/Success Notification Alert -->
-            <div class="auth-alert" id="authAlert" style="display: none;"></div>
-
-            <!-- 1. EMAIL & PASSWORD LOGIN (Returning User) -->
-            <form id="signInForm" class="auth-form" style="display: flex;" onsubmit="return false;">
-                <div class="form-group">
-                    <label for="signInEmail">Email</label>
-                    <input type="email" id="signInEmail" placeholder="player@example.com" required autocomplete="email">
-                </div>
-                <div class="form-group">
-                    <label for="signInPassword">Password</label>
-                    <input type="password" id="signInPassword" placeholder="••••••••" required autocomplete="current-password">
-                </div>
-                <button type="submit" class="btn btn-primary btn-full" id="btnSubmitSignIn">
-                    <span>⚡ Login</span>
-                </button>
-            </form>
-
-            <!-- 2. EMAIL & PASSWORD REGISTRATION (New User) -->
-            <form id="signUpForm" class="auth-form" style="display: none;" onsubmit="return false;">
-                <div class="form-group">
-                    <label for="signUpEmail">Email</label>
-                    <input type="email" id="signUpEmail" placeholder="player@example.com" required autocomplete="email">
-                </div>
-                <div class="form-group">
-                    <label for="signUpPassword">Password</label>
-                    <input type="password" id="signUpPassword" placeholder="••••••••" required autocomplete="new-password">
-                </div>
-                <div class="form-group">
-                    <label for="signUpPasswordConfirm">Confirm Password</label>
-                    <input type="password" id="signUpPasswordConfirm" placeholder="••••••••" required autocomplete="new-password">
-                </div>
-                <button type="submit" class="btn btn-primary btn-full" id="btnSubmitSignUp">
-                    <span>✨ Register</span>
-                </button>
-            </form>
-        </div>
-    </div>
 
     <!-- 6. Privacy Policy Modal -->
     <div class="modal-overlay" id="privacyModal">
@@ -997,10 +924,6 @@
             <span class="mob-nav-icon">🎁</span>
             <span class="mob-nav-label">Rewards</span>
         </a>
-        <button type="button" class="mobile-nav-item mob-nav-btn" id="mobLinkProfile">
-            <span class="mob-nav-icon" id="mobProfileIcon">👤</span>
-            <span class="mob-nav-label" id="mobProfileLabel">Account</span>
-        </button>
     </nav>
 
     <!-- Expanded Compliant Footer -->
@@ -1063,10 +986,8 @@
         </div>
     </footer>
 
-    <!-- Backend, AdSense & Frontend Scripts -->
-    <script src="backend/supabase-client.js"></script>
+    <!-- AdSense & Frontend Game Scripts -->
     <script src="js/ads-config.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
-
