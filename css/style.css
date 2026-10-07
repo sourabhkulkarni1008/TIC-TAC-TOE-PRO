@@ -3093,6 +3093,16 @@ body {
     margin-top: 2rem;
 }
 
+.history-item-icon {
+    font-size: 1.1rem;
+}
+
+.history-item-meta {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+
 
 
 

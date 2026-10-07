@@ -1240,10 +1240,10 @@ function renderRedemptionHistory() {
         return `
             <li class="history-item">
                 <div class="history-item-left">
-                    <span style="font-size: 1.1rem;">🎁</span>
+                    <span class="history-item-icon">🎁</span>
                     <div>
                         <strong>₹${item.amount} Google Play Card</strong>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">${dateStr} • ${pts.toLocaleString()} Pts</div>
+                        <div class="history-item-meta">${dateStr} • ${pts.toLocaleString()} Pts</div>
                     </div>
                 </div>
                 <span class="history-badge">Under Processing</span>
