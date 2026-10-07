@@ -35,11 +35,11 @@ try {
                 
                 $contentType = switch ($ext) {
                     ".html" { "text/html; charset=utf-8" }
-                    ".css"  { "text/css; charset=utf-8" }
-                    ".js"   { "application/javascript; charset=utf-8" }
+                    ".css" { "text/css; charset=utf-8" }
+                    ".js" { "application/javascript; charset=utf-8" }
                     ".json" { "application/json" }
-                    ".png"  { "image/png" }
-                    ".svg"  { "image/svg+xml" }
+                    ".png" { "image/png" }
+                    ".svg" { "image/svg+xml" }
                     default { "application/octet-stream" }
                 }
                 
@@ -47,7 +47,8 @@ try {
                 $headerBytes = [System.Text.Encoding]::UTF8.GetBytes($header)
                 $stream.Write($headerBytes, 0, $headerBytes.Length)
                 $stream.Write($bytes, 0, $bytes.Length)
-            } else {
+            }
+            else {
                 $msg = "HTTP/1.1 404 Not Found`r`nContent-Length: 13`r`nConnection: close`r`n`r`n404 Not Found"
                 $msgBytes = [System.Text.Encoding]::UTF8.GetBytes($msg)
                 $stream.Write($msgBytes, 0, $msgBytes.Length)
@@ -56,6 +57,7 @@ try {
         $stream.Flush()
         $client.Close()
     }
-} finally {
+}
+finally {
     $listener.Stop()
 }
