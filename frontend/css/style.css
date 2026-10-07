@@ -2083,4 +2083,98 @@ body {
     }
 }
 
+/* ==========================================================================
+   USER PROFILE PILL & LOGOUT BUTTON
+   ========================================================================== */
+.user-profile-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    padding: 4px 6px 4px 10px;
+    border-radius: var(--radius-full);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+    transition: var(--transition-fast);
+}
+
+.user-profile-pill:hover {
+    border-color: var(--cyan);
+}
+
+.user-avatar-small {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--blue));
+    color: #000;
+    font-weight: 800;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.user-avatar-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-name-small {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    max-width: 110px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-logout {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-logout:hover {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-logout:active {
+    transform: translateY(0);
+}
+
+.logout-icon {
+    stroke: currentColor;
+    flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+    .user-name-small {
+        display: none;
+    }
+    .user-profile-pill {
+        padding: 4px 6px;
+        gap: 0.4rem;
+    }
+}
+
+
 
