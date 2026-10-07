@@ -14,6 +14,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Supabase JS Client (v2) for Silent Cloud Sync -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <!-- Google AdSense Official Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2711605087755702"
          crossorigin="anonymous"></script>
@@ -905,30 +908,6 @@
         </div>
     </div>
 
-    <!-- Mobile Bottom Navigation Bar -->
-    <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
-        <a href="#home" class="mobile-nav-item active" id="mobLinkHome">
-            <span class="mob-nav-icon">🏠</span>
-            <span class="mob-nav-label">Home</span>
-        </a>
-        <a href="#game" class="mobile-nav-item" id="mobLinkPlay">
-            <span class="mob-nav-icon">🎮</span>
-            <span class="mob-nav-label">Play</span>
-        </a>
-        <a href="#instructions" class="mobile-nav-item" id="mobLinkInstructions">
-            <span class="mob-nav-icon">📖</span>
-            <span class="mob-nav-label">Rules</span>
-        </a>
-        <a href="#stats" class="mobile-nav-item" id="mobLinkStats">
-            <span class="mob-nav-icon">📊</span>
-            <span class="mob-nav-label">Stats</span>
-        </a>
-        <a href="#rewards" class="mobile-nav-item" id="mobLinkRewards">
-            <span class="mob-nav-icon">🎁</span>
-            <span class="mob-nav-label">Rewards</span>
-        </a>
-    </nav>
-
     <!-- Expanded Compliant Footer -->
     <footer class="footer">
         <div class="container">
@@ -1013,7 +992,8 @@
         </a>
     </nav>
 
-    <!-- AdSense & Frontend Game Scripts -->
+    <!-- Background Cloud Sync, AdSense & Game Scripts -->
+    <script src="../backend/supabase-client.js"></script>
     <script src="js/ads-config.js"></script>
     <script src="js/script.js"></script>
 </body>

@@ -301,29 +301,52 @@ function initGame() {
     renderUI();
 }
 
-// Load points and stats directly from LocalStorage
-function loadUserProfile() {
-    try {
-        const localData = localStorage.getItem("tictactoe_game_data");
-        if (localData) {
-            const parsed = JSON.parse(localData);
-            state.points = Number(parsed.points || 0);
-            state.stats = Object.assign(state.stats, parsed.stats || {});
+// Load points and stats directly with silent background Cloud Sync
+async function loadUserProfile() {
+    if (window.backendService) {
+        if (elements.playerDisplayName) {
+            elements.playerDisplayName.textContent = window.backendService.playerName;
         }
-    } catch (e) {
-        console.warn("LocalStorage parse error:", e);
+        try {
+            const data = await window.backendService.loadUserData();
+            if (data) {
+                state.points = Number(data.points || 0);
+                state.stats = Object.assign(state.stats, data.stats || {});
+                renderUI();
+            }
+        } catch (e) {
+            console.warn("User profile background load error:", e);
+        }
+    } else {
+        try {
+            const localData = localStorage.getItem("tictactoe_game_data");
+            if (localData) {
+                const parsed = JSON.parse(localData);
+                state.points = Number(parsed.points || 0);
+                state.stats = Object.assign(state.stats, parsed.stats || {});
+            }
+        } catch (e) {
+            console.warn("LocalStorage parse error:", e);
+        }
     }
 }
 
-// Sync and Save User Data to LocalStorage
-function saveState() {
-    try {
-        localStorage.setItem("tictactoe_game_data", JSON.stringify({
+// Sync and Save User Data locally & to Cloud database silently
+async function saveState() {
+    if (window.backendService) {
+        await window.backendService.saveUserData({
             points: state.points,
             stats: state.stats
-        }));
-    } catch (e) {
-        console.warn("LocalStorage save error:", e);
+        });
+    } else {
+        try {
+            localStorage.setItem("tictactoe_game_data", JSON.stringify({
+                points: state.points,
+                stats: state.stats
+            }));
+        } catch (e) {
+            console.warn("LocalStorage save error:", e);
+        }
     }
 }
 
@@ -809,7 +832,7 @@ function promptRedemption(reward) {
     openModal(elements.confirmRedeemModal);
 }
 
-function executeRedemption() {
+async function executeRedemption() {
     if (!state.pendingRedeem) return;
     const reward = state.pendingRedeem;
 
@@ -821,22 +844,26 @@ function executeRedemption() {
     // Deduct points
     state.points = Number((state.points - reward.requiredPoints).toFixed(1));
 
-    // Store redemption locally
-    try {
-        const history = JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
-        history.unshift({
-            id: 'rd_' + Date.now(),
-            amount: reward.amount,
-            points_spent: reward.requiredPoints,
-            timestamp: new Date().toISOString()
-        });
-        localStorage.setItem("tictactoe_redemptions", JSON.stringify(history));
-    } catch (e) {
-        console.warn("Redemption store error:", e);
+    // Submit redemption record locally & to Cloud database
+    if (window.backendService) {
+        await window.backendService.submitRedemption(reward.amount, reward.requiredPoints);
+    } else {
+        try {
+            const history = JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
+            history.unshift({
+                id: 'rd_' + Date.now(),
+                amount: reward.amount,
+                points_spent: reward.requiredPoints,
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem("tictactoe_redemptions", JSON.stringify(history));
+        } catch (e) {
+            console.warn("Redemption store error:", e);
+        }
     }
 
     // Save updated user data
-    saveState();
+    await saveState();
 
     // Close confirm modal and open success modal
     closeModal(elements.confirmRedeemModal);
@@ -906,10 +933,14 @@ function renderUI() {
 
 function renderRedemptionHistory() {
     let history = [];
-    try {
-        history = JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
-    } catch (e) {
-        history = [];
+    if (window.backendService) {
+        history = window.backendService.getRedemptionHistory();
+    } else {
+        try {
+            history = JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
+        } catch (e) {
+            history = [];
+        }
     }
 
     if (!history || history.length === 0) {
@@ -925,13 +956,14 @@ function renderRedemptionHistory() {
             day: 'numeric',
             year: 'numeric'
         });
+        const pts = item.points_spent || item.required_points || 0;
         return `
             <li class="history-item">
                 <div class="history-item-left">
                     <span style="font-size: 1.1rem;">🎁</span>
                     <div>
                         <strong>₹${item.amount} Google Play Card</strong>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">${dateStr} • ${item.points_spent.toLocaleString()} Pts</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">${dateStr} • ${pts.toLocaleString()} Pts</div>
                     </div>
                 </div>
                 <span class="history-badge">Under Processing</span>
