@@ -4,8 +4,8 @@
  */
 
 const ADS_CONFIG = {
-    // Replace with your actual Google AdSense Publisher ID (e.g., 'ca-pub-1234567890123456')
-    publisherId: 'ca-pub-XXXXXXXXXXXXXXXX',
+    // Official Google AdSense Publisher ID
+    publisherId: 'ca-pub-2711605087755702',
 
     // Replace with your Google AdSense Ad Slot IDs created in your AdSense dashboard
     slots: {
