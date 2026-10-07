@@ -788,30 +788,6 @@ function setupEventListeners() {
         });
     }
 
-    // Google Sign-In Action inside Modal
-    if (elements.btnAuthGoogle) {
-        elements.btnAuthGoogle.addEventListener('click', async () => {
-            clearAuthAlert();
-            elements.btnAuthGoogle.disabled = true;
-            try {
-                const { user, error } = await window.backendService.signInWithGoogle();
-                if (error) {
-                    showAuthAlert(error.message || 'Google sign-in could not be initiated.', 'error');
-                } else if (user) {
-                    updateAuthDisplay(user);
-                    await loadUserProfile();
-                    renderUI();
-                    closeModal(elements.authModal);
-                }
-            } catch (err) {
-                console.error("Google Auth error:", err);
-                showAuthAlert('Google Sign-In failed.', 'error');
-            } finally {
-                elements.btnAuthGoogle.disabled = false;
-            }
-        });
-    }
-
     // Sign Out Button
     if (elements.btnSignOut) {
         elements.btnSignOut.addEventListener('click', async () => {
