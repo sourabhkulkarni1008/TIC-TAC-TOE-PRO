@@ -32,14 +32,14 @@ class BackendService {
                     }
                 });
 
-                // Listen for auth state changes (LOGIN, LOGOUT, INITIAL_SESSION)
+                // Listen for auth state changes (LOGIN, LOGOUT, TOKEN_REFRESHED, INITIAL_SESSION)
                 this.supabase.auth.onAuthStateChange(async (event, session) => {
                     this.currentUser = session ? session.user : null;
                     console.log(`🔐 Auth State Change: ${event} | User: ${this.currentUser?.email || 'Logged Out'}`);
                     this.notifyAuthListeners(this.currentUser);
                 });
 
-                // Check initial session
+                // Initial session check
                 this.checkSession();
             } catch (err) {
                 console.warn("Supabase client init warning:", err);
@@ -55,9 +55,14 @@ class BackendService {
                 this.currentUser = session.user;
                 this.notifyAuthListeners(this.currentUser);
                 return this.currentUser;
+            } else {
+                this.currentUser = null;
+                this.notifyAuthListeners(null);
             }
         } catch (e) {
             console.warn("Session check error:", e);
+            this.currentUser = null;
+            this.notifyAuthListeners(null);
         }
         return null;
     }
@@ -65,7 +70,7 @@ class BackendService {
     onAuthChange(callback) {
         if (typeof callback === 'function') {
             this.authListeners.push(callback);
-            if (this.currentUser) callback(this.currentUser);
+            callback(this.currentUser);
         }
     }
 
@@ -79,13 +84,36 @@ class BackendService {
     async signUp(email, password) {
         if (!this.supabase) throw new Error("Database client not available");
         
+        const cleanEmail = email.trim().toLowerCase();
         const { data, error } = await this.supabase.auth.signUp({
-            email: email.trim().toLowerCase(),
+            email: cleanEmail,
             password: password
         });
 
         if (error) throw error;
-        
+
+        // If session is present directly
+        if (data && data.session && data.user) {
+            this.currentUser = data.user;
+            this.notifyAuthListeners(this.currentUser);
+            return data;
+        }
+
+        // Try direct password sign in immediately
+        try {
+            const loginRes = await this.supabase.auth.signInWithPassword({
+                email: cleanEmail,
+                password: password
+            });
+            if (loginRes.data && loginRes.data.user) {
+                this.currentUser = loginRes.data.user;
+                this.notifyAuthListeners(this.currentUser);
+                return loginRes.data;
+            }
+        } catch (signInErr) {
+            // Confirmation might be required by provider
+        }
+
         this.currentUser = data.user;
         this.notifyAuthListeners(this.currentUser);
         return data;
@@ -95,8 +123,9 @@ class BackendService {
     async signIn(email, password) {
         if (!this.supabase) throw new Error("Database client not available");
 
+        const cleanEmail = email.trim().toLowerCase();
         const { data, error } = await this.supabase.auth.signInWithPassword({
-            email: email.trim().toLowerCase(),
+            email: cleanEmail,
             password: password
         });
 
