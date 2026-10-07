@@ -1088,18 +1088,10 @@ function handleGameOver(result, winningCombination = null) {
     renderUI();
     updateTurnIndicator();
 
-    // Show Post-Game Ad Intermission Break (AdSense) before Result Modal
+    // Open Result Modal Directly (No Ads)
     setTimeout(() => {
-        if (window.adsManager && typeof window.adsManager.triggerPostGameAd === 'function') {
-            window.adsManager.triggerPostGameAd(() => {
-                openModal(elements.resultModal);
-                resetBoard();
-            });
-        } else {
-            openModal(elements.resultModal);
-            resetBoard();
-        }
-    }, 600);
+        openModal(elements.resultModal);
+    }, 450);
 }
 
 // ============================================================================

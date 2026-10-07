@@ -17,12 +17,8 @@
     <!-- Supabase JS Client (v2) for Email+Password Auth & Cloud Sync -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- Google AdSense Official Script -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2711605087755702"
-         crossorigin="anonymous"></script>
-    
     <!-- Main Stylesheet -->
-    <link rel="stylesheet" href="css/style.css?v=4.0">
+    <link rel="stylesheet" href="css/style.css?v=4.1">
 </head>
 <body>
 
@@ -154,19 +150,6 @@
             <!-- 2. TIC-TAC-TOE GAME ARENA SECTION -->
             <section class="game-section" id="game">
                 <div class="container">
-                    <!-- Top Google AdSense Banner Slot -->
-                    <div class="ad-banner-section" style="padding-top: 0;">
-                        <div class="ad-banner-wrapper" id="adBannerTopContainer">
-                            <div class="ad-unit-label">SPONSORED ADVERTISEMENT</div>
-                            <ins class="adsbygoogle"
-                                 style="display:block"
-                                 data-ad-client="ca-pub-2711605087755702"
-                                 data-ad-slot="4293059609"
-                                 data-ad-format="auto"
-                                 data-full-width-responsive="true"></ins>
-                        </div>
-                    </div>
-
                     <div class="game-arena-card">
                         
                         <div class="game-header">
@@ -229,19 +212,6 @@
                             </button>
                         </div>
 
-                    </div>
-
-                    <!-- Bottom Google AdSense Banner Slot -->
-                    <div class="ad-banner-section" style="padding-bottom: 0;">
-                        <div class="ad-banner-wrapper" id="adBannerBottomContainer">
-                            <div class="ad-unit-label">SPONSORED ADVERTISEMENT</div>
-                            <ins class="adsbygoogle"
-                                 style="display:block"
-                                 data-ad-client="ca-pub-2711605087755702"
-                                 data-ad-slot="4293059609"
-                                 data-ad-format="auto"
-                                 data-full-width-responsive="true"></ins>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -985,31 +955,6 @@
         </div>
     </div>
 
-    <!-- 1. Post-Game Google AdSense Intermission Modal -->
-    <div class="modal-overlay ad-intermission-overlay" id="adIntermissionModal">
-        <div class="modal-card ad-intermission-card">
-            <div class="ad-intermission-header">
-                <span class="ad-badge">SPONSORED ADVERTISEMENT</span>
-                <span class="ad-timer" id="adTimerBadge">Next match in <strong id="adTimerCountdown">4</strong>s</span>
-            </div>
-            
-            <div class="ad-container-interstitial" id="adInterstitialContainer">
-                <ins class="adsbygoogle"
-                     style="display:block; min-height: 250px; width: 100%;"
-                     data-ad-client="ca-pub-2711605087755702"
-                     data-ad-slot="4293059609"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
-            </div>
-
-            <div class="ad-intermission-footer">
-                <button type="button" class="btn btn-primary" id="btnSkipAd" disabled>
-                    <span>⏳ Please wait (<span id="adSkipCountdown">4</span>s)...</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- 2. Game Result Modal -->
     <div class="modal-overlay" id="resultModal">
         <div class="modal-card">
@@ -1030,16 +975,6 @@
                     <span>Updated Total:</span>
                     <strong id="resultModalTotal" style="color: var(--gold);">48.5 Pts</strong>
                 </div>
-            </div>
-
-            <!-- AdSense Result Banner Unit -->
-            <div class="ad-result-box" id="adResultBannerContainer">
-                <ins class="adsbygoogle"
-                     style="display:block"
-                     data-ad-client="ca-pub-2711605087755702"
-                     data-ad-slot="4293059609"
-                     data-ad-format="auto"
-                     data-full-width-responsive="true"></ins>
             </div>
 
             <div class="modal-actions">
@@ -1263,9 +1198,8 @@
         </button>
     </nav>
 
-    <!-- Background Cloud Sync, AdSense & Game Scripts -->
-    <script src="backend/supabase-client.js?v=4.0"></script>
-    <script src="js/ads-config.js?v=4.0"></script>
-    <script src="js/script.js?v=4.0"></script>
+    <!-- Background Cloud Sync & Game Scripts -->
+    <script src="backend/supabase-client.js?v=4.2"></script>
+    <script src="js/script.js?v=4.2"></script>
 </body>
 </html>
