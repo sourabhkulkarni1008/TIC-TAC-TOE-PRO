@@ -10,6 +10,10 @@ const SUPABASE_CONFIG = {
     anonKey: "sb_publishable_8Mz4FDbiPVCuroGHObMAhA_qbZDOOet"
 };
 
+// Render Backend API URL
+const RENDER_BACKEND_URL = "https://tic-tac-toe-pro-o2km.onrender.com";
+
+
 class BackendService {
     constructor() {
         this.supabase = null;
@@ -215,6 +219,20 @@ class BackendService {
         return redemptionRecord;
     }
 
+    // Ping Render Backend Service Health
+    async checkBackendHealth() {
+        try {
+            const res = await fetch(`${RENDER_BACKEND_URL}/health`, { method: 'GET' });
+            if (res.ok) {
+                const data = await res.json();
+                return { success: true, data };
+            }
+            return { success: false, status: res.status };
+        } catch (e) {
+            return { success: false, error: e.message };
+        }
+    }
+
     // Get Redemption History
     getRedemptionHistory() {
         return JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
@@ -223,3 +241,4 @@ class BackendService {
 
 // Global Supabase Backend Service Instance
 window.backendService = new BackendService();
+

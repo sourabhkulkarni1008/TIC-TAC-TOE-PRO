@@ -14,14 +14,20 @@ const rootDir = path.resolve(__dirname, '..');
 
 // Serve static frontend assets
 app.use(express.static(rootDir));
-app.use(express.static(__dirname));
-
-// Health check endpoint
+// Health & Status API Endpoints
 app.get('/health', (req, res) => {
     res.status(200).json({
-        status: 'ok',
-        service: 'Tic-Tac-Toe Pro Backend',
-        uptime: process.uptime(),
+        status: 'healthy',
+        service: 'Tic-Tac-Toe Pro Backend API',
+        uptime: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.get('/api/status', (req, res) => {
+    res.status(200).json({
+        online: true,
+        message: 'Backend server is operational and connected to frontend',
         timestamp: new Date().toISOString()
     });
 });
