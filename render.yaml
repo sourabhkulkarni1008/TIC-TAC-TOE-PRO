@@ -1,10 +1,7 @@
 services:
   - type: web
     name: tic-tac-toe-pro
-    runtime: static
-    buildCommand: ""
-    staticPublishPath: .
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node backend/server.js
