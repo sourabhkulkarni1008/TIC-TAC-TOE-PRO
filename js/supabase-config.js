@@ -233,6 +233,35 @@ class BackendService {
         }
     }
 
+    // Check full 3-Way Connected Services Status
+    async check3WayStatus() {
+        try {
+            const res = await fetch(`${RENDER_BACKEND_URL}/api/status`, { method: 'GET' });
+            if (res.ok) {
+                const data = await res.json();
+                return { success: true, data };
+            }
+            return { success: false, status: res.status };
+        } catch (e) {
+            return { success: false, error: e.message };
+        }
+    }
+
+    // Fetch Global Leaderboard from Render Backend / Supabase
+    async fetchLeaderboard() {
+        try {
+            const res = await fetch(`${RENDER_BACKEND_URL}/api/leaderboard`, { method: 'GET' });
+            if (res.ok) {
+                const data = await res.json();
+                return data.leaderboard || [];
+            }
+            return [];
+        } catch (e) {
+            console.warn("Leaderboard fetch notice:", e);
+            return [];
+        }
+    }
+
     // Get Redemption History
     getRedemptionHistory() {
         return JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
@@ -241,4 +270,5 @@ class BackendService {
 
 // Global Supabase Backend Service Instance
 window.backendService = new BackendService();
+
 
