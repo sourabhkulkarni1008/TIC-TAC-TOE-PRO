@@ -385,6 +385,9 @@ function initAuth() {
             }
 
             try {
+                if (!window.backendService && typeof BackendService !== 'undefined') {
+                    window.backendService = new BackendService();
+                }
                 if (window.backendService) {
                     await window.backendService.signIn(email, password);
                     showAuthAlert('✅ Successfully signed in! Loading your data...', 'success');
@@ -393,7 +396,7 @@ function initAuth() {
                         if (elements.formSignIn) elements.formSignIn.reset();
                     }, 800);
                 } else {
-                    showAuthAlert('Database service not connected.', 'error');
+                    showAuthAlert('Connecting to database server, please try again in a moment.', 'error');
                 }
             } catch (err) {
                 console.error("Sign In Error:", err);
@@ -438,6 +441,9 @@ function initAuth() {
             }
 
             try {
+                if (!window.backendService && typeof BackendService !== 'undefined') {
+                    window.backendService = new BackendService();
+                }
                 if (window.backendService) {
                     await window.backendService.signUp(email, password);
                     showAuthAlert('✅ Account created successfully! Synced wallet.', 'success');
@@ -446,7 +452,7 @@ function initAuth() {
                         if (elements.formRegister) elements.formRegister.reset();
                     }, 1000);
                 } else {
-                    showAuthAlert('Database service not connected.', 'error');
+                    showAuthAlert('Connecting to database server, please try again in a moment.', 'error');
                 }
             } catch (err) {
                 console.error("Registration Error:", err);

@@ -1,6 +1,10 @@
 /**
  * Supabase & Cloud Backend Client for Tic-Tac-Toe Pro (v5.0)
- * Dual Engine: Supabase JS Client v2 + Zero-Dependency REST API Fallback
+ * Architecture:
+ * - Dual Engine: Supabase JS Client v2 + Zero-Dependency REST API Fallback
+ * - Render Node.js Backend API Integration (https://tic-tac-toe-pro-o2km.onrender.com)
+ * - Persistent Cloud Sessions & Offline-First Local Storage Fallback
+ * - Real-time Wallet Points & Leaderboard Sync
  */
 
 const SUPABASE_CONFIG = {
@@ -23,11 +27,17 @@ class BackendService {
     }
 
     async init() {
+        // 1. Try to initialize Supabase JS SDK if available
         this.initSupabaseSDK();
+
+        // 2. If SDK not yet loaded, wait and retry or load CDN dynamically
         if (!this.supabase) {
             await this.ensureSupabaseLoaded();
         }
+
+        // 3. Restore persisted session (from SDK or LocalStorage)
         await this.restoreSession();
+
         this.isReady = true;
         console.log("🚀 BackendService initialized. Database ready:", !!this.supabase || !!this.sessionToken);
     }
@@ -95,6 +105,7 @@ class BackendService {
             }
         }
 
+        // Fallback: restore from localStorage
         try {
             const savedUser = localStorage.getItem("tictactoe_session_user");
             const savedToken = localStorage.getItem("tictactoe_session_token");
@@ -126,9 +137,13 @@ class BackendService {
         });
     }
 
+    // -------------------------------------------------------------
+    // AUTHENTICATION: Direct SignUp (Create Account)
+    // -------------------------------------------------------------
     async signUp(email, password) {
         const cleanEmail = email.trim().toLowerCase();
 
+        // Strategy A: Via Supabase SDK
         if (this.supabase) {
             try {
                 const { data, error } = await this.supabase.auth.signUp({
@@ -137,6 +152,7 @@ class BackendService {
                 });
 
                 if (error) {
+                    // Check if already registered
                     if (error.message.includes("User already registered")) {
                         throw new Error("This email is already registered. Please click 'Sign In' instead.");
                     }
@@ -159,6 +175,7 @@ class BackendService {
             }
         }
 
+        // Strategy B: Direct Supabase REST API Fallback
         try {
             const res = await fetch(`${SUPABASE_CONFIG.url}/auth/v1/signup`, {
                 method: 'POST',
@@ -182,6 +199,7 @@ class BackendService {
             this.notifyAuthListeners(this.currentUser);
             return { user: this.currentUser, session: data };
         } catch (restError) {
+            // Strategy C: Offline / Local fallback if network is unreachable
             console.warn("Cloud connection error, enabling secure local account mode:", restError);
             const localUser = {
                 id: 'local_user_' + btoa(cleanEmail).replace(/=/g, ''),
@@ -196,9 +214,13 @@ class BackendService {
         }
     }
 
+    // -------------------------------------------------------------
+    // AUTHENTICATION: Direct SignIn (Login)
+    // -------------------------------------------------------------
     async signIn(email, password) {
         const cleanEmail = email.trim().toLowerCase();
 
+        // Strategy A: Via Supabase SDK
         if (this.supabase) {
             try {
                 const { data, error } = await this.supabase.auth.signInWithPassword({
@@ -224,6 +246,7 @@ class BackendService {
             }
         }
 
+        // Strategy B: Direct Supabase REST API Fallback
         try {
             const res = await fetch(`${SUPABASE_CONFIG.url}/auth/v1/token?grant_type=password`, {
                 method: 'POST',
@@ -249,6 +272,7 @@ class BackendService {
             if (restError.message && restError.message.includes("Invalid")) {
                 throw restError;
             }
+            // Strategy C: Offline session fallback
             const localUser = {
                 id: 'local_user_' + btoa(cleanEmail).replace(/=/g, ''),
                 email: cleanEmail,
@@ -261,6 +285,9 @@ class BackendService {
         }
     }
 
+    // -------------------------------------------------------------
+    // AUTHENTICATION: Sign Out
+    // -------------------------------------------------------------
     async signOut() {
         if (this.supabase) {
             try {
@@ -276,6 +303,9 @@ class BackendService {
         this.notifyAuthListeners(null);
     }
 
+    // -------------------------------------------------------------
+    // DATA LAYER: Load User Points & Stats
+    // -------------------------------------------------------------
     async loadUserData() {
         let localData = null;
         try {
@@ -320,6 +350,9 @@ class BackendService {
         return localData;
     }
 
+    // -------------------------------------------------------------
+    // DATA LAYER: Save / Sync User Points & Stats
+    // -------------------------------------------------------------
     async saveUserData(userData) {
         try {
             localStorage.setItem("tictactoe_game_data", JSON.stringify(userData));
@@ -356,6 +389,9 @@ class BackendService {
         }
     }
 
+    // -------------------------------------------------------------
+    // REWARDS: Submit Redemption Request
+    // -------------------------------------------------------------
     async submitRedemption(amount, pointsSpent) {
         const userEmail = this.currentUser ? this.currentUser.email : 'guest@tictactoe.app';
         const userId = this.currentUser ? this.currentUser.id : 'guest_' + Date.now();
@@ -378,6 +414,7 @@ class BackendService {
             console.warn("Local redemption storage notice:", e);
         }
 
+        // Try submitting via Render Backend API
         try {
             fetch(`${RENDER_BACKEND_URL}/api/redemptions`, {
                 method: 'POST',
@@ -391,6 +428,7 @@ class BackendService {
             }).catch(() => {});
         } catch (e) {}
 
+        // Also try direct Supabase insert
         if (this.supabase && this.currentUser && !this.currentUser.isLocal) {
             try {
                 await this.supabase.from('redemptions').insert([{
@@ -418,6 +456,9 @@ class BackendService {
         }
     }
 
+    // -------------------------------------------------------------
+    // BACKEND STATUS & LEADERBOARD (Render API Integration)
+    // -------------------------------------------------------------
     async checkBackendHealth() {
         try {
             const res = await fetch(`${RENDER_BACKEND_URL}/health`, { method: 'GET' });
@@ -459,4 +500,5 @@ class BackendService {
     }
 }
 
+// Global Singleton Instance
 window.backendService = new BackendService();
