@@ -327,9 +327,9 @@ function initGame() {
 function initAuth() {
     // Check initial auth state & listen for changes
     if (window.backendService) {
-        window.backendService.onAuthChange((user) => {
+        window.backendService.onAuthChange(async (user) => {
             updateAuthHeader(user);
-            loadUserProfile();
+            await loadUserProfile();
         });
     }
 
@@ -390,6 +390,7 @@ function initAuth() {
                 }
                 if (window.backendService) {
                     await window.backendService.signIn(email, password);
+                    await loadUserProfile();
                     showAuthAlert('✅ Successfully signed in! Loading your data...', 'success');
                     setTimeout(() => {
                         closeModal(elements.authModal);
@@ -446,6 +447,7 @@ function initAuth() {
                 }
                 if (window.backendService) {
                     await window.backendService.signUp(email, password);
+                    await loadUserProfile();
                     showAuthAlert('✅ Account created successfully! Synced wallet.', 'success');
                     setTimeout(() => {
                         closeModal(elements.authModal);
@@ -473,6 +475,27 @@ function initAuth() {
             if (window.backendService) {
                 await window.backendService.signOut();
             }
+            // 1. Immediately reset state points to 0.0
+            state.points = 0.0;
+            state.stats = {
+                totalGames: 0,
+                userWins: 0,
+                aiWins: 0,
+                draws: 0,
+                easyWins: 0,
+                mediumWins: 0,
+                hardWins: 0
+            };
+            // 2. Clear old legacy guest storage
+            try {
+                localStorage.removeItem("tictactoe_game_data");
+                localStorage.removeItem("tictactoe_guest_game_data");
+            } catch (e) {}
+
+            // 3. Reset board
+            resetBoard();
+
+            // 4. Update Header & UI
             updateAuthHeader(null);
             renderUI();
         });
@@ -522,24 +545,28 @@ async function loadUserProfile() {
         try {
             const data = await window.backendService.loadUserData();
             if (data) {
-                state.points = Number(data.points || 0);
-                state.stats = Object.assign(state.stats, data.stats || {});
-                renderUI();
+                state.points = Number(data.points || 0.0);
+                state.stats = {
+                    totalGames: Number(data.stats?.totalGames || 0),
+                    userWins: Number(data.stats?.userWins || 0),
+                    aiWins: Number(data.stats?.aiWins || 0),
+                    draws: Number(data.stats?.draws || 0),
+                    easyWins: Number(data.stats?.easyWins || 0),
+                    mediumWins: Number(data.stats?.mediumWins || 0),
+                    hardWins: Number(data.stats?.hardWins || 0)
+                };
+            } else {
+                state.points = 0.0;
+                state.stats = { totalGames: 0, userWins: 0, aiWins: 0, draws: 0, easyWins: 0, mediumWins: 0, hardWins: 0 };
             }
+            renderUI();
         } catch (e) {
             console.warn("User profile background load error:", e);
         }
     } else {
-        try {
-            const localData = localStorage.getItem("tictactoe_game_data");
-            if (localData) {
-                const parsed = JSON.parse(localData);
-                state.points = Number(parsed.points || 0);
-                state.stats = Object.assign(state.stats, parsed.stats || {});
-            }
-        } catch (e) {
-            console.warn("LocalStorage parse error:", e);
-        }
+        state.points = 0.0;
+        state.stats = { totalGames: 0, userWins: 0, aiWins: 0, draws: 0, easyWins: 0, mediumWins: 0, hardWins: 0 };
+        renderUI();
     }
 }
 

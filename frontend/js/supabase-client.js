@@ -1,6 +1,5 @@
 /**
- * Supabase & Cloud Backend Client for Tic-Tac-Toe Pro (v5.0)
- * Dual Engine: Supabase JS Client v2 + Zero-Dependency REST API Fallback
+ * Supabase & Cloud Backend Client for Tic-Tac-Toe Pro (v5.1)
  */
 
 const SUPABASE_CONFIG = {
@@ -29,7 +28,7 @@ class BackendService {
         }
         await this.restoreSession();
         this.isReady = true;
-        console.log("🚀 BackendService initialized. Database ready:", !!this.supabase || !!this.sessionToken);
+        console.log("🚀 BackendService initialized. Active User:", this.currentUser?.email || 'Guest (0.0 Pts)');
     }
 
     initSupabaseSDK() {
@@ -44,7 +43,7 @@ class BackendService {
                     }
                 });
 
-                this.supabase.auth.onAuthStateChange((event, session) => {
+                this.supabase.auth.onAuthStateChange(async (event, session) => {
                     this.currentUser = session?.user || null;
                     this.sessionToken = session?.access_token || null;
                     if (this.currentUser) {
@@ -54,7 +53,7 @@ class BackendService {
                         localStorage.removeItem("tictactoe_session_user");
                         localStorage.removeItem("tictactoe_session_token");
                     }
-                    console.log(`🔐 Auth Event: ${event} | User: ${this.currentUser?.email || 'Guest'}`);
+                    console.log(`🔐 Auth State Event: ${event} | User: ${this.currentUser?.email || 'Logged Out'}`);
                     this.notifyAuthListeners(this.currentUser);
                 });
                 return true;
@@ -109,6 +108,7 @@ class BackendService {
         }
 
         this.currentUser = null;
+        this.sessionToken = null;
         this.notifyAuthListeners(null);
         return null;
     }
@@ -137,7 +137,7 @@ class BackendService {
                 });
 
                 if (error) {
-                    if (error.message.includes("User already registered")) {
+                    if (error.message.includes("User already registered") || error.message.includes("already registered")) {
                         throw new Error("This email is already registered. Please click 'Sign In' instead.");
                     }
                     throw error;
@@ -277,81 +277,140 @@ class BackendService {
     }
 
     async loadUserData() {
-        let localData = null;
-        try {
-            const stored = localStorage.getItem("tictactoe_game_data");
-            if (stored) localData = JSON.parse(stored);
-        } catch (e) {
-            console.warn("LocalStorage parse notice:", e);
+        if (!this.currentUser) {
+            return {
+                points: 0.0,
+                stats: { totalGames: 0, userWins: 0, aiWins: 0, draws: 0, easyWins: 0, mediumWins: 0, hardWins: 0 }
+            };
         }
 
-        if (this.currentUser && !this.currentUser.isLocal) {
-            if (this.supabase) {
-                try {
-                    const { data, error } = await this.supabase
-                        .from('user_profiles')
-                        .select('*')
-                        .eq('id', this.currentUser.id)
-                        .maybeSingle();
+        const userId = this.currentUser.id;
+        const userCacheKey = `tictactoe_user_${userId}_data`;
 
-                    if (data && !error) {
-                        const mergedPoints = Math.max(Number(data.points || 0), Number(localData?.points || 0));
-                        const mergedData = {
-                            points: mergedPoints,
-                            stats: {
-                                totalGames: Math.max(data.total_games || 0, localData?.stats?.totalGames || 0),
-                                userWins: Math.max(data.user_wins || 0, localData?.stats?.userWins || 0),
-                                aiWins: Math.max(data.ai_wins || 0, localData?.stats?.aiWins || 0),
-                                draws: Math.max(data.draws || 0, localData?.stats?.draws || 0),
-                                easyWins: Math.max(data.easy_wins || 0, localData?.stats?.easyWins || 0),
-                                mediumWins: Math.max(data.medium_wins || 0, localData?.stats?.mediumWins || 0),
-                                hardWins: Math.max(data.hard_wins || 0, localData?.stats?.hardWins || 0)
-                            }
-                        };
-                        localStorage.setItem("tictactoe_game_data", JSON.stringify(mergedData));
-                        return mergedData;
-                    }
-                } catch (e) {
-                    console.warn("Supabase user profile load notice:", e);
+        if (this.supabase && !this.currentUser.isLocal) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('id', userId)
+                    .maybeSingle();
+
+                if (data && !error) {
+                    const cloudData = {
+                        points: Number(data.points || 0.0),
+                        stats: {
+                            totalGames: Number(data.total_games || 0),
+                            userWins: Number(data.user_wins || 0),
+                            aiWins: Number(data.ai_wins || 0),
+                            draws: Number(data.draws || 0),
+                            easyWins: Number(data.easy_wins || 0),
+                            mediumWins: Number(data.medium_wins || 0),
+                            hardWins: Number(data.hard_wins || 0)
+                        }
+                    };
+                    localStorage.setItem(userCacheKey, JSON.stringify(cloudData));
+                    return cloudData;
                 }
+            } catch (e) {
+                console.warn("SDK loadUserData notice:", e);
             }
         }
 
-        return localData;
+        if (this.sessionToken && !this.currentUser.isLocal) {
+            try {
+                const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/user_profiles?id=eq.${userId}&select=*`, {
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${this.sessionToken}`
+                    }
+                });
+                if (res.ok) {
+                    const rows = await res.json();
+                    if (rows && rows.length > 0) {
+                        const data = rows[0];
+                        const cloudData = {
+                            points: Number(data.points || 0.0),
+                            stats: {
+                                totalGames: Number(data.total_games || 0),
+                                userWins: Number(data.user_wins || 0),
+                                aiWins: Number(data.ai_wins || 0),
+                                draws: Number(data.draws || 0),
+                                easyWins: Number(data.easy_wins || 0),
+                                mediumWins: Number(data.medium_wins || 0),
+                                hardWins: Number(data.hard_wins || 0)
+                            }
+                        };
+                        localStorage.setItem(userCacheKey, JSON.stringify(cloudData));
+                        return cloudData;
+                    }
+                }
+            } catch (e) {
+                console.warn("REST loadUserData notice:", e);
+            }
+        }
+
+        const cached = localStorage.getItem(userCacheKey);
+        if (cached) {
+            try { return JSON.parse(cached); } catch (e) {}
+        }
+
+        return {
+            points: 0.0,
+            stats: { totalGames: 0, userWins: 0, aiWins: 0, draws: 0, easyWins: 0, mediumWins: 0, hardWins: 0 }
+        };
     }
 
     async saveUserData(userData) {
-        try {
-            localStorage.setItem("tictactoe_game_data", JSON.stringify(userData));
-        } catch (e) {
-            console.warn("LocalStorage save notice:", e);
+        if (!this.currentUser) {
+            return;
         }
 
-        if (this.currentUser && !this.currentUser.isLocal && !this.isSyncing) {
-            this.isSyncing = true;
-            try {
-                const payload = {
-                    id: this.currentUser.id,
-                    email: this.currentUser.email,
-                    display_name: this.currentUser.email.split('@')[0],
-                    points: Number((userData.points || 0).toFixed(1)),
-                    easy_wins: userData.stats?.easyWins || 0,
-                    medium_wins: userData.stats?.mediumWins || 0,
-                    hard_wins: userData.stats?.hardWins || 0,
-                    total_games: userData.stats?.totalGames || 0,
-                    user_wins: userData.stats?.userWins || 0,
-                    ai_wins: userData.stats?.aiWins || 0,
-                    draws: userData.stats?.draws || 0,
-                    updated_at: new Date().toISOString()
-                };
+        const userId = this.currentUser.id;
+        const userCacheKey = `tictactoe_user_${userId}_data`;
+        try {
+            localStorage.setItem(userCacheKey, JSON.stringify(userData));
+        } catch (e) {}
 
-                if (this.supabase) {
-                    await this.supabase.from('user_profiles').upsert(payload, { onConflict: 'id' });
-                }
+        if (this.currentUser.isLocal) return;
+
+        const payload = {
+            id: userId,
+            email: this.currentUser.email,
+            display_name: (this.currentUser.email || '').split('@')[0],
+            points: Number((userData.points || 0).toFixed(1)),
+            easy_wins: userData.stats?.easyWins || 0,
+            medium_wins: userData.stats?.mediumWins || 0,
+            hard_wins: userData.stats?.hardWins || 0,
+            total_games: userData.stats?.totalGames || 0,
+            user_wins: userData.stats?.userWins || 0,
+            ai_wins: userData.stats?.aiWins || 0,
+            draws: userData.stats?.draws || 0,
+            updated_at: new Date().toISOString()
+        };
+
+        if (this.supabase) {
+            try {
+                await this.supabase.from('user_profiles').upsert(payload, { onConflict: 'id' });
+                return;
             } catch (err) {
-                console.warn("Cloud profile save notice:", err);
-            } finally {
-                this.isSyncing = false;
+                console.warn("SDK saveUserData notice:", err);
+            }
+        }
+
+        if (this.sessionToken) {
+            try {
+                await fetch(`${SUPABASE_CONFIG.url}/rest/v1/user_profiles`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${this.sessionToken}`,
+                        'Prefer': 'resolution=merge-duplicates'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                console.warn("REST saveUserData notice:", e);
             }
         }
     }
@@ -370,13 +429,12 @@ class BackendService {
             timestamp: new Date().toISOString()
         };
 
+        const historyKey = this.currentUser ? `tictactoe_redemptions_${this.currentUser.id}` : 'tictactoe_guest_redemptions';
         try {
-            const history = JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
+            const history = JSON.parse(localStorage.getItem(historyKey) || "[]");
             history.unshift(record);
-            localStorage.setItem("tictactoe_redemptions", JSON.stringify(history));
-        } catch (e) {
-            console.warn("Local redemption storage notice:", e);
-        }
+            localStorage.setItem(historyKey, JSON.stringify(history));
+        } catch (e) {}
 
         try {
             fetch(`${RENDER_BACKEND_URL}/api/redemptions`, {
@@ -411,8 +469,9 @@ class BackendService {
     }
 
     getRedemptionHistory() {
+        const historyKey = this.currentUser ? `tictactoe_redemptions_${this.currentUser.id}` : 'tictactoe_guest_redemptions';
         try {
-            return JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
+            return JSON.parse(localStorage.getItem(historyKey) || "[]");
         } catch (e) {
             return [];
         }

@@ -1,10 +1,10 @@
 /**
- * Supabase & Cloud Backend Client for Tic-Tac-Toe Pro (v5.0)
- * Architecture:
- * - Dual Engine: Supabase JS Client v2 + Zero-Dependency REST API Fallback
- * - Render Node.js Backend API Integration (https://tic-tac-toe-pro-o2km.onrender.com)
- * - Persistent Cloud Sessions & Offline-First Local Storage Fallback
- * - Real-time Wallet Points & Leaderboard Sync
+ * Supabase & Cloud Backend Client for Tic-Tac-Toe Pro (v5.1)
+ * Features:
+ * - Persistent Cloud-Synced Accounts (Email + Password)
+ * - Strict User Isolation: Cloud points loaded on login, 0.0 points on logout
+ * - Cross-Device Sync: Login with same email/password anywhere to access points
+ * - Dual Engine: Supabase JS Client v2 + Direct REST API Fallback
  */
 
 const SUPABASE_CONFIG = {
@@ -27,19 +27,13 @@ class BackendService {
     }
 
     async init() {
-        // 1. Try to initialize Supabase JS SDK if available
         this.initSupabaseSDK();
-
-        // 2. If SDK not yet loaded, wait and retry or load CDN dynamically
         if (!this.supabase) {
             await this.ensureSupabaseLoaded();
         }
-
-        // 3. Restore persisted session (from SDK or LocalStorage)
         await this.restoreSession();
-
         this.isReady = true;
-        console.log("🚀 BackendService initialized. Database ready:", !!this.supabase || !!this.sessionToken);
+        console.log("🚀 BackendService initialized. Active User:", this.currentUser?.email || 'Guest (0.0 Pts)');
     }
 
     initSupabaseSDK() {
@@ -54,7 +48,7 @@ class BackendService {
                     }
                 });
 
-                this.supabase.auth.onAuthStateChange((event, session) => {
+                this.supabase.auth.onAuthStateChange(async (event, session) => {
                     this.currentUser = session?.user || null;
                     this.sessionToken = session?.access_token || null;
                     if (this.currentUser) {
@@ -64,7 +58,7 @@ class BackendService {
                         localStorage.removeItem("tictactoe_session_user");
                         localStorage.removeItem("tictactoe_session_token");
                     }
-                    console.log(`🔐 Auth Event: ${event} | User: ${this.currentUser?.email || 'Guest'}`);
+                    console.log(`🔐 Auth State Event: ${event} | User: ${this.currentUser?.email || 'Logged Out'}`);
                     this.notifyAuthListeners(this.currentUser);
                 });
                 return true;
@@ -105,7 +99,6 @@ class BackendService {
             }
         }
 
-        // Fallback: restore from localStorage
         try {
             const savedUser = localStorage.getItem("tictactoe_session_user");
             const savedToken = localStorage.getItem("tictactoe_session_token");
@@ -120,6 +113,7 @@ class BackendService {
         }
 
         this.currentUser = null;
+        this.sessionToken = null;
         this.notifyAuthListeners(null);
         return null;
     }
@@ -138,12 +132,12 @@ class BackendService {
     }
 
     // -------------------------------------------------------------
-    // AUTHENTICATION: Direct SignUp (Create Account)
+    // SIGN UP (Create new cloud account)
     // -------------------------------------------------------------
     async signUp(email, password) {
         const cleanEmail = email.trim().toLowerCase();
 
-        // Strategy A: Via Supabase SDK
+        // 1. Try Supabase SDK
         if (this.supabase) {
             try {
                 const { data, error } = await this.supabase.auth.signUp({
@@ -152,8 +146,7 @@ class BackendService {
                 });
 
                 if (error) {
-                    // Check if already registered
-                    if (error.message.includes("User already registered")) {
+                    if (error.message.includes("User already registered") || error.message.includes("already registered")) {
                         throw new Error("This email is already registered. Please click 'Sign In' instead.");
                     }
                     throw error;
@@ -175,7 +168,7 @@ class BackendService {
             }
         }
 
-        // Strategy B: Direct Supabase REST API Fallback
+        // 2. Direct Supabase REST API Fallback
         try {
             const res = await fetch(`${SUPABASE_CONFIG.url}/auth/v1/signup`, {
                 method: 'POST',
@@ -199,7 +192,6 @@ class BackendService {
             this.notifyAuthListeners(this.currentUser);
             return { user: this.currentUser, session: data };
         } catch (restError) {
-            // Strategy C: Offline / Local fallback if network is unreachable
             console.warn("Cloud connection error, enabling secure local account mode:", restError);
             const localUser = {
                 id: 'local_user_' + btoa(cleanEmail).replace(/=/g, ''),
@@ -215,12 +207,12 @@ class BackendService {
     }
 
     // -------------------------------------------------------------
-    // AUTHENTICATION: Direct SignIn (Login)
+    // SIGN IN (Login with registered email & password)
     // -------------------------------------------------------------
     async signIn(email, password) {
         const cleanEmail = email.trim().toLowerCase();
 
-        // Strategy A: Via Supabase SDK
+        // 1. Try Supabase SDK
         if (this.supabase) {
             try {
                 const { data, error } = await this.supabase.auth.signInWithPassword({
@@ -246,7 +238,7 @@ class BackendService {
             }
         }
 
-        // Strategy B: Direct Supabase REST API Fallback
+        // 2. Direct Supabase REST API Fallback
         try {
             const res = await fetch(`${SUPABASE_CONFIG.url}/auth/v1/token?grant_type=password`, {
                 method: 'POST',
@@ -272,7 +264,6 @@ class BackendService {
             if (restError.message && restError.message.includes("Invalid")) {
                 throw restError;
             }
-            // Strategy C: Offline session fallback
             const localUser = {
                 id: 'local_user_' + btoa(cleanEmail).replace(/=/g, ''),
                 email: cleanEmail,
@@ -286,7 +277,7 @@ class BackendService {
     }
 
     // -------------------------------------------------------------
-    // AUTHENTICATION: Sign Out
+    // SIGN OUT (Logout & reset session)
     // -------------------------------------------------------------
     async signOut() {
         if (this.supabase) {
@@ -304,87 +295,153 @@ class BackendService {
     }
 
     // -------------------------------------------------------------
-    // DATA LAYER: Load User Points & Stats
+    // LOAD USER DATA (Fetches user's exact cloud points & stats)
     // -------------------------------------------------------------
     async loadUserData() {
-        let localData = null;
-        try {
-            const stored = localStorage.getItem("tictactoe_game_data");
-            if (stored) localData = JSON.parse(stored);
-        } catch (e) {
-            console.warn("LocalStorage parse notice:", e);
+        // If guest / logged out -> return 0.0 points
+        if (!this.currentUser) {
+            return {
+                points: 0.0,
+                stats: { totalGames: 0, userWins: 0, aiWins: 0, draws: 0, easyWins: 0, mediumWins: 0, hardWins: 0 }
+            };
         }
 
-        if (this.currentUser && !this.currentUser.isLocal) {
-            if (this.supabase) {
-                try {
-                    const { data, error } = await this.supabase
-                        .from('user_profiles')
-                        .select('*')
-                        .eq('id', this.currentUser.id)
-                        .maybeSingle();
+        const userId = this.currentUser.id;
+        const userCacheKey = `tictactoe_user_${userId}_data`;
 
-                    if (data && !error) {
-                        const mergedPoints = Math.max(Number(data.points || 0), Number(localData?.points || 0));
-                        const mergedData = {
-                            points: mergedPoints,
-                            stats: {
-                                totalGames: Math.max(data.total_games || 0, localData?.stats?.totalGames || 0),
-                                userWins: Math.max(data.user_wins || 0, localData?.stats?.userWins || 0),
-                                aiWins: Math.max(data.ai_wins || 0, localData?.stats?.aiWins || 0),
-                                draws: Math.max(data.draws || 0, localData?.stats?.draws || 0),
-                                easyWins: Math.max(data.easy_wins || 0, localData?.stats?.easyWins || 0),
-                                mediumWins: Math.max(data.medium_wins || 0, localData?.stats?.mediumWins || 0),
-                                hardWins: Math.max(data.hard_wins || 0, localData?.stats?.hardWins || 0)
-                            }
-                        };
-                        localStorage.setItem("tictactoe_game_data", JSON.stringify(mergedData));
-                        return mergedData;
-                    }
-                } catch (e) {
-                    console.warn("Supabase user profile load notice:", e);
+        // 1. Fetch from Supabase via SDK
+        if (this.supabase && !this.currentUser.isLocal) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('user_profiles')
+                    .select('*')
+                    .eq('id', userId)
+                    .maybeSingle();
+
+                if (data && !error) {
+                    const cloudData = {
+                        points: Number(data.points || 0.0),
+                        stats: {
+                            totalGames: Number(data.total_games || 0),
+                            userWins: Number(data.user_wins || 0),
+                            aiWins: Number(data.ai_wins || 0),
+                            draws: Number(data.draws || 0),
+                            easyWins: Number(data.easy_wins || 0),
+                            mediumWins: Number(data.medium_wins || 0),
+                            hardWins: Number(data.hard_wins || 0)
+                        }
+                    };
+                    localStorage.setItem(userCacheKey, JSON.stringify(cloudData));
+                    return cloudData;
                 }
+            } catch (e) {
+                console.warn("SDK loadUserData notice:", e);
             }
         }
 
-        return localData;
+        // 2. Fetch from Supabase via REST API
+        if (this.sessionToken && !this.currentUser.isLocal) {
+            try {
+                const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/user_profiles?id=eq.${userId}&select=*`, {
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${this.sessionToken}`
+                    }
+                });
+                if (res.ok) {
+                    const rows = await res.json();
+                    if (rows && rows.length > 0) {
+                        const data = rows[0];
+                        const cloudData = {
+                            points: Number(data.points || 0.0),
+                            stats: {
+                                totalGames: Number(data.total_games || 0),
+                                userWins: Number(data.user_wins || 0),
+                                aiWins: Number(data.ai_wins || 0),
+                                draws: Number(data.draws || 0),
+                                easyWins: Number(data.easy_wins || 0),
+                                mediumWins: Number(data.medium_wins || 0),
+                                hardWins: Number(data.hard_wins || 0)
+                            }
+                        };
+                        localStorage.setItem(userCacheKey, JSON.stringify(cloudData));
+                        return cloudData;
+                    }
+                }
+            } catch (e) {
+                console.warn("REST loadUserData notice:", e);
+            }
+        }
+
+        // 3. User-specific local cache
+        const cached = localStorage.getItem(userCacheKey);
+        if (cached) {
+            try { return JSON.parse(cached); } catch (e) {}
+        }
+
+        return {
+            points: 0.0,
+            stats: { totalGames: 0, userWins: 0, aiWins: 0, draws: 0, easyWins: 0, mediumWins: 0, hardWins: 0 }
+        };
     }
 
     // -------------------------------------------------------------
-    // DATA LAYER: Save / Sync User Points & Stats
+    // SAVE USER DATA (Saves points directly to user's cloud account)
     // -------------------------------------------------------------
     async saveUserData(userData) {
-        try {
-            localStorage.setItem("tictactoe_game_data", JSON.stringify(userData));
-        } catch (e) {
-            console.warn("LocalStorage save notice:", e);
+        if (!this.currentUser) {
+            // Guest mode: do not write to any user cloud profile
+            return;
         }
 
-        if (this.currentUser && !this.currentUser.isLocal && !this.isSyncing) {
-            this.isSyncing = true;
-            try {
-                const payload = {
-                    id: this.currentUser.id,
-                    email: this.currentUser.email,
-                    display_name: this.currentUser.email.split('@')[0],
-                    points: Number((userData.points || 0).toFixed(1)),
-                    easy_wins: userData.stats?.easyWins || 0,
-                    medium_wins: userData.stats?.mediumWins || 0,
-                    hard_wins: userData.stats?.hardWins || 0,
-                    total_games: userData.stats?.totalGames || 0,
-                    user_wins: userData.stats?.userWins || 0,
-                    ai_wins: userData.stats?.aiWins || 0,
-                    draws: userData.stats?.draws || 0,
-                    updated_at: new Date().toISOString()
-                };
+        const userId = this.currentUser.id;
+        const userCacheKey = `tictactoe_user_${userId}_data`;
+        try {
+            localStorage.setItem(userCacheKey, JSON.stringify(userData));
+        } catch (e) {}
 
-                if (this.supabase) {
-                    await this.supabase.from('user_profiles').upsert(payload, { onConflict: 'id' });
-                }
+        if (this.currentUser.isLocal) return;
+
+        const payload = {
+            id: userId,
+            email: this.currentUser.email,
+            display_name: (this.currentUser.email || '').split('@')[0],
+            points: Number((userData.points || 0).toFixed(1)),
+            easy_wins: userData.stats?.easyWins || 0,
+            medium_wins: userData.stats?.mediumWins || 0,
+            hard_wins: userData.stats?.hardWins || 0,
+            total_games: userData.stats?.totalGames || 0,
+            user_wins: userData.stats?.userWins || 0,
+            ai_wins: userData.stats?.aiWins || 0,
+            draws: userData.stats?.draws || 0,
+            updated_at: new Date().toISOString()
+        };
+
+        // 1. Supabase SDK Upsert
+        if (this.supabase) {
+            try {
+                await this.supabase.from('user_profiles').upsert(payload, { onConflict: 'id' });
+                return;
             } catch (err) {
-                console.warn("Cloud profile save notice:", err);
-            } finally {
-                this.isSyncing = false;
+                console.warn("SDK saveUserData notice:", err);
+            }
+        }
+
+        // 2. Supabase REST Upsert
+        if (this.sessionToken) {
+            try {
+                await fetch(`${SUPABASE_CONFIG.url}/rest/v1/user_profiles`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${this.sessionToken}`,
+                        'Prefer': 'resolution=merge-duplicates'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                console.warn("REST saveUserData notice:", e);
             }
         }
     }
@@ -406,15 +463,13 @@ class BackendService {
             timestamp: new Date().toISOString()
         };
 
+        const historyKey = this.currentUser ? `tictactoe_redemptions_${this.currentUser.id}` : 'tictactoe_guest_redemptions';
         try {
-            const history = JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
+            const history = JSON.parse(localStorage.getItem(historyKey) || "[]");
             history.unshift(record);
-            localStorage.setItem("tictactoe_redemptions", JSON.stringify(history));
-        } catch (e) {
-            console.warn("Local redemption storage notice:", e);
-        }
+            localStorage.setItem(historyKey, JSON.stringify(history));
+        } catch (e) {}
 
-        // Try submitting via Render Backend API
         try {
             fetch(`${RENDER_BACKEND_URL}/api/redemptions`, {
                 method: 'POST',
@@ -428,7 +483,6 @@ class BackendService {
             }).catch(() => {});
         } catch (e) {}
 
-        // Also try direct Supabase insert
         if (this.supabase && this.currentUser && !this.currentUser.isLocal) {
             try {
                 await this.supabase.from('redemptions').insert([{
@@ -449,16 +503,14 @@ class BackendService {
     }
 
     getRedemptionHistory() {
+        const historyKey = this.currentUser ? `tictactoe_redemptions_${this.currentUser.id}` : 'tictactoe_guest_redemptions';
         try {
-            return JSON.parse(localStorage.getItem("tictactoe_redemptions") || "[]");
+            return JSON.parse(localStorage.getItem(historyKey) || "[]");
         } catch (e) {
             return [];
         }
     }
 
-    // -------------------------------------------------------------
-    // BACKEND STATUS & LEADERBOARD (Render API Integration)
-    // -------------------------------------------------------------
     async checkBackendHealth() {
         try {
             const res = await fetch(`${RENDER_BACKEND_URL}/health`, { method: 'GET' });
